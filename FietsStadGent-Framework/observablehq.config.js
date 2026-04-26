@@ -3,18 +3,25 @@ export default {
   // The app’s title; used in the sidebar and webpage titles.
   title: "FietsStadGent",
 
-  // The pages and sections in the sidebar. If you don’t specify this option,
-  // all pages will be listed in alphabetical order. Listing pages explicitly
-  // lets you organize them into sections and have unlisted pages.
-  // pages: [
-  //   {
-  //     name: "Examples",
-  //     pages: [
-  //       {name: "Dashboard", path: "/example-dashboard"},
-  //       {name: "Report", path: "/example-report"}
-  //     ]
-  //   }
-  // ],
+  // Organize navigation for the project team.
+  pages: [
+    {name: "Home", path: "/"},
+    {
+      name: "Framework Starters",
+      pages: [
+        {name: "Observable Plot", path: "/visualisaties-plot"},
+        {name: "D3.js", path: "/visualisaties-d3"},
+        {name: "Vega-Lite", path: "/visualisaties-vega-lite"}
+      ]
+    },
+    {
+      name: "Examples",
+      pages: [
+        {name: "Dashboard", path: "/example-dashboard"},
+        {name: "Report", path: "/example-report"}
+      ]
+    }
+  ],
 
   // Content to add to the head of the page, e.g. for a favicon:
   head: '<link rel="icon" href="observable.png" type="image/png" sizes="32x32">',
@@ -25,7 +32,7 @@ export default {
   // Some additional configuration options and their defaults:
   // theme: "default", // try "light", "dark", "slate", etc.
   // header: "", // what to show in the header (HTML)
-  // footer: "Built with Observable.", // what to show in the footer (HTML)
+  footer: "Datavisualisatie UGent 2025-2026 · FietsStadGent", // what to show in the footer (HTML)
   // sidebar: true, // whether to show the sidebar
   // toc: true, // whether to show the table of contents
   // pager: true, // whether to show previous & next links in the footer

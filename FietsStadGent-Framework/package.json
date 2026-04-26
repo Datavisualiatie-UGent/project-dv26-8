@@ -10,8 +10,13 @@
   },
   "dependencies": {
     "@observablehq/framework": "^1.13.4",
+    "@observablehq/plot": "^0.6.17",
+    "d3": "^7.9.0",
     "d3-dsv": "^3.0.1",
-    "d3-time-format": "^4.1.0"
+    "d3-time-format": "^4.1.0",
+    "vega": "^6.2.0",
+    "vega-embed": "^7.1.0",
+    "vega-lite": "^6.4.3"
   },
   "devDependencies": {
     "rimraf": "^5.0.5"
