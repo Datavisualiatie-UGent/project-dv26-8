@@ -103,15 +103,13 @@ const poleContent = pole
 <style>
   .pole-page-shell {
     box-sizing: border-box;
-    width: calc(100vw - var(--observablehq-inset-left, 0rem) - var(--observablehq-inset-right, 0rem) - 2rem);
-    margin-left: calc(-1 * var(--observablehq-inset-left, 0rem));
-    margin-right: 0;
-    max-width: none;
+    width: 100%;
+    margin: 0;
   }
 
   .pole-page {
     display: grid;
-    gap: 0.9rem;
+    gap: 0.95rem;
     width: 100%;
   }
 
@@ -243,6 +241,7 @@ const poleContent = pole
     .pole-page-shell {
       width: 100%;
       margin-left: 0;
+      margin-right: 0;
     }
 
     .pole-grid {
@@ -255,4 +254,6 @@ const poleContent = pole
   }
 </style>
 
-${poleContent}
+<div class="pole-page">
+  ${poleContent}
+</div>

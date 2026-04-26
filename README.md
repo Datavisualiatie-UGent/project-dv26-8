@@ -1,5 +1,25 @@
 # Datavisualisatie Project: Fietsstad Gent
 
+## Repository guide
+
+This repository has two main parts:
+
+- `data/`: raw source files and notebook/prototyping assets
+- `FietsStadGent-Framework/`: the Observable Framework website used for the final visualizations
+
+To run the website locally:
+
+1. Go to `FietsStadGent-Framework/`
+2. Install dependencies: `npm install`
+3. Start preview: `npm run dev`
+4. Build for validation: `npm run build`
+
+Main implemented pages in the framework:
+
+- `/fietspalen`: global map + ranking dashboard
+- `/paal?code=...`: detail page per counting pole
+- `/visualisaties-plot`, `/visualisaties-d3`, `/visualisaties-vega-lite`: framework starters
+
 ## project assignment
 
 - Selection of 3 datasets with ideas of what to do with it
@@ -12,6 +32,18 @@
   - Dataset source, key cleaning/transformation steps, design rationale
   - Document your progress, prototypes, ideas, ...
   - Don’t forget this!
+
+## Grading
+
+Aspects taken into account
+
+- Level of ambition and choice of dataset
+- Technical execution
+  - Interactive visualisations are a plus
+- Following data visualisation best practices
+  - Innovative visualisations are a plus
+- The story that is told
+- Attention to detail
 
 ## Tools we can use
 
