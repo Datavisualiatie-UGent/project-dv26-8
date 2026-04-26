@@ -47,11 +47,41 @@ const kaart = resize((width) => {
   const map = L.map(container, {
     zoomControl: true,
     scrollWheelZoom: true
-  })
+  });
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
     attribution: "&copy; OpenStreetMap contributors"
+  }).addTo(map);
+
+  // After adding the tile layer, add a world mask with a Ghent hole
+  const ghentBounds = [
+    [51.15, 3.55],  // NW corner (lat, lon)
+    [51.15, 3.85],  // NE
+    [50.95, 3.85],  // SE  
+    [50.95, 3.55],  // SW
+  ];
+  
+  // World polygon with a hole cut out for Ghent
+  const worldWithHole = {
+    type: "Feature",
+    geometry: {
+      type: "Polygon",
+      coordinates: [
+        // Outer ring: whole world
+        [[-180, -90], [180, -90], [180, 90], [-180, 90], [-180, -90]],
+        // Inner ring: Ghent hole (counter-clockwise = hole)
+        [...ghentBounds.map(([lat, lon]) => [lon, lat]).reverse(), [ghentBounds[0][1], ghentBounds[0][0]]]
+      ]
+    }
+  };
+
+  L.geoJSON(worldWithHole, {
+    style: {
+      fillColor: "#888",
+      fillOpacity: 0.45,
+      stroke: false
+    }
   }).addTo(map);
 
   const bikeIcon = L.divIcon({
@@ -120,15 +150,18 @@ const kaart = resize((width) => {
     const marker = L.marker([point.lat, point.lon], { icon: bikeIcon }).addTo(map);
     bounds.extend([point.lat, point.lon]);
     marker.on("click", () => {
-        renderPanel(point);
-        map.flyTo([point.lat, point.lon], Math.max(map.getZoom(), 15), { animate: true, duration: 0.4 });
+      renderPanel(point);
+      map.flyTo([point.lat, point.lon], Math.max(map.getZoom(), 15), { animate: true, duration: 0.4 });
     });
   }
 
   // Fit map to show all pins with some padding:
   if (bounds.isValid()) {
-    map.fitBounds(bounds, { padding: [20, 20], maxZoom: 13 });
+    map.fitBounds(bounds, { padding: [60, 60], maxZoom: 13 });
   }
+
+  if (points.length > 0) renderPanel(points[0]);
+  else renderPanel(null);
 
   const style = document.createElement("style");
   style.textContent = `
@@ -160,7 +193,7 @@ const kaart = resize((width) => {
 
     .bike-pin-tail {
       position: absolute;
-      bottom: 9px;        /* was 0 — pull up so corner touches circle edge */
+      bottom: 9px;
       left: 50%;
       transform: translateX(-50%) rotate(45deg);
       width: 14px;
@@ -238,13 +271,12 @@ const kaart = resize((width) => {
       border-radius: 999px;
       background: #0f766e;
       color: #ffffff !important;
+      -webkit-text-fill-color: #ffffff;
       text-decoration: none;
       font-weight: 700;
       font-size: 0.78rem;
-      box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
-      cursor: pointer;
       text-align: center;
-      -webkit-text-fill-color: #ffffff;
+      box-shadow: 0 4px 12px rgba(15, 118, 110, 0.25);
     }
 
     .pole-info-link:hover { background: #115e59; }
@@ -259,13 +291,6 @@ const kaart = resize((width) => {
   `;
 
   shell.append(container, panel, style);
-
-  if (points.length > 0) {
-    renderPanel(points[0]);
-  } else {
-    renderPanel(null);
-  }
-
   setTimeout(() => map.invalidateSize(), 0);
   return shell;
 });
@@ -277,5 +302,6 @@ const kaart = resize((width) => {
   </div>
 </div>
 
-Klik op een pin om de gegevens van die telpaal in het infopaneel te zien.
-
+<div class="grid grid-cols-1" style="margin-top: 0.5rem;">
+  Klik op een pin om de gegevens van die telpaal in het infopaneel te zien.
+</div>
