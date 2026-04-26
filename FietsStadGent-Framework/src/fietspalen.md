@@ -37,8 +37,8 @@ const kaart = resize((width) => {
   shell.className = "kaart-shell";
   shell.style.position = "relative";
   shell.style.width = "100%";
-  shell.style.height = "42vh";
-  shell.style.minHeight = "42vh";
+  shell.style.height = "40vh";
+  shell.style.minHeight = "35vh";
   shell.style.overflow = "hidden";
 
   const container = document.createElement("div");
@@ -158,9 +158,19 @@ const kaart = resize((width) => {
     renderPanel(null);
   });
 
-  // Fit map to show all pins with some padding:
-  if (bounds.isValid()) {
-    map.fitBounds(bounds, { padding: [60, 60], maxZoom: 13 });
+  function fitAllPins() {
+    if (!bounds.isValid()) return;
+
+    // Compensate for pin height
+    const horizontalPadding = 20;
+    const verticalPadding = 40;
+    const pinHeight = 60;
+
+    map.fitBounds(bounds, {
+      paddingTopLeft: [horizontalPadding, verticalPadding],
+      paddingBottomRight: [horizontalPadding, verticalPadding - pinHeight],
+      maxZoom: 15
+    });
   }
 
   renderPanel(null);
@@ -293,7 +303,10 @@ const kaart = resize((width) => {
   `;
 
   shell.append(container, panel, style);
-  setTimeout(() => map.invalidateSize(), 0);
+  setTimeout(() => {
+    map.invalidateSize();
+    fitAllPins();
+  }, 0);
   return shell;
 });
 ```
