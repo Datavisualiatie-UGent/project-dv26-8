@@ -6,7 +6,7 @@ export default {
   // Organize navigation for the project team.
   pages: [
     {name: "Home", path: "/"},
-    {name: "Kaart", path: "/kaart"},
+    {name: "Globaal", path: "/fietspalen"},
     {name: "Telpaal", path: "/paal"},
     {
       name: "Framework Starters",

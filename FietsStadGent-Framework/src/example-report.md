@@ -1,5 +1,6 @@
 ---
 title: Example report
+theme: dashboard
 ---
 
 # A brief history of space exploration

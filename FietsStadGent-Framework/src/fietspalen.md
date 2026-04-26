@@ -3,7 +3,7 @@ toc: false
 theme: dashboard
 ---
 
-# Kaart van fietstelpalen in Gent
+# Fietstelpalen in Gent
 
 ```js
 import L from "npm:leaflet";
@@ -12,6 +12,7 @@ import L from "npm:leaflet";
 ```js
 const locaties = await FileAttachment("data/locaties.json").json();
 const bikeSummary = await FileAttachment("data/fietspalen.json").json();
+const gentBoundaryGeo = await FileAttachment("data/OSMB-71785c830e71f3607aaeffc6b51538d7206c36a0.geojson").json();
 
 const totalByCode = new Map((bikeSummary.codeTotals || []).map((d) => [d.code, d.total]));
 const points = locaties
@@ -54,35 +55,35 @@ const kaart = resize((width) => {
     attribution: "&copy; OpenStreetMap contributors"
   }).addTo(map);
 
-  // After adding the tile layer, add a world mask with a Ghent hole
-  const ghentBounds = [
-    [51.15, 3.55],  // NW corner (lat, lon)
-    [51.15, 3.85],  // NE
-    [50.95, 3.85],  // SE  
-    [50.95, 3.55],  // SW
-  ];
-  
-  // World polygon with a hole cut out for Ghent
-  const worldWithHole = {
-    type: "Feature",
-    geometry: {
-      type: "Polygon",
-      coordinates: [
-        // Outer ring: whole world
-        [[-180, -90], [180, -90], [180, 90], [-180, 90], [-180, -90]],
-        // Inner ring: Ghent hole (counter-clockwise = hole)
-        [...ghentBounds.map(([lat, lon]) => [lon, lat]).reverse(), [ghentBounds[0][1], ghentBounds[0][0]]]
-      ]
-    }
-  };
+  const boundaryFeature = gentBoundaryGeo?.features?.[0];
+  const ghentRing = boundaryFeature?.geometry?.type === "Polygon"
+    ? boundaryFeature.geometry.coordinates?.[0]
+    : null;
 
-  L.geoJSON(worldWithHole, {
-    style: {
-      fillColor: "#888",
-      fillOpacity: 0.45,
-      stroke: false
-    }
-  }).addTo(map);
+  // World polygon with a Ghent hole derived from the real OSM boundary.
+  const worldWithHole = ghentRing && ghentRing.length > 3
+    ? {
+        type: "Feature",
+        geometry: {
+          type: "Polygon",
+          coordinates: [
+            [[-180, -90], [180, -90], [180, 90], [-180, 90], [-180, -90]],
+            ghentRing
+          ]
+        }
+      }
+    : null;
+
+  if (worldWithHole) {
+    L.geoJSON(worldWithHole, {
+      style: {
+        fillColor: "#888",
+        fillOpacity: 0.45,
+        stroke: false,
+        fillRule: "evenodd"
+      }
+    }).addTo(map);
+  }
 
   const bikeIcon = L.divIcon({
     className: "bike-pin",
@@ -96,15 +97,12 @@ const kaart = resize((width) => {
 
   const panel = document.createElement("aside");
   panel.className = "pole-info-panel";
+  panel.hidden = true;
 
   function renderPanel(point) {
     if (!point) {
       panel.replaceChildren();
-      const introTitle = document.createElement("h3");
-      introTitle.textContent = "Klik op een pin";
-      const introText = document.createElement("p");
-      introText.textContent = "Bekijk hier de gegevens van een telpaal.";
-      panel.append(introTitle, introText);
+      panel.hidden = true;
       return;
     }
 
@@ -141,6 +139,7 @@ const kaart = resize((width) => {
     link.textContent = "Open infopagina van deze telpaal";
 
     panel.replaceChildren(title, list, link);
+    panel.hidden = false;
   }
 
   // Add all markers first, collecting them:
@@ -155,13 +154,16 @@ const kaart = resize((width) => {
     });
   }
 
+  map.on("click", () => {
+    renderPanel(null);
+  });
+
   // Fit map to show all pins with some padding:
   if (bounds.isValid()) {
     map.fitBounds(bounds, { padding: [60, 60], maxZoom: 13 });
   }
 
-  if (points.length > 0) renderPanel(points[0]);
-  else renderPanel(null);
+  renderPanel(null);
 
   const style = document.createElement("style");
   style.textContent = `

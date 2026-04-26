@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { dsvFormat } from "d3-dsv";
 
-const rawDataRoot = new URL("../../../data/", import.meta.url);
+const rawDataRoot = new URL("../data/", import.meta.url);
 const semicolonCsv = dsvFormat(";");
 
 async function readRawCsv(fileName) {
