@@ -1,5 +1,6 @@
 ---
 title: Observable Plot Starter
+theme: dashboard
 ---
 
 # Observable Plot starter

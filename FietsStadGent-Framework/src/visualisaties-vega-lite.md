@@ -1,5 +1,6 @@
 ---
 title: Vega-Lite Starter
+theme: dashboard
 ---
 
 # Vega-Lite starter

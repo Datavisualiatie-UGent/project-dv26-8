@@ -69,6 +69,7 @@ export async function loadBikeSummary() {
     const hourlyTotals = new Map();
     const weekdayTotals = new Map();
     const locationTotals = new Map();
+    const codeTotals = new Map();
 
     let totalCyclists = 0;
     let recordCount = 0;
@@ -92,7 +93,14 @@ export async function loadBikeSummary() {
         if (Number.isFinite(hour)) addToMap(hourlyTotals, hour, total);
         addToMap(weekdayTotals, weekday, total);
         addToMap(locationTotals, row.locatie || "Onbekend", total);
+        const codeKey = row.code || "ONBEKEND";
+        if (!codeTotals.has(codeKey)) {
+            codeTotals.set(codeKey, { code: codeKey, location: row.locatie || "Onbekend", total: 0 });
+        }
+        codeTotals.get(codeKey).total += total;
     }
+
+    const codeTotalsArray = Array.from(codeTotals.values()).sort((a, b) => b.total - a.total);
 
     return {
         recordCount,
@@ -101,7 +109,8 @@ export async function loadBikeSummary() {
         monthlyTotals: sortSeries(monthlyTotals, "month", "total", (a, b) => a.month - b.month),
         hourlyTotals: sortSeries(hourlyTotals, "hour", "total", (a, b) => a.hour - b.hour),
         weekdayTotals: sortSeries(weekdayTotals, "weekday", "total", (a, b) => a.weekday - b.weekday),
-        topLocations: sortSeries(locationTotals, "location", "total", (a, b) => b.total - a.total).slice(0, 10)
+        topLocations: sortSeries(locationTotals, "location", "total", (a, b) => b.total - a.total).slice(0, 10),
+        codeTotals: codeTotalsArray
     };
 }
 

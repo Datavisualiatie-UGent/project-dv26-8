@@ -1,5 +1,6 @@
 ---
 title: D3 Starter
+theme: dashboard
 ---
 
 # D3.js starter

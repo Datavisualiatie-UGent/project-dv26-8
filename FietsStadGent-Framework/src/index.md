@@ -1,5 +1,6 @@
 ---
 toc: false
+theme: dashboard
 ---
 
 <div class="hero">
