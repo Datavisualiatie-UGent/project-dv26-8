@@ -36,8 +36,8 @@ const kaart = resize((width) => {
   shell.className = "kaart-shell";
   shell.style.position = "relative";
   shell.style.width = "100%";
-  shell.style.height = "40vh";
-  shell.style.minHeight = "40vh";
+  shell.style.height = "42vh";
+  shell.style.minHeight = "42vh";
   shell.style.overflow = "hidden";
 
   const container = document.createElement("div");
@@ -47,7 +47,7 @@ const kaart = resize((width) => {
   const map = L.map(container, {
     zoomControl: true,
     scrollWheelZoom: true
-  }).setView([51.0543, 3.7174], 12);
+  })
 
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 19,
@@ -113,12 +113,21 @@ const kaart = resize((width) => {
     panel.replaceChildren(title, list, link);
   }
 
+  // Add all markers first, collecting them:
+  const bounds = L.latLngBounds();
+
   for (const point of points) {
     const marker = L.marker([point.lat, point.lon], { icon: bikeIcon }).addTo(map);
+    bounds.extend([point.lat, point.lon]);
     marker.on("click", () => {
-      renderPanel(point);
-      map.flyTo([point.lat, point.lon], Math.max(map.getZoom(), 14), { animate: true, duration: 0.35 });
+        renderPanel(point);
+        map.flyTo([point.lat, point.lon], Math.max(map.getZoom(), 15), { animate: true, duration: 0.4 });
     });
+  }
+
+  // Fit map to show all pins with some padding:
+  if (bounds.isValid()) {
+    map.fitBounds(bounds, { padding: [20, 20], maxZoom: 13 });
   }
 
   const style = document.createElement("style");
