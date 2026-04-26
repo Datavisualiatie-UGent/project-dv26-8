@@ -2,7 +2,6 @@
 
 
 ```js
-import * as d3 from "d3";
 import { drukte } from "./components/drukte.js";
 
 // Load precomputed monthly averages
@@ -23,31 +22,34 @@ const parsed = data.map(d => ({
 </div>
 
 ```js
-import { Inputs } from "@observablehq/inputs";
+import * as Inputs from "@observablehq/inputs";
+import { Generators } from "@observablehq/stdlib";
 
 const data2 = await FileAttachment("./data/monthlyPerLocation.json").json();
 
-viewof selectedLocation = Inputs.select(
+const locationInput = Inputs.select(
   data2.map(d => d.locatie),
   {
     label: "Locatie",
     value: data2[0].locatie
   }
 );
+const location = Generators.input(locationInput);
 
-const selectedData = (() => {
-  const loc = data2.find(d => d.locatie === selectedLocation);
-  return loc ? loc.months
-    .map(([month, value]) => ({
-      month: new Date(month),
-      avg: value
-    }))
-    .sort((a, b) => a.month - b.month) : [];
-})();
+const selectedData = (location) => {
+    return data2
+  .find(d => d.locatie === location)?.months
+  .map(([month, value]) => ({
+    month: new Date(month),
+    avg: value
+  }))
+  .sort((a, b) => a.month - b.month) ?? [];
+}
 ```
 
 <div class="grid grid-cols-1">
-    <div class="card"> 
-        ${resize((width) => drukte(selectedData, "Drukte", {width, height: 400}))} 
+    <div class="card" style="display: flex; flex-direction: column; gap: 1rem;"> 
+        ${locationInput}
+        ${resize((width) => drukte(selectedData(location), "Drukte", {width, height: 400}))} 
     </div> 
 </div>
