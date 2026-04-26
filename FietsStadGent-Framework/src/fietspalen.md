@@ -154,11 +154,31 @@ const kaart = resize((width) => {
 
   const pointByCode = new Map(points.map((p) => [p.code, p]));
   const markerByCode = new Map();
+  let selectedMarkerCode = null;
+
+  function updateSelectedMarker(code) {
+    if (selectedMarkerCode && markerByCode.has(selectedMarkerCode)) {
+      const previousMarker = markerByCode.get(selectedMarkerCode);
+      const previousElement = previousMarker?.getElement?.();
+      previousElement?.classList.remove("is-selected");
+      previousMarker?.setZIndexOffset?.(0);
+    }
+
+    selectedMarkerCode = code || null;
+
+    if (selectedMarkerCode && markerByCode.has(selectedMarkerCode)) {
+      const currentMarker = markerByCode.get(selectedMarkerCode);
+      const currentElement = currentMarker?.getElement?.();
+      currentElement?.classList.add("is-selected");
+      currentMarker?.setZIndexOffset?.(1000);
+    }
+  }
 
   function closePanel() {
     panel.replaceChildren();
     panel.hidden = true;
     mapBridge.selectedCode = null;
+    updateSelectedMarker(null);
   }
 
   function renderPanel(point) {
@@ -168,6 +188,7 @@ const kaart = resize((width) => {
     }
 
     mapBridge.selectedCode = point.code;
+    updateSelectedMarker(point.code);
 
     const header = document.createElement("div");
     header.className = "pole-info-header";
@@ -212,7 +233,7 @@ const kaart = resize((width) => {
     const link = document.createElement("a");
     link.className = "pole-info-link";
     link.href = `/paal?code=${encodeURIComponent(point.code)}`;
-    link.textContent = "Open infopagina van deze telpaal";
+    link.textContent = "Open infopagina";
 
     panel.replaceChildren(header, list, link);
     panel.hidden = false;
@@ -321,6 +342,19 @@ const kaart = resize((width) => {
       box-sizing: border-box;
     }
 
+    .bike-pin.is-selected {
+      z-index: 1000 !important;
+    }
+
+    .bike-pin.is-selected .bike-pin-circle {
+      background: #ef4444;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25);
+    }
+
+    .bike-pin.is-selected .bike-pin-tail {
+      background: #ef4444;
+    }
+
     .bike-pin-tail {
       position: absolute;
       bottom: 9px;
@@ -366,11 +400,13 @@ const kaart = resize((width) => {
       background: #fff;
       color: #0f172a;
       font-weight: 700;
-      font-size: 15px;
-      line-height: 30px;
+      font-size: 28px;
+      line-height: 1;
       cursor: pointer;
       text-align: center;
       text-decoration: none;
+      display: grid;
+      place-items: center;
       border-top: 1px solid rgba(255, 255, 255, 0.4);
       border-bottom: 1px solid rgba(0, 0, 0, 0.12);
     }
@@ -468,21 +504,45 @@ const kaart = resize((width) => {
     @media (max-width: 640px) {
       .pole-info-panel {
         top: 0.5rem;
-        bottom: auto;
-        left: 0.5rem;
+        left: auto;
         right: 0.5rem;
-        width: auto;
-        max-height: 42%;
-        padding: 0.55rem;
+        width: min(16.5rem, calc(100% - 20rem));
+        max-width: calc(100% - 1rem);
+        min-width: 8rem;
+        max-height: min(34vh, 15rem);
+        padding: 0.45rem 0.48rem;
+      }
+
+      .pole-info-panel h3 {
+        font-size: 0.92rem;
+      }
+
+      .pole-info-header {
+        margin-bottom: 0.3rem;
       }
 
       .pole-info-list {
-        grid-template-columns: 4rem 1fr;
-        gap: 0.16rem 0.38rem;
+        grid-template-columns: 1fr;
+        gap: 0.28rem;
       }
 
       .pole-info-list dt,
       .pole-info-list dd {
+        font-size: 0.72rem;
+        white-space: normal;
+      }
+
+      .pole-info-list dt {
+        margin-top: 0.1rem;
+      }
+
+      .pole-info-list dd {
+        margin-bottom: 0.1rem;
+      }
+
+      .pole-info-link {
+        margin-top: 0.5rem;
+        padding: 0.48rem 0.45rem;
         font-size: 0.74rem;
       }
     }
