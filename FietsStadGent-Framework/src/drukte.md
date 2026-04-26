@@ -5,7 +5,7 @@
 import { drukte } from "./components/drukte.js";
 
 // Load precomputed monthly averages
-const data = await FileAttachment("./data/monthlyAvg.json").json();
+const data = await FileAttachment("data/monthlyAvg.json").json();
 
 // Parse month strings back into Date objects
 const parsed = data.map(d => ({
@@ -25,7 +25,8 @@ const parsed = data.map(d => ({
 import * as Inputs from "@observablehq/inputs";
 import { Generators } from "@observablehq/stdlib";
 
-const data2 = await FileAttachment("./data/monthlyPerLocation.json").json();
+const data2 = await FileAttachment("data/monthlyPerLocation.json").json();
+console.log(data2);
 
 const locationInput = Inputs.select(
   data2.map(d => d.locatie),
