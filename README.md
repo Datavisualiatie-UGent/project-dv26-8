@@ -33,7 +33,7 @@
     - Great for basic visualizations
     - A lot of work for complex graphs
 - Dashboards
-  - **Observable Framwork**
+  - **Observable Framework**
     - Static site generator
     - Server side code wrangling when building
     - Client side visualizations
