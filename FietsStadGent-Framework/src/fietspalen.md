@@ -3,10 +3,9 @@ toc: false
 theme: dashboard
 ---
 
-# Fietstelpalen in Gent
-
 ```js
 import L from "npm:leaflet";
+import {html} from "npm:htl";
 ```
 
 ```js
@@ -29,6 +28,21 @@ const points = locaties
     lon: d.long,
     total: totalByCode.get(d.code) ?? 0
   }));
+
+const sortedPoints = [...points].sort((a, b) => b.total - a.total);
+const totalPoles = sortedPoints.length;
+const totalCyclists = sortedPoints.reduce((sum, d) => sum + d.total, 0);
+const avgCyclists = totalPoles > 0 ? totalCyclists / totalPoles : 0;
+
+const withBuildYear = sortedPoints.filter((d) => Number.isFinite(d.bouwjaar));
+const newestPole = withBuildYear.length > 0
+  ? withBuildYear.reduce((best, d) => (d.bouwjaar > best.bouwjaar ? d : best))
+  : null;
+const oldestPole = withBuildYear.length > 0
+  ? withBuildYear.reduce((best, d) => (d.bouwjaar < best.bouwjaar ? d : best))
+  : null;
+
+const nf = new Intl.NumberFormat("nl-BE");
 ```
 
 ```js
@@ -161,9 +175,9 @@ const kaart = resize((width) => {
   function fitAllPins() {
     if (!bounds.isValid()) return;
 
-    // Compensate for pin height
+    // Keep top/bottom spacing visually balanced while accounting for pin height.
     const horizontalPadding = 20;
-    const verticalPadding = 40;
+    const verticalPadding = 20;
     const pinHeight = 60;
 
     map.fitBounds(bounds, {
@@ -311,12 +325,238 @@ const kaart = resize((width) => {
 });
 ```
 
+<style>
+  .fietspalen-page {
+    display: grid;
+    gap: 0.95rem;
+  }
+
+  .fietspalen-hero {
+    border-radius: 14px;
+    padding: 1rem 1.1rem;
+    color: #ffffff;
+    background: linear-gradient(135deg, #0f766e 0%, #0f172a 100%);
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.22);
+  }
+
+  .fietspalen-hero h2 {
+    margin: 0;
+    font-size: 1.35rem;
+    line-height: 1.2;
+  }
+
+  .fietspalen-hero p {
+    margin: 0.35rem 0 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.7rem;
+  }
+
+  .overview-card {
+    border-radius: 12px;
+    border: 1px solid #dbe7ef;
+    background: #ffffff;
+    padding: 0.72rem 0.78rem;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  }
+
+  .overview-label {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+  }
+
+  .overview-value {
+    margin: 0.2rem 0 0;
+    color: #0f172a;
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .ranking-card {
+    border-radius: 12px;
+    border: 1px solid #dbe7ef;
+    background: #ffffff;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+    overflow: hidden;
+  }
+
+  .ranking-header {
+    padding: 0.82rem 0.9rem;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+  }
+
+  .ranking-header h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: #0f172a;
+  }
+
+  .ranking-table-wrap {
+    overflow-x: auto;
+  }
+
+  .ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.86rem;
+  }
+
+  .ranking-table th,
+  .ranking-table td {
+    padding: 0.52rem 0.7rem;
+    border-bottom: 1px solid #edf2f7;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .ranking-table th {
+    color: #64748b;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 700;
+    background: #ffffff;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  .ranking-table tr:nth-child(even) {
+    background: #fcfdff;
+  }
+
+  .ranking-table .rank-cell {
+    font-weight: 700;
+    color: #0f766e;
+  }
+
+  .map-card {
+    padding: 0;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid #dbe7ef;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1);
+  }
+
+  .map-caption {
+    color: #475569;
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 1024px) {
+    .overview-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .overview-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="fietspalen-page">
+  <section class="fietspalen-hero">
+    <h2>Fietstelpalen in Gent</h2>
+    <p>Interactieve kaart en ranking op basis van totaal getelde fietsers per telpaal.</p>
+  </section>
+
+  <section class="overview-grid">
+    <article class="overview-card">
+      <p class="overview-label">Aantal telpalen</p>
+      <p class="overview-value">${nf.format(totalPoles)}</p>
+    </article>
+    <article class="overview-card">
+      <p class="overview-label">Totaal fietsers</p>
+      <p class="overview-value">${nf.format(totalCyclists)}</p>
+    </article>
+    <article class="overview-card">
+      <p class="overview-label">Gemiddeld per paal</p>
+      <p class="overview-value">${nf.format(Math.round(avgCyclists))}</p>
+    </article>
+    <article class="overview-card">
+      <p class="overview-label">Top telpaal</p>
+      <p class="overview-value">${sortedPoints[0] ? sortedPoints[0].name : "Onbekend"}</p>
+    </article>
+  </section>
+
+  <section class="ranking-card">
+    <div class="ranking-header">
+      <h3>Ranking van telpalen</h3>
+    </div>
+    <div class="ranking-table-wrap">
+      <table class="ranking-table">
+        <thead>
+          <tr>
+            <th>Rang</th>
+            <th>Naam</th>
+            <th>Code</th>
+            <th>Fietsers</th>
+            <th>Aandeel</th>
+            <th>Bouwjaar</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${sortedPoints.map((p, i) => {
+            const share = totalCyclists > 0 ? (p.total / totalCyclists) * 100 : 0;
+            const year = Number.isFinite(p.bouwjaar) ? String(Math.trunc(p.bouwjaar)) : "Onbekend";
+            return html`<tr>
+              <td class="rank-cell">${i + 1}</td>
+              <td>${p.name}</td>
+              <td>${p.code}</td>
+              <td>${nf.format(p.total)}</td>
+              <td>${share.toFixed(2)}%</td>
+              <td>${year}</td>
+            </tr>`;
+          })}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="overview-grid">
+    <article class="overview-card">
+      <p class="overview-label">Oudste telpaal</p>
+      <p class="overview-value">${oldestPole ? `${oldestPole.name} (${Math.trunc(oldestPole.bouwjaar)})` : "Onbekend"}</p>
+    </article>
+    <article class="overview-card">
+      <p class="overview-label">Nieuwste telpaal</p>
+      <p class="overview-value">${newestPole ? `${newestPole.name} (${Math.trunc(newestPole.bouwjaar)})` : "Onbekend"}</p>
+    </article>
+    <article class="overview-card">
+      <p class="overview-label">Top 3 samen</p>
+      <p class="overview-value">${nf.format(sortedPoints.slice(0, 3).reduce((sum, d) => sum + d.total, 0))}</p>
+    </article>
+    <article class="overview-card">
+      <p class="overview-label">Mediaan (ruw)</p>
+      <p class="overview-value">${(() => {
+        if (sortedPoints.length === 0) return "0";
+        const asc = [...sortedPoints].map((d) => d.total).sort((a, b) => a - b);
+        const mid = Math.floor(asc.length / 2);
+        const med = asc.length % 2 ? asc[mid] : (asc[mid - 1] + asc[mid]) / 2;
+        return nf.format(Math.round(med));
+      })()}</p>
+    </article>
+  </section>
+</div>
+
 <div class="grid grid-cols-1">
-  <div class="card" style="padding: 0; overflow: hidden; border-radius: 12px;">
+  <div class="card map-card">
     ${kaart}
   </div>
 </div>
 
 <div class="grid grid-cols-1" style="margin-top: 0.5rem;">
-  Klik op een pin om de gegevens van die telpaal in het infopaneel te zien.
+  <p class="map-caption">Klik op een pin om de gegevens van die telpaal in het infopaneel te zien.</p>
 </div>
