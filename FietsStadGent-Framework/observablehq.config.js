@@ -20,7 +20,8 @@ export default {
       name: "Examples",
       pages: [
         {name: "Dashboard", path: "/example-dashboard"},
-        {name: "Report", path: "/example-report"}
+        {name: "Report", path: "/example-report"},
+        {name: "Drukte", path: "/drukte"},
       ]
     }
   ],

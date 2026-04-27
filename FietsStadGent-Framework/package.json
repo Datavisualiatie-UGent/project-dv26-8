@@ -10,10 +10,13 @@
   },
   "dependencies": {
     "@observablehq/framework": "^1.13.4",
-    "@observablehq/plot": "^0.6.17",
+    "@observablehq/inputs": "^0.12.0",
+    "@observablehq/stdlib": "^5.8.8",
     "d3": "^7.9.0",
     "d3-dsv": "^3.0.1",
     "d3-time-format": "^4.1.0",
+    "observable": "^2.1.4",
+    "@observablehq/plot": "^0.6.17",
     "vega": "^6.2.0",
     "vega-embed": "^7.1.0",
     "vega-lite": "^6.4.3"
