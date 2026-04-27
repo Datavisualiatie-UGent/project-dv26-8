@@ -1,5 +1,8 @@
-# Drukte 
+---
+theme: dashboard
+---
 
+# Drukte
 
 ```js
 import { drukte } from "./components/drukte.js";
@@ -8,10 +11,22 @@ import { drukte } from "./components/drukte.js";
 const data = await FileAttachment("data/monthlyAvg.json").json();
 
 // Parse month strings back into Date objects
-const parsed = data.map(d => ({
-  ...d,
-  month: new Date(d.month)
-})).sort((a, b) => a.month - b.month);
+const parseMonth = (value) => {
+  if (value == null) return null;
+  if (typeof value !== "string") return null;
+  const raw = value.trim();
+  if (!raw) return null;
+  const month = new Date(value);
+  return Number.isNaN(month.getTime()) ? null : month;
+};
+
+const parsed = data
+  .map(d => ({
+    ...d,
+    month: parseMonth(d.month)
+  }))
+  .filter(d => d.month !== null && Number.isFinite(d.avg))
+  .sort((a, b) => a.month - b.month);
 
 ```
 
@@ -26,7 +41,6 @@ import * as Inputs from "@observablehq/inputs";
 import { Generators } from "@observablehq/stdlib";
 
 const data2 = await FileAttachment("data/monthlyPerLocation.json").json();
-console.log(data2);
 
 const locationInput = Inputs.select(
   data2.map(d => d.locatie),
@@ -38,13 +52,14 @@ const locationInput = Inputs.select(
 const location = Generators.input(locationInput);
 
 const selectedData = (location) => {
-    return data2
-  .find(d => d.locatie === location)?.months
-  .map(([month, value]) => ({
-    month: new Date(month),
-    avg: value
-  }))
-  .sort((a, b) => a.month - b.month) ?? [];
+  return data2
+    .find(d => d.locatie === location)?.months
+    .map(([month, value]) => ({
+      month: parseMonth(month),
+      avg: value
+    }))
+    .filter(d => d.month !== null && Number.isFinite(d.avg))
+    .sort((a, b) => a.month - b.month) ?? [];
 }
 ```
 

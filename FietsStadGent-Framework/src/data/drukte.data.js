@@ -6,11 +6,19 @@ const filePath = new URL("./data_fietspalen.csv", import.meta.url);
 async function processData() {
   const text = await readFile(filePath, "utf-8");
 
-  return d3.dsvFormat(";").parse(text, d => ({
-    locatie: d.locatie,
-    date: new Date(d.datum),
-    totaal: +d.totaal
-  }));
+  return d3
+    .dsvFormat(";")
+    .parse(text, d => ({
+      locatie: d.locatie,
+      date: new Date(d.datum),
+      totaal: +d.totaal
+    }))
+    .filter(d =>
+      d.locatie &&
+      Number.isFinite(d.totaal) &&
+      d.date instanceof Date &&
+      !Number.isNaN(d.date.getTime())
+    );
 };
 
 export async function monthlyPerLocation() {

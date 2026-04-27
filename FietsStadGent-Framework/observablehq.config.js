@@ -8,6 +8,7 @@ export default {
     {name: "Home", path: "/"},
     {name: "Globaal", path: "/fietspalen"},
     {name: "Telpaal", path: "/paal"},
+    {name: "Drukte", path: "/drukte"},
     {
       name: "Framework Starters",
       pages: [
@@ -21,7 +22,6 @@ export default {
       pages: [
         {name: "Dashboard", path: "/example-dashboard"},
         {name: "Report", path: "/example-report"},
-        {name: "Drukte", path: "/drukte"},
       ]
     }
   ],
