@@ -66,6 +66,6 @@ const selectedData = (location) => {
 <div class="grid grid-cols-1">
     <div class="card" style="display: flex; flex-direction: column; gap: 1rem;"> 
         ${locationInput}
-        ${resize((width) => drukte(selectedData(location), "Drukte", {width, height: 400}))} 
+        ${resize((width) => drukte(selectedData(location), "Aantal fietsers", {width, height: 400}))} 
     </div> 
 </div>
