@@ -90,7 +90,7 @@ const kaart = resize((width) => {
   shell.className = "kaart-shell";
   shell.style.position = "relative";
   shell.style.width = "100%";
-  shell.style.height = "40vh";
+  shell.style.height = "42vh";
   shell.style.minHeight = "35vh";
   shell.style.overflow = "hidden";
 
@@ -293,13 +293,12 @@ const kaart = resize((width) => {
     if (!bounds.isValid()) return;
 
     // Keep top/bottom spacing visually balanced while accounting for pin height.
-    const horizontalPadding = 20;
-    const verticalPadding = 20;
-    const pinHeight = 60;
+    const horizontalPadding = 10;
+    const verticalPadding = 10;
 
     map.fitBounds(bounds, {
       paddingTopLeft: [horizontalPadding, verticalPadding],
-      paddingBottomRight: [horizontalPadding, verticalPadding - pinHeight],
+      paddingBottomRight: [horizontalPadding, verticalPadding],
       maxZoom: 15
     });
   }
