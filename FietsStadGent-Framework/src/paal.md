@@ -1,5 +1,6 @@
 ---
 title: Telpaal Detail
+toc: false
 theme: dashboard
 ---
 
