@@ -2,8 +2,6 @@
 theme: dashboard
 ---
 
-# Drukte
-
 ```js
 import { drukte } from "./components/drukte.js";
 
@@ -30,11 +28,48 @@ const parsed = data
 
 ```
 
-<div class="grid grid-cols-1">
-  <div class="card">
-    ${resize((width) => drukte(parsed, "Gemiddelde fietsers", {width, height: 400}))}
-  </div>
-</div>
+<style>
+  .drukte-page {
+    display: grid;
+    gap: 0.95rem;
+    width: 100%;
+    max-width: none;
+    padding-top: 0.2rem;
+  }
+
+  .drukte-hero {
+    border-radius: 14px;
+    padding: 1rem 1.1rem;
+    color: #ffffff;
+    background: linear-gradient(135deg, #0f766e 0%, #0f172a 100%);
+    box-shadow: 0 10px 26px rgba(15, 23, 42, 0.22);
+  }
+
+  .drukte-hero h2 {
+    margin: 0;
+    font-size: 1.35rem;
+    line-height: 1.2;
+  }
+
+  .drukte-hero p {
+    margin: 0.35rem 0 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .drukte-card {
+    border-radius: 12px;
+    border: 1px solid #dbe7ef;
+    background: #ffffff;
+    padding: 0.82rem 0.9rem;
+    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  }
+
+  .drukte-card--with-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+</style>
 
 ```js
 import * as Inputs from "@observablehq/inputs";
@@ -63,9 +98,18 @@ const selectedData = (location) => {
 }
 ```
 
-<div class="grid grid-cols-1">
-    <div class="card" style="display: flex; flex-direction: column; gap: 1rem;"> 
-        ${locationInput}
-        ${resize((width) => drukte(selectedData(location), "Aantal fietsers", {width, height: 400}))} 
-    </div> 
+<div class="drukte-page">
+  <section class="drukte-hero">
+    <h2>Drukte</h2>
+    <p>Maandelijkse trends van fietsers, globaal en per telpaal.</p>
+  </section>
+
+  <section class="drukte-card">
+    ${resize((width) => drukte(parsed, "Gemiddelde fietsers", {width, height: 400}))}
+  </section>
+
+  <section class="drukte-card drukte-card--with-controls">
+    ${locationInput}
+    ${resize((width) => drukte(selectedData(location), "Aantal fietsers", {width, height: 400}))}
+  </section>
 </div>

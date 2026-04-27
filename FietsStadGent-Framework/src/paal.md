@@ -36,8 +36,7 @@ const osmHref = hasCoords
   : null;
 
 const poleContent = pole
-  ? html`<div class="pole-page-shell"><div class="pole-page">
-      <section class="pole-hero">
+  ? html`<section class="pole-hero">
         <h2>${pole.naam || pole.code}</h2>
         <div class="pole-subtitle">Code ${pole.code} · Fietstelpaal in Gent</div>
       </section>
@@ -88,16 +87,15 @@ const poleContent = pole
           ? html`<a class="pole-button secondary" target="_blank" rel="noopener noreferrer" href="${osmHref}">Bekijk op OSM</a>`
           : null}
       </section>
-    </div></div>`
-  : html`<div class="pole-page-shell"><div class="pole-page">
-      <section class="pole-hero">
+    `
+  : html`<section class="pole-hero">
         <h2>Telpaal niet gevonden</h2>
         <div class="pole-subtitle">Kies een telpaal via de kaart om detailinformatie te bekijken.</div>
       </section>
       <section class="pole-actions">
         <a class="pole-button primary" href="/fietspalen">Ga naar de kaart</a>
       </section>
-    </div></div>`;
+    `;
 ```
 
 <style>
@@ -105,12 +103,15 @@ const poleContent = pole
     box-sizing: border-box;
     width: 100%;
     margin: 0;
+    max-width: none;
+    padding-top: 0.2rem;
   }
 
   .pole-page {
     display: grid;
     gap: 0.95rem;
     width: 100%;
+    max-width: none;
   }
 
   .pole-hero {
@@ -254,6 +255,8 @@ const poleContent = pole
   }
 </style>
 
-<div class="pole-page">
-  ${poleContent}
+<div class="pole-page-shell">
+  <div class="pole-page">
+    ${poleContent}
+  </div>
 </div>

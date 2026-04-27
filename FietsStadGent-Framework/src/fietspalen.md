@@ -887,10 +887,8 @@ const kaart = resize((width) => {
   </section>
 </div>
 
-<div class="grid grid-cols-1">
-  <div class="card map-card">
-    ${kaart}
-  </div>
+<div class="card map-card">
+  ${kaart}
 </div>
 
 <div class="grid grid-cols-1" style="margin-top: 0.5rem;">
