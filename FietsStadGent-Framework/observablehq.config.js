@@ -9,6 +9,7 @@ export default {
     {name: "Globaal", path: "/fietspalen"},
     {name: "Telpaal", path: "/paal"},
     {name: "Drukte", path: "/drukte"},
+    {name: "Heatmap", path: "/heatmap"},
     {
       name: "Framework Starters",
       pages: [
