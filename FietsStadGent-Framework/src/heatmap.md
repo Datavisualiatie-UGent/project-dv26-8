@@ -3,32 +3,6 @@ toc: false
 theme: dashboard
 ---
 
-```js
-import { heatmap } from "./components/heatmap.js";
-import * as Inputs from "@observablehq/inputs";
-import { Generators } from "@observablehq/stdlib";
-
-const rows = await FileAttachment("data/data_fietspalen.csv").csv();
-
-const years = Array.from(
-  new Set(
-    rows
-      .map(d => {
-        const date = new Date(d.datum);
-        return Number.isFinite(date.getTime()) ? date.getUTCFullYear() : null;
-      })
-      .filter(Number.isFinite)
-  )
-).sort((a, b) => a - b);
-
-const yearInput = Inputs.select(years.map(String), {
-  label: "Jaar",
-  value: years.length ? String(years[0]) : ""
-});
-
-const year = Generators.input(yearInput);
-```
-
 <style>
   .heatmap-page {
     display: grid;
@@ -72,6 +46,38 @@ const year = Generators.input(yearInput);
   }
 </style>
 
+```js
+import { heatmap } from "./components/heatmap.js";
+
+const data = await FileAttachment("data/dailyAvg.json").json();
+
+const parsed = data
+.map(d => {
+    const date = new Date(d.day);
+
+    // start of year
+    const start = new Date(date.getFullYear(), 0, 1);
+
+    // Monday-based weekday (Mon=0, Sun=6)
+    const weekdayIndex = (date.getDay() + 6) % 7;
+    const startWeekday = (start.getDay() + 6) % 7;
+
+    const dayOfYear = Math.floor((date - start) / (1000 * 60 * 60 * 24));
+
+    // 🔑 key fix: include offset of first week
+    const week = Math.floor((dayOfYear + startWeekday) / 7);
+
+    return {
+      day: date,
+      value: d.avg,
+      weekday: date.toLocaleString("nl-BE", { weekday: "short" }),
+      month: date.toLocaleString("nl-BE", { month: "short" }),
+      week: week,
+    };
+}).filter(d => d.day.getFullYear() === 2025);
+console.log(parsed);
+```
+
 <div class="heatmap-page">
   <section class="heatmap-hero">
     <h2>Heatmap fietsdrukte</h2>
@@ -79,7 +85,6 @@ const year = Generators.input(yearInput);
   </section>
 
   <section class="heatmap-card heatmap-card--with-controls">
-    ${yearInput}
-    ${resize((width) => heatmap(rows, Number(year), {width, height: 520}))}
+    ${resize((width) => heatmap(parsed, {width, height: 200}))}
   </section>
 </div>
