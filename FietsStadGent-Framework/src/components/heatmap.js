@@ -18,19 +18,21 @@ export function heatmap(rows, {width, height} = {}) {
     return Plot.plot({
         width: width,
         height: height,
-        marginTop: 30,
+        marginTop: 20,
         x: {
             axis: null,
         },
         y: {
             label: null,
-            domain: weekdayNames
+            domain: weekdayNames,
+            axisLine: false,
         },
         color: {
             label: "Average",
-            scheme: "viridis"
+            scheme: "greens"
         },
         marks: [
+           Plot.axisY({tickSize: 0}),
            Plot.rect(rows, {
                 x: "week",
                 y: "weekday",
@@ -40,11 +42,10 @@ export function heatmap(rows, {width, height} = {}) {
 
             Plot.text(monthLabels, {
                 x: "week",
-                y: weekdayNames[0],
+                y: (_) => "ma",
                 text: "month",
                 dy: -20,
-                fontSize: 12,
-                textAnchor: "start",
+                // textAnchor: "start",
             })
         ]
     });
