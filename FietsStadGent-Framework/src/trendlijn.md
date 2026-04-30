@@ -9,43 +9,42 @@ theme: dashboard
 import * as Inputs from "@observablehq/inputs";
 import { Generators } from "@observablehq/stdlib";
 
-import { getYearsView, trendLijn } from "./components/trendlijn.js";
+import { getModeView, getYearsView, trendLijn } from "./components/trendlijn.js";
 
-const data = await FileAttachment("data/trendPerLocation.json").json();
-//console.log(data);
+const data = await FileAttachment("data/hourlyPerLocation.json").json();
+
+
 // TODO: add a clear checkbox button, add year label to line color
 
-
+// Global trend data
 const allData = data.flatMap(d =>
-  d.months.map(([month, value]) => ({
+  d.months.map(([month, hour, value]) => ({
     month: new Date(month).getMonth(),
     year: new Date(month).getFullYear(),
+    hour: new Date(hour),
     value
   }))
 );
 
-const yearCheckBox = getYearsView(allData);
-const years = Generators.input(yearCheckBox);
-
-const summed = Array.from(
+const averaged = Array.from(
   d3.rollup(
     allData,
-    v => d3.sum(v, d => d.value),
+    v => d3.mean(v, d => d.value),
     d => d.year,
-    d => d.month
+    d => d.month,
+    d => d.hour
   ),
   ([year, months]) =>
-    Array.from(months, ([month, value]) => ({
+    Array.from(months, ([month, hour, value]) => ({
       year,
       month,
+      hour,
       value
     }))
 ).flat();
 
 
-/////
-
-//console.log(years);
+// Individual trend data
 
 const locationView = Inputs.select(
   data.map(d => d.locatie),
@@ -54,16 +53,12 @@ const locationView = Inputs.select(
     value: data[0].locatie
   }
 );
-const location = Generators.input(locationView);
-
-const yearCheckBox2 = getYearsView(allData);
-const years2 = Generators.input(yearCheckBox2);
 
 const selectedData = (loc) => {
   const found = data.find(d => d.locatie === loc);
   if (!found) return [];
 
-  const filtered = found.months.map(([month, value]) => ({
+  const filtered = found.months.map(([month, hour, value]) => ({
     month: new Date(month).getMonth(),
     value,
     year: new Date(month).getFullYear()
@@ -72,6 +67,23 @@ const selectedData = (loc) => {
   return filtered;
 }
 
+// Extra
+
+// Global trend components
+const yearCheckBox = getYearsView(allData);
+const years = Generators.input(yearCheckBox);
+
+const modeView = getModeView();
+const mode = Generators.input(modeView);
+
+// Individual trend components
+const location = Generators.input(locationView);
+
+const yearCheckBox2 = getYearsView(allData);
+const years2 = Generators.input(yearCheckBox2);
+
+const modeView2 = getModeView();
+const mode2 = Generators.input(modeView2);
 ```
 
 <style>
@@ -136,16 +148,15 @@ const selectedData = (loc) => {
   }
 
   .plot-tip {
-    background: white !important;
-    color: #111827 !important;
-    border: 1px solid #e5e7eb !important;
+    background: white;
+    color: #111827;
+    border: 1px solid #e5e7eb;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
     font-size: 12px;
   }
 
-  /* SVG-based tooltip text (important!) */
   .plot-tip text {
-    fill: #111827 !important;
+    fill: #111827;
   }
 
 </style>
@@ -159,12 +170,13 @@ const selectedData = (loc) => {
   <section class="trendlijn-card">
     <div class="trendlijn-controls">
       <div>${yearCheckBox}</div>
+      <div>${modeView}</div>
     </div>
     ${resize((width) =>
       trendLijn(
-        summed.filter(d => years.includes(d.year)),
-        "month",
-        "value",
+        averaged.filter(d => years.includes(d.year)),
+        "Maand",
+        "Gemiddelde fietsers",
         { width, height: 400 }
       )
     )}
@@ -174,12 +186,13 @@ const selectedData = (loc) => {
     <div class="trendlijn-controls">
       <div>${yearCheckBox2}</div>
       <div>${locationView}</div>
+      <div>${modeView2}</div>
     </div>
     ${resize((width) =>
       trendLijn(
         selectedData(location).filter(d => years2.includes(d.year)).sort((a, b) => a.month - b.month),
-        "month",
-        "value",
+        "Maand",
+        "Aantal fietsers",
         { width, height: 400 }
       )
   )}

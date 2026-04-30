@@ -13,6 +13,22 @@ export function getYearsView(data) {
   );
 }
 
+export function getModeView() {
+    return Inputs.select(
+        ["month", "weekday", "hourly"],
+        {
+            label: "Trend",
+            value: "month",
+            format: d => ({
+                month: "Month",
+                weekday: "Weekday Pattern",
+                hourly: "Hourly"
+            })[d]
+        }
+    );
+
+}
+
 // inspiration: https://fil.github.io/pangea/plot/multiple-line-chart-hover
 export function trendLijn(data, xLabel, yLabel, { width, height } = {}) {
 
@@ -42,8 +58,8 @@ export function trendLijn(data, xLabel, yLabel, { width, height } = {}) {
         x: {
             domain: d3.range(12),
             tickFormat: d => [
-                "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-                "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+                "Jan", "Feb", "Maa", "Apr", "Mei", "Jun",
+                "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"
             ][d],
             label: xLabel.charAt(0).toUpperCase() + xLabel.slice(1),
         },
