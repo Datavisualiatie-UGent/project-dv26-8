@@ -7,43 +7,43 @@ theme: dashboard
 ```js
 import {html} from "npm:htl";
 
-const points = await FileAttachment("data/locaties.json").json();
+const locations = await FileAttachment("data/locaties.json").json();
 
 const params = new URLSearchParams(location.search);
-const code = params.get("code") || (points[0]?.code ?? null);
+const code = params.get("code") || (locations[0]?.code ?? null);
 
-const locationByCode = new Map(points.map((d) => [d.code, d]));
+const locationByCode = new Map(locations.map((d) => [d.code, d]));
 
-const totals = [...points].sort((a, b) => b.total - a.total);
+const totals = [...locations].sort((a, b) => b.total - a.total);
 const totalCyclistsAll = totals.reduce((sum, d) => sum + d.total, 0);
 
-const pole = code ? locationByCode.get(code) : null;
+const station = code ? locationByCode.get(code) : null;
 const rank = code ? totals.findIndex((d) => d.code === code) + 1 : 0;
-const poleCount = totals.length;
-const share = pole && totalCyclistsAll > 0 ? (pole.total / totalCyclistsAll) * 100 : null;
+const stationCount = totals.length;
+const share = station && totalCyclistsAll > 0 ? (station.total / totalCyclistsAll) * 100 : null;
 
-const hasCoords = pole && Number.isFinite(pole.lat) && Number.isFinite(pole.long);
-const buildYear = Number.isFinite(pole?.bouwjaar) ? String(Math.trunc(pole.bouwjaar)) : "Onbekend";
-const startDate = pole?.begindatum || "Onbekend";
-const owner = pole?.eigenaar || "Onbekend";
-const totalLabel = pole ? pole.total.toLocaleString("nl-BE") : "-";
-const rankLabel = pole && rank > 0 ? `${rank} / ${poleCount}` : "-";
+const hasCoordinates = station && Number.isFinite(station.lat) && Number.isFinite(station.long);
+const buildYear = Number.isFinite(station?.buildYear) ? String(Math.trunc(station.buildYear)) : "Onbekend";
+const startDate = station?.startDate || "Onbekend";
+const owner = station?.owner || "Onbekend";
+const totalLabel = station ? station.total.toLocaleString("nl-BE") : "-";
+const rankLabel = station && rank > 0 ? `${rank} / ${stationCount}` : "-";
 const shareLabel = share != null ? `${share.toFixed(2)}%` : "-";
-const osmHref = hasCoords
-  ? `https://www.openstreetmap.org/?mlat=${pole.lat}&mlon=${pole.long}#map=17/${pole.lat}/${pole.long}`
+const osmHref = hasCoordinates
+  ? `https://www.openstreetmap.org/?mlat=${station.lat}&mlon=${station.long}#map=17/${station.lat}/${station.long}`
   : null;
 
-const poleContent = pole
+const stationContent = station
   ? html`<section class="pole-hero">
-        <h2>${pole.naam || pole.code}</h2>
-        <div class="pole-subtitle">Code ${pole.code} · Fietstelpaal in Gent</div>
+        <h2>${station.name || station.code}</h2>
+        <div class="pole-subtitle">Code ${station.code} · Fietstelpaal in Gent</div>
       </section>
 
       <section class="pole-grid">
         <article class="pole-card">
           <h3>Algemene info</h3>
           <dl class="pole-list">
-            <dt>Code</dt><dd>${pole.code}</dd>
+            <dt>Code</dt><dd>${station.code}</dd>
             <dt>Eigenaar</dt><dd>${owner}</dd>
             <dt>Bouwjaar</dt><dd>${buildYear}</dd>
             <dt>Begindatum</dt><dd>${startDate}</dd>
@@ -53,8 +53,8 @@ const poleContent = pole
         <article class="pole-card">
           <h3>Locatie</h3>
           <dl class="pole-list">
-            <dt>Lat</dt><dd>${hasCoords ? pole.lat.toFixed(6) : "Onbekend"}</dd>
-            <dt>Long</dt><dd>${hasCoords ? pole.long.toFixed(6) : "Onbekend"}</dd>
+            <dt>Lat</dt><dd>${hasCoordinates ? station.lat.toFixed(6) : "Onbekend"}</dd>
+            <dt>Long</dt><dd>${hasCoordinates ? station.long.toFixed(6) : "Onbekend"}</dd>
           </dl>
         </article>
       </section>
@@ -253,6 +253,6 @@ const poleContent = pole
 
 <div class="pole-page-shell">
   <div class="pole-page">
-    ${poleContent}
+    ${stationContent}
   </div>
 </div>

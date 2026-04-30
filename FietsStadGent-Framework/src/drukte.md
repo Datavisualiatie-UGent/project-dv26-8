@@ -79,17 +79,17 @@ import { Generators } from "@observablehq/stdlib";
 const data2 = await FileAttachment("data/monthlyPerLocation.json").json();
 
 const locationInput = Inputs.select(
-  data2.map(d => d.locatie),
+  data2.map(d => d.location),
   {
     label: "Locatie",
-    value: data2[0].locatie
+    value: data2[0].location
   }
 );
-const location = Generators.input(locationInput);
+const selectedLocation = Generators.input(locationInput);
 
 const selectedData = (location) => {
   return data2
-    .find(d => d.locatie === location)?.months
+    .find(d => d.location === location)?.months
     .map(([month, value]) => ({
       month: parseMonth(month),
       avg: value
@@ -111,6 +111,6 @@ const selectedData = (location) => {
 
   <section class="drukte-card drukte-card--with-controls">
     ${locationInput}
-    ${resize((width) => drukte(selectedData(location), "Aantal fietsers", {width, height: 400}))}
+    ${resize((width) => drukte(selectedData(selectedLocation), "Aantal fietsers", {width, height: 400}))}
   </section>
 </div>

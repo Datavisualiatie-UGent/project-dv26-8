@@ -17,7 +17,7 @@ function toNumber(value) {
 
 export async function loadBikeSummary() {
   // Load all datasets in parallel, but only extract the fields we actually need for the charts
-  const [year, month, hour, weekday, locs] = await Promise.all([
+  const [year, month, hour, weekdayRows, locations] = await Promise.all([
     readCsv("agg_year.csv"),
     readCsv("agg_month.csv"),
     readCsv("agg_hour.csv"),
@@ -31,7 +31,7 @@ export async function loadBikeSummary() {
 
   // Weekday still needs raw data — but only two columns
   const weekdayMap = new Map();
-  for (const row of weekday) {
+  for (const row of weekdayRows) {
     const date = new Date(row.datum);
     if (isNaN(date)) continue;
     const wd = date.getUTCDay();
@@ -40,17 +40,17 @@ export async function loadBikeSummary() {
   const weekdayTotals = Array.from(weekdayMap, ([weekday, total]) => ({ weekday, total }))
     .sort((a, b) => a.weekday - b.weekday);
 
-  const codeTotals = locs
+  const codeTotals = locations
     .filter((d) => d.code)
-    .map((d) => ({ code: d.code, location: d.naam || d.locatie || d.code, total: +d.totaal || 0 }))
+    .map((d) => ({ code: d.code, name: d.naam || d.locatie || d.code, total: +d.totaal || 0 }))
     .sort((a, b) => b.total - a.total);
 
   const totalCyclists = codeTotals.reduce((s, d) => s + d.total, 0);
   const topLocations = [...codeTotals].sort((a, b) => b.total - a.total).slice(0, 10)
-    .map((d) => ({ location: d.location, total: d.total }));
+    .map((d) => ({ name: d.name, total: d.total }));
 
   return {
-    recordCount: weekday.length,
+    recordCount: weekdayRows.length,
     totalCyclists,
     yearlyTotals,
     monthlyTotals,
@@ -61,10 +61,10 @@ export async function loadBikeSummary() {
   };
 }
 
-export async function loadLocaties() {
-  const locs = await readCsv("locations_with_totals.csv");
+export async function loadLocations() {
+  const rows = await readCsv("locations_with_totals.csv");
 
-  return locs
+  return rows
     .filter((d) => d.code)
     .map((d) => {
       const lat = toNumber(d.lat);
@@ -72,12 +72,12 @@ export async function loadLocaties() {
 
       return {
         code: d.code,
-        naam: d.naam || d.code,
-        eigenaar: d.eigenaar || "Onbekend",
-        bouwjaar: toNumber(d.bouwjaar),
-        point_x: toNumber(d.point_x),
-        point_y: toNumber(d.point_y),
-        begindatum: d.begindatum || "Onbekend",
+        name: d.naam || d.locatie || d.code,
+        owner: d.eigenaar || "Onbekend",
+        buildYear: toNumber(d.bouwjaar),
+        pointX: toNumber(d.point_x),
+        pointY: toNumber(d.point_y),
+        startDate: d.begindatum || "Onbekend",
         lat: lat,
         long: long,
         total: toNumber(d.totaal) ?? 0
