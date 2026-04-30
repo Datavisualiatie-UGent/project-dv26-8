@@ -12,7 +12,7 @@ data = r.json()
 size = data["total_count"]
 
 
-with open("data_fietspalen.csv", "w", encoding="utf-8") as f:
+with open("fietspalen_raw.csv", "w", encoding="utf-8") as f:
     for i, result in enumerate(data["results"]):
         id = result["dataset_id"]
         if id != "fietstelpalen-gent":
@@ -24,7 +24,7 @@ with open("data_fietspalen.csv", "w", encoding="utf-8") as f:
             f.write(r.text)
 
 
-with open("data_locaties.csv", "w", encoding="utf-8") as f:
+with open("locations_raw.csv", "w", encoding="utf-8") as f:
     id = "fietstelpalen-gent"
     print(f"{size}/{size}: {id}")
     url = f"{URL_CATALOG}/{id}/exports/csv"
