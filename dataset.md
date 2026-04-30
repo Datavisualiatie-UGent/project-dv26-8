@@ -10,14 +10,14 @@ This project uses open data from **Stad Gent** ([https://data.stad.gent](https:/
 
 We download the data using the Stad Gent API:
 
-- **Raw counts**: CSV files with 5-minute measurements
+- **Raw counts**: CSV files (semicolon-separated `;`)
 - **Location metadata**: coordinates, owner, installation year, etc.
 - **Granularity**: 5-minute intervals
 - **Key fields**:
-  - `code` – short identifier of the counting pole
+  - `code` – identifier of the counting pole
   - `locatie` – human-readable name
   - `totaal`, `hoofdrichting`, `tegenrichting` – counts
-  - `datum`, `uur5minuten` – date ISO + time
+  - `datum`, `uur5minuten` – date (ISO) + time
 
 ---
 
@@ -33,16 +33,28 @@ python preprocess.py fietspalen_raw.csv
 
 What happens:
 
-- Column names are normalized (lowercase, trimmed, BOM removed)
+- CSV is read using `;` separator (Gent standard)
+- Empty lines are ignored
+- Column names are normalized:
+  - lowercase
+  - trimmed
+  - BOM characters removed
 - Only relevant columns are kept:
   - `code`, `locatie`, `datum`, `uur5minuten`, `totaal`, `tegenrichting`, `hoofdrichting`
-- Known code inconsistencies are fixed:
-  - `LOU → HAV`
+- Data is standardized:
+  - `code` → uppercase + whitespace removed
+  - known fixes applied (`LOU → HAV`)
+  - `uur5minuten` → zero-padded (`0:00:00 → 00:00:00`)
 - A timestamp column is created:
   - `timestamp = datum + uur5minuten`
-- Numeric columns are converted safely (invalid values → `NaN`)
-- **Rows with missing or invalid `code`, `locatie`, or `timestamp` are dropped** (prevents spurious 0.0 rows in all outputs)
-- Output:
+- Numeric columns are converted safely (`errors="coerce"`)
+
+Cleaning rules:
+
+- Rows with missing `totaal` are removed
+- Missing `locatie` values are **allowed** (handled later)
+
+Output:
 
 ```text
 ../FietsStadGent-Framework/src/data/fietspalen_clean.csv
@@ -58,29 +70,29 @@ Run:
 python preprocess.py fietspalen_raw.csv --aggregate
 ```
 
-or, for already cleaned data:
+or using cleaned data:
 
 ```bash
 python preprocess.py ../FietsStadGent-Framework/src/data/fietspalen_clean.csv --data-is-clean --aggregate
 ```
 
-This produces several pre-aggregated datasets (in `../FietsStadGent-Framework/src/data/`):
+This generates:
 
-| File                | Description                 |
-| ------------------- | --------------------------- |
-| `agg_hour.csv`      | Hourly totals per location  |
-| `agg_day.csv`       | Daily totals per location   |
-| `agg_month.csv`     | Monthly totals per location |
-| `agg_year.csv`      | Yearly totals per location  |
+| File                            | Description                 |
+| ------------------------------- | --------------------------- |
+| `agg_hour.csv`                  | Hourly totals per location  |
+| `agg_day.csv`                   | Daily totals per location   |
+| `agg_month.csv`                 | Monthly totals per location |
+| `agg_year.csv`                  | Yearly totals per location  |
 | `total_counts_per_location.csv` | Total counts per location   |
 
 Details:
 
-- Aggregations are grouped by `code` and `locatie`
-- Time-based aggregations use the computed `timestamp`
-- Monthly data is stored as a **period (`YYYY-MM`)**
-- Hourly data is rounded down (`floor("h")`)
-- All aggregations are based on already cleaned data (no empty or invalid rows)
+- Grouping keys: `code`, `locatie`
+- Time-based aggregations use `timestamp`
+- Monthly aggregation uses `to_period("M")`
+- Hourly aggregation uses `floor("h")`
+- Outputs are written using `;` separator
 
 ---
 
@@ -94,11 +106,17 @@ python preprocess.py fietspalen_raw.csv --clean-locations locations_raw.csv
 
 What it does:
 
+- Reads CSV using `;`
 - Normalizes column names
-- Keeps only relevant columns:
-  - `code`, `naam`, `lat`, `long`, `eigenaar`, `bouwjaar`, `begindatum`
+- Keeps only:
+
+  ```text
+  code, naam, lat, long, eigenaar, bouwjaar, begindatum
+  ```
+
 - Converts coordinates to numeric values
-- Output:
+
+Outputs:
 
 ```text
 ../FietsStadGent-Framework/src/data/locations_clean.csv
@@ -108,7 +126,7 @@ What it does:
 
 ### 4. 🔗 Merge locations with totals
 
-When `--clean-locations` is used, the script also creates:
+When `--clean-locations` is used, the script also produces:
 
 ```text
 ../FietsStadGent-Framework/src/data/locations_with_totals.csv
@@ -116,18 +134,27 @@ When `--clean-locations` is used, the script also creates:
 
 This file combines:
 
-- Cleaned location metadata
-- Total counts per location
+- cleaned location metadata
+- total counts per location
 
-Totals are resolved in this order:
+Additional logic:
 
-1. `--totals FILE` (if provided)
-2. existing `total_counts_per_location.csv`
-3. regenerated from raw data
+- merge is done on `code`
+- missing `locatie` values are filled using `naam`
 
 ---
 
-### 5. Run all Cleaning & Transformations
+### Totals resolution logic
+
+Totals are loaded in this order:
+
+1. `--totals FILE` (if provided)
+2. existing `total_counts_per_location.csv`
+3. regenerated from current dataset
+
+---
+
+### 5. Run full pipeline
 
 ```bash
 python preprocess.py fietspalen_raw.csv --aggregate --clean-locations locations_raw.csv
@@ -139,33 +166,57 @@ python preprocess.py fietspalen_raw.csv --aggregate --clean-locations locations_
 
 | Option                   | Description                                          |
 | ------------------------ | ---------------------------------------------------- |
-| `input`                  | Path to raw count CSV or cleaned CSV                 |
-| `--data-is-clean`        | Skip cleaning and assume input is already cleaned    |
+| `input`                  | Path to raw or cleaned count CSV                     |
+| `--data-is-clean`        | Skip cleaning and assume input is already normalized |
 | `--aggregate`            | Generate aggregated datasets                         |
 | `--clean-locations FILE` | Clean location metadata CSV                          |
-| `--totals FILE`          | Optional totals file for merging                     |
+| `--totals FILE`          | Optional totals file                                 |
 
-## All files produced (in `./FietsStadGent-Framework/src/data/`)
+---
 
-| File                            | Description                             |
-| ------------------------------- | --------------------------------------- |
-| `fietspalen_clean.csv`          | Cleaned raw 5-minute data               |
-| `agg_hour.csv`                  | Hourly totals per location              |
-| `agg_day.csv`                   | Daily totals per location               |
-| `agg_month.csv`                 | Monthly totals per location (YYYY-MM)   |
-| `agg_year.csv`                  | Yearly totals per location              |
-| `total_counts_per_location.csv` | Total counts per location (summary)     |
-| `locations_clean.csv`           | Cleaned location metadata               |
-| `locations_with_totals.csv`     | Locations merged with total counts      |
+## 📂 Output Files
+
+All main outputs are written to:
+
+```text
+./FietsStadGent-Framework/src/data/
+```
+
+| File                        | Description               |
+| --------------------------- | ------------------------- |
+| `fietspalen_clean.csv`      | Cleaned 5-minute data     |
+| `agg_hour.csv`              | Hourly aggregation        |
+| `agg_day.csv`               | Daily aggregation         |
+| `agg_month.csv`             | Monthly aggregation       |
+| `agg_year.csv`              | Yearly aggregation        |
+| `locations_clean.csv`       | Cleaned location metadata |
+| `locations_with_totals.csv` | Locations + totals        |
+
+Additionally:
+
+| File                            | Location     |
+| ------------------------------- | ------------ |
+| `total_counts_per_location.csv` | ./data       |
+
+---
+
+## ⚠️ Important Notes
+
+- All CSV files use **semicolon (`;`) as separator**
+- Cleaned datasets must include a valid `timestamp` column
+- When using `--data-is-clean`:
+  - the script ensures `timestamp` exists or rebuilds it
+- Missing `locatie` values are handled during merge (not dropped)
 
 ---
 
 ## 🧠 Design Rationale
 
-- **Pre-aggregation** → faster dashboards (e.g. Observable)
-- **Strict cleaning** → prevents spurious/empty rows in all outputs
-- **Flexible date parsing** → supports inconsistent raw data
-- **Resilient totals logic** → avoids missing file issues
+- **Robust CSV handling** → supports BOM, empty lines, inconsistent formatting
+- **Strict numeric cleaning** → avoids corrupted aggregations
+- **Timestamp-centric design** → all time logic derived from one column
+- **Pre-aggregation** → fast dashboards (e.g. Observable)
 - **Separation of concerns**:
-  - Python → heavy preprocessing
-  - Visualization tools → lightweight queries
+
+  - Python → preprocessing
+  - Frontend → visualization

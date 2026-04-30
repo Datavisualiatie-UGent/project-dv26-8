@@ -19,6 +19,7 @@ CODE_FIXES = {"LOU": "HAV"}
 
 
 def normalize_columns(df):
+    """Normalize column names by stripping whitespace, converting to lowercase, and removing BOM characters."""
     df.columns = df.columns.str.strip().str.lower().str.replace("\ufeff", "")
     return df
 
@@ -27,18 +28,22 @@ def load_and_clean(path):
     """Load raw CSV and remove useless columns."""
     df = pd.read_csv(path, sep=";", encoding="utf-8", low_memory=False, skip_blank_lines=True)
     df = normalize_columns(df)
-    df = df[COLUMNS_TO_KEEP].copy()
 
-    df["code"] = df["code"].replace(CODE_FIXES)
+    print(f"Loaded {len(df)} rows from {path}.")
+
+    df = df[COLUMNS_TO_KEEP].copy()
+    df["code"] = df["code"].astype("string").str.strip().str.upper().replace(CODE_FIXES)
+    df["locatie"] = df["locatie"].astype("string").str.strip()
     df["uur5minuten"] = df["uur5minuten"].str.zfill(8)
-    df["timestamp"] = pd.to_datetime(df["datum"] + " " + df["uur5minuten"], errors="coerce")
+    df["timestamp"] = pd.to_datetime(df["datum"].astype("string") + " " + df["uur5minuten"], errors="coerce")
 
     for col in ["totaal", "tegenrichting", "hoofdrichting"]:
         df[col] = pd.to_numeric(df[col], errors="coerce")
 
-    # Drop rows with missing or invalid key columns to avoid 0.0 rows in output and in saved clean file
-    df = df.dropna(subset=["code", "locatie", "timestamp"])
-    df = df[(df["code"] != "") & (df["locatie"] != "")]
+    # Keep rows with missing location names, but require a valid code and timestamp.
+    df = df.dropna(subset=["totaal"])
+
+    print(f"Cleaned data has {len(df)} rows after processing.")
 
     return df
 
@@ -110,6 +115,7 @@ def load_totals_or_regenerate(df, totals_path):
 
 def merge_locations_with_totals(loc_df, totals_df, output="../FietsStadGent-Framework/src/data/locations_with_totals.csv"):
     merged = loc_df.merge(totals_df, how="left", on="code")
+    merged["locatie"] = merged["locatie"].fillna(merged["naam"])
     merged.to_csv(output, sep=";", index=False)
     print(f"Merged locations with totals written to {output}")
 
@@ -146,6 +152,7 @@ def main():
     else:
         df = load_and_clean(args.input)
         df.to_csv("../FietsStadGent-Framework/src/data/fietspalen_clean.csv", sep=";", index=False)
+        print("Cleaned data written to ../FietsStadGent-Framework/src/data/fietspalen_clean.csv")
         print("Loaded and cleaned data")
 
     totals_df = None
@@ -153,10 +160,15 @@ def main():
     if args.aggregate:
         df_day, df_month, df_year, df_hour, totals_df = aggregate(df)
         df_day.to_csv("../FietsStadGent-Framework/src/data/agg_day.csv", sep=";", index=False)
+        print("Aggregated by day written to ../FietsStadGent-Framework/src/data/agg_day.csv")
         df_month.to_csv("../FietsStadGent-Framework/src/data/agg_month.csv", sep=";", index=False)
+        print("Aggregated by month written to ../FietsStadGent-Framework/src/data/agg_month.csv")
         df_year.to_csv("../FietsStadGent-Framework/src/data/agg_year.csv", sep=";", index=False)
+        print("Aggregated by year written to ../FietsStadGent-Framework/src/data/agg_year.csv")
         df_hour.to_csv("../FietsStadGent-Framework/src/data/agg_hour.csv", sep=";", index=False)
+        print("Aggregated by hour written to ../FietsStadGent-Framework/src/data/agg_hour.csv")
         totals_df.to_csv("total_counts_per_location.csv", sep=";", index=False)
+        print("Total counts per location written to total_counts_per_location.csv")
         print("Aggregation complete")
 
     if args.clean_locations:
