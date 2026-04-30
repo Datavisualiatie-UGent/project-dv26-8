@@ -58,8 +58,6 @@ const poleContent = pole
           <dl class="pole-list">
             <dt>Lat</dt><dd>${hasCoords ? pole.lat.toFixed(6) : "Onbekend"}</dd>
             <dt>Long</dt><dd>${hasCoords ? pole.long.toFixed(6) : "Onbekend"}</dd>
-            <dt>Point X</dt><dd>${Number.isFinite(pole.point_x) ? pole.point_x.toFixed(4) : "Onbekend"}</dd>
-            <dt>Point Y</dt><dd>${Number.isFinite(pole.point_y) ? pole.point_y.toFixed(4) : "Onbekend"}</dd>
           </dl>
         </article>
       </section>

@@ -9,25 +9,9 @@ import {html} from "npm:htl";
 ```
 
 ```js
-const locaties = await FileAttachment("data/locaties.json").json();
-const bikeSummary = await FileAttachment("data/fietspalen.json").json();
 const gentBoundaryGeo = await FileAttachment("data/OSMB-71785c830e71f3607aaeffc6b51538d7206c36a0.geojson").json();
 
-const totalByCode = new Map((bikeSummary.codeTotals || []).map((d) => [d.code, d.total]));
-const points = locaties
-  .filter((d) => Number.isFinite(d.lat) && Number.isFinite(d.long) && d.code)
-  .map((d) => ({
-    code: d.code,
-    name: d.naam || d.code,
-    eigenaar: d.eigenaar || "Onbekend",
-    bouwjaar: d.bouwjaar,
-    point_x: d.point_x,
-    point_y: d.point_y,
-    begindatum: d.begindatum || d.begindatumIso || "Onbekend",
-    lat: d.lat,
-    lon: d.long,
-    total: totalByCode.get(d.code) ?? 0
-  }));
+const points = await FileAttachment("data/locaties.json").json();
 
 if (!globalThis.__fietsMapBridge) {
   globalThis.__fietsMapBridge = {focusPole: null, resetView: null, selectedCode: null};
@@ -39,7 +23,7 @@ const rankingSort = pageParams.get("sort") || "total";
 const rankingDir = pageParams.get("dir") === "asc" ? "asc" : "desc";
 
 function sortValue(point, key) {
-  if (key === "name") return (point.name || "").toLowerCase();
+  if (key === "naam") return (point.naam || "").toLowerCase();
   if (key === "code") return (point.code || "").toLowerCase();
   if (key === "year") return Number.isFinite(point.bouwjaar) ? point.bouwjaar : -Infinity;
   return point.total;
@@ -78,7 +62,7 @@ const nf = new Intl.NumberFormat("nl-BE");
 
 const sortControls = html`<div class="ranking-controls">
   <a class="sort-chip ${rankingSort === "total" ? "active" : ""}" href=${createSortHref("total")}>Fietsers</a>
-  <a class="sort-chip ${rankingSort === "name" ? "active" : ""}" href=${createSortHref("name")}>Naam</a>
+  <a class="sort-chip ${rankingSort === "naam" ? "active" : ""}" href=${createSortHref("naam")}>Naam</a>
   <a class="sort-chip ${rankingSort === "year" ? "active" : ""}" href=${createSortHref("year")}>Bouwjaar</a>
   <a class="sort-chip" href=${createSortHref(rankingSort, rankingDir === "asc" ? "desc" : "asc")}>${rankingDir === "asc" ? "Oplopend" : "Aflopend"}</a>
 </div>`;
@@ -158,19 +142,13 @@ const kaart = resize((width) => {
 
   function updateSelectedMarker(code) {
     if (selectedMarkerCode && markerByCode.has(selectedMarkerCode)) {
-      const previousMarker = markerByCode.get(selectedMarkerCode);
-      const previousElement = previousMarker?.getElement?.();
-      previousElement?.classList.remove("is-selected");
-      previousMarker?.setZIndexOffset?.(0);
+      markerByCode.get(selectedMarkerCode)?.getElement?.()?.classList.remove("is-selected");
+      markerByCode.get(selectedMarkerCode)?.setZIndexOffset?.(0);
     }
-
     selectedMarkerCode = code || null;
-
     if (selectedMarkerCode && markerByCode.has(selectedMarkerCode)) {
-      const currentMarker = markerByCode.get(selectedMarkerCode);
-      const currentElement = currentMarker?.getElement?.();
-      currentElement?.classList.add("is-selected");
-      currentMarker?.setZIndexOffset?.(1000);
+      markerByCode.get(selectedMarkerCode)?.getElement?.()?.classList.add("is-selected");
+      markerByCode.get(selectedMarkerCode)?.setZIndexOffset?.(1000);
     }
   }
 
@@ -194,7 +172,7 @@ const kaart = resize((width) => {
     header.className = "pole-info-header";
 
     const title = document.createElement("h3");
-    title.textContent = point.name;
+    title.textContent = point.naam;
 
     const closeBtn = document.createElement("button");
     closeBtn.type = "button";
@@ -208,25 +186,18 @@ const kaart = resize((width) => {
 
     const list = document.createElement("dl");
     list.className = "pole-info-list";
-
-    const rows = [
-      ["naam", point.name],
+    for (const [label, value] of [
+      ["naam", point.naam],
       ["code", point.code],
       ["eigenaar", point.eigenaar],
       ["bouwjaar", Number.isFinite(point.bouwjaar) ? String(Math.trunc(point.bouwjaar)) : "Onbekend"],
       ["begindatum", point.begindatum],
-      ["fietsers", new Intl.NumberFormat("nl-BE").format(point.total)],
-      ["point_x", Number.isFinite(point.point_x) ? point.point_x.toFixed(8) : "Onbekend"],
-      ["point_y", Number.isFinite(point.point_y) ? point.point_y.toFixed(8) : "Onbekend"],
+      ["fietsers", nf.format(point.total)],
       ["lat", Number.isFinite(point.lat) ? point.lat.toFixed(10) : "Onbekend"],
-      ["long", Number.isFinite(point.lon) ? point.lon.toFixed(10) : "Onbekend"],
-    ];
-
-    for (const [label, value] of rows) {
-      const dt = document.createElement("dt");
-      dt.textContent = label;
-      const dd = document.createElement("dd");
-      dd.textContent = value;
+      ["long", Number.isFinite(point.long) ? point.long.toFixed(10) : "Onbekend"],
+    ]) {
+      const dt = document.createElement("dt"); dt.textContent = label;
+      const dd = document.createElement("dd"); dd.textContent = value;
       list.append(dt, dd);
     }
 
@@ -244,33 +215,30 @@ const kaart = resize((width) => {
     if (!point) return;
     renderPanel(point);
     mapBridge.scrollToMap?.();
-    map.flyTo([point.lat, point.lon], Math.max(map.getZoom(), zoom), { animate: true, duration: 0.4 });
+    map.flyTo([point.lat, point.long], Math.max(map.getZoom(), zoom), { animate: true, duration: 0.4 });
   }
 
   // Add all markers first, collecting them:
   const bounds = L.latLngBounds();
 
   for (const point of points) {
-    const marker = L.marker([point.lat, point.lon], { icon: bikeIcon }).addTo(map);
+    const marker = L.marker([point.lat, point.long], { icon: bikeIcon }).addTo(map);
     markerByCode.set(point.code, marker);
-    bounds.extend([point.lat, point.lon]);
+    bounds.extend([point.lat, point.long]);
     marker.on("click", () => {
       focusPoint(point.code);
     });
   }
 
   mapBridge.focusPole = (code) => {
-    if (!markerByCode.has(code)) return;
-    focusPoint(code);
+     if (markerByCode.has(code)) focusPoint(code);
   };
 
   mapBridge.resetView = () => {
     fitAllPins();
   };
 
-  map.on("click", () => {
-    renderPanel(null);
-  });
+  map.on("click", () => closePanel());
 
   const recenterControl = L.control({ position: "topleft" });
   recenterControl.onAdd = () => {
@@ -278,12 +246,11 @@ const kaart = resize((width) => {
     const btn = L.DomUtil.create("a", "leaflet-control-recenter", wrap);
     btn.href = "#";
     btn.title = "Centreer kaart";
-    btn.setAttribute("aria-label", "Centreer kaart");
-    btn.textContent = "○";
+    btn.textContent = "⊙";
     L.DomEvent.disableClickPropagation(btn);
-    L.DomEvent.on(btn, "click", (event) => {
-      L.DomEvent.stop(event);
-      fitAllPins();
+    L.DomEvent.on(btn, "click", (e) => {
+       L.DomEvent.stop(e);
+        fitAllPins();
     });
     return wrap;
   };
@@ -817,7 +784,7 @@ const kaart = resize((width) => {
     </article>
     <article class="overview-card">
       <p class="overview-label">Top telpaal</p>
-      <p class="overview-value">${sortedPoints[0] ? sortedPoints[0].name : "Onbekend"}</p>
+      <p class="overview-value">${sortedPoints[0] ? sortedPoints[0].naam : "Onbekend"}</p>
     </article>
   </section>
 
@@ -848,7 +815,7 @@ const kaart = resize((width) => {
             const year = Number.isFinite(p.bouwjaar) ? String(Math.trunc(p.bouwjaar)) : "Onbekend";
             return html`<tr>
               <td class="rank-cell">${i + 1}</td>
-              <td>${p.name}</td>
+              <td>${p.naam}</td>
               <td>${p.code}</td>
               <td>${nf.format(p.total)}</td>
               <td>${share.toFixed(2)}%</td>
@@ -864,11 +831,11 @@ const kaart = resize((width) => {
   <section class="overview-grid">
     <article class="overview-card">
       <p class="overview-label">Oudste telpaal</p>
-      <p class="overview-value">${oldestPole ? `${oldestPole.name} (${Math.trunc(oldestPole.bouwjaar)})` : "Onbekend"}</p>
+      <p class="overview-value">${oldestPole ? `${oldestPole.naam} (${Math.trunc(oldestPole.bouwjaar)})` : "Onbekend"}</p>
     </article>
     <article class="overview-card">
       <p class="overview-label">Nieuwste telpaal</p>
-      <p class="overview-value">${newestPole ? `${newestPole.name} (${Math.trunc(newestPole.bouwjaar)})` : "Onbekend"}</p>
+      <p class="overview-value">${newestPole ? `${newestPole.naam} (${Math.trunc(newestPole.bouwjaar)})` : "Onbekend"}</p>
     </article>
     <article class="overview-card">
       <p class="overview-label">Top 3 samen</p>
