@@ -36,6 +36,10 @@ def load_and_clean(path):
     for col in ["totaal", "tegenrichting", "hoofdrichting"]:
         df[col] = pd.to_numeric(df[col], errors="coerce")
 
+    # Drop rows with missing or invalid key columns to avoid 0.0 rows in output and in saved clean file
+    df = df.dropna(subset=["code", "locatie", "timestamp"])
+    df = df[(df["code"] != "") & (df["locatie"] != "")]
+
     return df
 
 
@@ -71,7 +75,7 @@ def aggregate(df):
     return df_day, df_month, df_year, df_hour, df_totals
 
 
-def clean_locations(path, output="locations_clean.csv"):
+def clean_locations(path, output="../FietsStadGent-Framework/src/data/locations_clean.csv"):
     """
     Clean the raw location CSV by removing useless metadata columns
     and keeping only the columns in LOCATION_COLUMNS_TO_KEEP.
@@ -104,7 +108,7 @@ def load_totals_or_regenerate(df, totals_path):
     return totals_df
 
 
-def merge_locations_with_totals(loc_df, totals_df, output="locations_with_totals.csv"):
+def merge_locations_with_totals(loc_df, totals_df, output="../FietsStadGent-Framework/src/data/locations_with_totals.csv"):
     merged = loc_df.merge(totals_df, how="left", on="code")
     merged.to_csv(output, sep=";", index=False)
     print(f"Merged locations with totals written to {output}")
@@ -128,22 +132,30 @@ def main():
     args = parser.parse_args()
 
     if args.data_is_clean:
-        df = pd.read_csv(args.input, sep=";", encoding="utf-8")
+        # Use utf-8-sig to handle BOM if present
+        df = pd.read_csv(args.input, sep=";", encoding="utf-8-sig")
         df = normalize_columns(df)
+        # Ensure timestamp column exists and is datetime
+        if "timestamp" not in df.columns:
+            if "datum" in df.columns and "uur5minuten" in df.columns:
+                df["uur5minuten"] = df["uur5minuten"].astype(str).str.zfill(8)
+                df["timestamp"] = pd.to_datetime(df["datum"] + " " + df["uur5minuten"], errors="coerce")
+        else:
+            df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
         print("Loaded clean data")
     else:
         df = load_and_clean(args.input)
-        df.to_csv("fietspalen_clean.csv", sep=";", index=False)
+        df.to_csv("../FietsStadGent-Framework/src/data/fietspalen_clean.csv", sep=";", index=False)
         print("Loaded and cleaned data")
 
     totals_df = None
 
     if args.aggregate:
         df_day, df_month, df_year, df_hour, totals_df = aggregate(df)
-        df_day.to_csv("agg_day.csv", sep=";", index=False)
-        df_month.to_csv("agg_month.csv", sep=";", index=False)
-        df_year.to_csv("agg_year.csv", sep=";", index=False)
-        df_hour.to_csv("agg_hour.csv", sep=";", index=False)
+        df_day.to_csv("../FietsStadGent-Framework/src/data/agg_day.csv", sep=";", index=False)
+        df_month.to_csv("../FietsStadGent-Framework/src/data/agg_month.csv", sep=";", index=False)
+        df_year.to_csv("../FietsStadGent-Framework/src/data/agg_year.csv", sep=";", index=False)
+        df_hour.to_csv("../FietsStadGent-Framework/src/data/agg_hour.csv", sep=";", index=False)
         totals_df.to_csv("total_counts_per_location.csv", sep=";", index=False)
         print("Aggregation complete")
 
