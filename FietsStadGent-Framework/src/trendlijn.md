@@ -3,29 +3,47 @@ toc: false
 theme: dashboard
 ---
 
+
 ```js
 
 import * as Inputs from "@observablehq/inputs";
 import { Generators } from "@observablehq/stdlib";
 
-import { trendLijn } from "./components/trendlijn.js";
+import { getYearsView, trendLijn } from "./components/trendlijn.js";
 
 const data = await FileAttachment("data/trendPerLocation.json").json();
 //console.log(data);
+// TODO: add a clear checkbox button, add year label to line color
 
 
-const yearsView = Inputs.checkbox(
-    data
-    .flatMap(d => {
-      let l = d.months.map(([month, _]) => new Date(month).getFullYear());
-      return l;
-    }),
-    {
-      label: "Year",
-      unique: true,
-      sort: true
-    }
+const allData = data.flatMap(d =>
+  d.months.map(([month, value]) => ({
+    month: new Date(month).getMonth(),
+    year: new Date(month).getFullYear(),
+    value
+  }))
 );
+
+const yearCheckBox = getYearsView(allData);
+const years = Generators.input(yearCheckBox);
+
+const summed = Array.from(
+  d3.rollup(
+    allData,
+    v => d3.sum(v, d => d.value),
+    d => d.year,
+    d => d.month
+  ),
+  ([year, months]) =>
+    Array.from(months, ([month, value]) => ({
+      year,
+      month,
+      value
+    }))
+).flat();
+
+
+/////
 
 //console.log(years);
 
@@ -37,7 +55,9 @@ const locationView = Inputs.select(
   }
 );
 const location = Generators.input(locationView);
-const years = Generators.input(yearsView);
+
+const yearCheckBox2 = getYearsView(allData);
+const years2 = Generators.input(yearCheckBox2);
 
 const selectedData = (loc) => {
   const found = data.find(d => d.locatie === loc);
@@ -51,8 +71,6 @@ const selectedData = (loc) => {
 
   return filtered;
 }
-
-console.log(location);
 
 ```
 
@@ -139,17 +157,27 @@ console.log(location);
   </section>
 
   <section class="trendlijn-card">
+    <div class="trendlijn-controls">
+      <div>${yearCheckBox}</div>
+    </div>
+    ${resize((width) =>
+      trendLijn(
+        summed.filter(d => years.includes(d.year)),
+        "month",
+        "value",
+        { width, height: 400 }
+      )
+    )}
   </section>
 
   <section class="trendlijn-card trendlijn-card--individual">
     <div class="trendlijn-controls">
-      <div>${yearsView}</div>
+      <div>${yearCheckBox2}</div>
       <div>${locationView}</div>
     </div>
     ${resize((width) =>
       trendLijn(
-        selectedData(location).filter(d => years.includes(d.year)).sort((a, b) => a.month - b.month),
-        years,
+        selectedData(location).filter(d => years2.includes(d.year)).sort((a, b) => a.month - b.month),
         "month",
         "value",
         { width, height: 400 }

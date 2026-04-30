@@ -1,8 +1,20 @@
 import * as Plot from "npm:@observablehq/plot";
 import * as d3 from "d3";
+import * as Inputs from "@observablehq/inputs";
+
+export function getYearsView(data) {
+  return Inputs.checkbox(
+    data.flatMap(d => d.year),
+    {
+      label: "Year",
+      unique: true,
+      sort: true
+    }
+  );
+}
 
 // inspiration: https://fil.github.io/pangea/plot/multiple-line-chart-hover
-export function trendLijn(data, years, xLabel, yLabel, { width, height } = {}) {
+export function trendLijn(data, xLabel, yLabel, { width, height } = {}) {
 
     console.log(data);
 
@@ -39,7 +51,6 @@ export function trendLijn(data, years, xLabel, yLabel, { width, height } = {}) {
             grid: true,
             label: yLabel.charAt(0).toUpperCase() + yLabel.slice(1),
         },
-
         marks: [
             //Plot.ruleY([0], {stroke: "#e5e7eb"}),
 
