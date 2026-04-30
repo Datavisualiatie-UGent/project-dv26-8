@@ -1,7 +1,8 @@
 # Datavisualisatie Project: Fietsstad Gent
 
 Project documentation:
-- [Data Source, Cleaning Pipeline, and Usage Guide ](dataset.md).
+
+- [Data Source, Cleaning Pipeline, and Usage Guide](dataset.md).
 
 ## Repository guide
 
