@@ -38,7 +38,7 @@ def load_and_clean(path):
     df["timestamp"] = pd.to_datetime(df["datum"].astype("string") + " " + df["uur5minuten"], errors="coerce")
 
     for col in ["totaal", "tegenrichting", "hoofdrichting"]:
-        df[col] = pd.to_numeric(df[col], errors="coerce")
+        df[col] = pd.to_numeric(df[col], errors="coerce").round(0).astype("Int64")
 
     # Keep rows with missing location names, but require a valid code and timestamp.
     df = df.dropna(subset=["totaal"])
@@ -62,7 +62,7 @@ def aggregate(df):
         .rename(columns={"timestamp": "month"})
     )
     df_year = (
-        df.groupby(["code", "locatie", df["timestamp"].dt.year])[numeric_cols]
+        df.groupby(["code", "locatie", df["timestamp"].dt.year.astype("Int64")])[numeric_cols]
         .sum()
         .reset_index()
         .rename(columns={"timestamp": "year"})
@@ -116,6 +116,7 @@ def load_totals_or_regenerate(df, totals_path):
 def merge_locations_with_totals(loc_df, totals_df, output="../FietsStadGent-Framework/src/data/locations_with_totals.csv"):
     merged = loc_df.merge(totals_df, how="left", on="code")
     merged["locatie"] = merged["locatie"].fillna(merged["naam"])
+    merged["totaal"] = merged["totaal"].fillna(0).astype("Int64")
     merged.to_csv(output, sep=";", index=False)
     print(f"Merged locations with totals written to {output}")
 
