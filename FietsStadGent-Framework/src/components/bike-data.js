@@ -62,7 +62,8 @@ function sortSeries(map, keyName, valueName, comparator) {
 }
 
 export async function loadBikeSummary() {
-    const rows = await readRawCsv("data_fietspalen.csv");
+    // Prefer cleaned 5-minute CSV created by the preprocessor
+    const rows = await readRawCsv("fietspalen_clean.csv");
 
     const yearlyTotals = new Map();
     const monthlyTotals = new Map();
@@ -115,7 +116,8 @@ export async function loadBikeSummary() {
 }
 
 export async function loadLocaties() {
-    const rows = await readRawCsv("data_locaties.csv");
+    // Use cleaned locations CSV produced by the preprocessor
+    const rows = await readRawCsv("locations_clean.csv");
 
     return rows.map((row) => {
         const begindatum = parseDate(row.begindatum);

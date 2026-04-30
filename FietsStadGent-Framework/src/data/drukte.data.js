@@ -1,7 +1,8 @@
 import * as d3 from "d3";
 import { readFile, writeFile } from "fs/promises";
 
-const filePath = new URL("./data_fietspalen.csv", import.meta.url);
+// Use the cleaned CSV produced by the preprocessor
+const filePath = new URL("./fietspalen_clean.csv", import.meta.url);
 
 async function processData() {
   const text = await readFile(filePath, "utf-8");

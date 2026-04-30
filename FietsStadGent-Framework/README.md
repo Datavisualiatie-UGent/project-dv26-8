@@ -83,8 +83,13 @@ When running `npm run dev` or `npm run build`, Observable executes the data load
 │  │  ├─ bike-data.js
 │  │  └─ timeline.js
 │  ├─ data/
-│  │  ├─ data_fietspalen.csv
-│  │  ├─ data_locaties.csv
+│  │  ├─ fietspalen_clean.csv
+│  │  ├─ locations_clean.csv
+│  │  ├─ agg_hour.csv
+│  │  ├─ agg_day.csv
+│  │  ├─ agg_month.csv
+│  │  ├─ agg_year.csv
+│  │  ├─ locations_with_totals.csv
 │  │  ├─ fietspalen.json.js
 │  │  ├─ locaties.json.js
 │  │  ├─ OSMB-71785c830e71f3607aaeffc6b51538d7206c36a0.geojson
