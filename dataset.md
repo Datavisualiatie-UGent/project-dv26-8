@@ -1,6 +1,6 @@
 # 🚲 Gent Fietstelpalen Dataset
 
-**Source, Cleaning Pipeline, and Usage Guide**
+**Data Source, Cleaning Pipeline, and Usage Guide**
 
 This project uses open data from **Stad Gent** ([https://data.stad.gent](https://data.stad.gent)), specifically datasets tagged *Fietstelpaal*. These datasets contain bicycle counts measured every **5 minutes** at automated counting poles across the city.
 
@@ -144,6 +144,19 @@ python preprocess.py fietspalen_raw.csv --aggregate --clean-locations locations_
 | `--aggregate`            | Generate aggregated datasets                         |
 | `--clean-locations FILE` | Clean location metadata CSV                          |
 | `--totals FILE`          | Optional totals file for merging                     |
+
+## All files produced (in `./FietsStadGent-Framework/src/data/`)
+
+| File                            | Description                             |
+| ------------------------------- | --------------------------------------- |
+| `fietspalen_clean.csv`          | Cleaned raw 5-minute data               |
+| `agg_hour.csv`                  | Hourly totals per location              |
+| `agg_day.csv`                   | Daily totals per location               |
+| `agg_month.csv`                 | Monthly totals per location (YYYY-MM)   |
+| `agg_year.csv`                  | Yearly totals per location              |
+| `total_counts_per_location.csv` | Total counts per location (summary)     |
+| `locations_clean.csv`           | Cleaned location metadata               |
+| `locations_with_totals.csv`     | Locations merged with total counts      |
 
 ---
 
