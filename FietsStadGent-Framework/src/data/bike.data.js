@@ -66,16 +66,22 @@ export async function loadLocaties() {
 
   return locs
     .filter((d) => d.code)
-    .map((d) => ({
+    .map((d) => {
+      const lat = toNumber(d.lat);
+      const long = toNumber(d.long);
+
+      return {
         code: d.code,
         naam: d.naam || d.code,
         eigenaar: d.eigenaar || "Onbekend",
-        bouwjaar: d.bouwjaar ? +d.bouwjaar : null,
-        point_x: d.point_x ? +d.point_x : null,
-        point_y: d.point_y ? +d.point_y : null,
+        bouwjaar: toNumber(d.bouwjaar),
+        point_x: toNumber(d.point_x),
+        point_y: toNumber(d.point_y),
         begindatum: d.begindatum || "Onbekend",
-        lat: +d.lat,
-        long: +d.long,
-        total: d.totaal ? parseFloat(d.totaal) : 0
-    }));
+        lat: lat,
+        long: long,
+        total: toNumber(d.totaal) ?? 0
+      };
+    })
+    .filter((d) => Number.isFinite(d.lat) && Number.isFinite(d.long));
 }
