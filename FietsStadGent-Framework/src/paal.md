@@ -7,30 +7,27 @@ theme: dashboard
 ```js
 import {html} from "npm:htl";
 
-const locaties = await FileAttachment("data/locaties.json").json();
-const bikeSummary = await FileAttachment("data/fietspalen.json").json();
+const points = await FileAttachment("data/locaties.json").json();
 
 const params = new URLSearchParams(location.search);
-const code = params.get("code") || (bikeSummary.codeTotals?.[0]?.code ?? null);
+const code = params.get("code") || (points[0]?.code ?? null);
 
-const locationByCode = new Map(locaties.map((d) => [d.code, d]));
-const totalByCode = new Map((bikeSummary.codeTotals || []).map((d) => [d.code, d]));
+const locationByCode = new Map(points.map((d) => [d.code, d]));
+
+const totals = [...points].sort((a, b) => b.total - a.total);
+const totalCyclistsAll = totals.reduce((sum, d) => sum + d.total, 0);
 
 const pole = code ? locationByCode.get(code) : null;
-const stats = code ? totalByCode.get(code) : null;
-
-const totals = [...(bikeSummary.codeTotals || [])].sort((a, b) => b.total - a.total);
-const totalCyclistsAll = totals.reduce((sum, d) => sum + (Number.isFinite(d.total) ? d.total : 0), 0);
 const rank = code ? totals.findIndex((d) => d.code === code) + 1 : 0;
 const poleCount = totals.length;
-const share = stats && totalCyclistsAll > 0 ? (stats.total / totalCyclistsAll) * 100 : null;
+const share = pole && totalCyclistsAll > 0 ? (pole.total / totalCyclistsAll) * 100 : null;
 
 const hasCoords = pole && Number.isFinite(pole.lat) && Number.isFinite(pole.long);
 const buildYear = Number.isFinite(pole?.bouwjaar) ? String(Math.trunc(pole.bouwjaar)) : "Onbekend";
-const startDate = pole?.begindatum || pole?.begindatumIso || "Onbekend";
+const startDate = pole?.begindatum || "Onbekend";
 const owner = pole?.eigenaar || "Onbekend";
-const totalLabel = stats ? stats.total.toLocaleString("nl-BE") : "-";
-const rankLabel = stats && rank > 0 ? `${rank} / ${poleCount}` : "-";
+const totalLabel = pole ? pole.total.toLocaleString("nl-BE") : "-";
+const rankLabel = pole && rank > 0 ? `${rank} / ${poleCount}` : "-";
 const shareLabel = share != null ? `${share.toFixed(2)}%` : "-";
 const osmHref = hasCoords
   ? `https://www.openstreetmap.org/?mlat=${pole.lat}&mlon=${pole.long}#map=17/${pole.lat}/${pole.long}`
