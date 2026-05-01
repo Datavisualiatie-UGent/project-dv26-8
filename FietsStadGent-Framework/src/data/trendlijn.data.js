@@ -13,21 +13,70 @@ async function processData() {
     return d3
         .dsvFormat(";")
         .parse(text, d => {
-            const timestamp = new Date(d.ordening);
+            const t = new Date(d.ordening);//new Date(`${d.datum}T${d.uur5minuten}`);
+
             return {
                 locatie: d.locatie,
-                date: timestamp,
-                hour: timestamp.getHours(),
-                hour: timestamp.getDay(),
+                date: t,
+                year: t.getFullYear(),
+                month: t.getMonth(),
+                day: t.getDay(),
+                hour: t.getHours(),
                 totaal: +d.totaal
-            }
+            };
         })
         .filter(d =>
             d.locatie &&
             Number.isFinite(d.totaal) &&
             !Number.isNaN(d.date.getTime())
         );
-};
+}
+
+export async function monthlyWithYear() {
+    const data = await processData();
+
+    const rollup = d3.rollup(
+        data,
+        v => d3.sum(v, d => d.totaal),
+        d => d.locatie,
+        d => d.year,
+        d => d.month
+    );
+
+    return Array.from(rollup, ([locatie, years]) => ({
+        locatie,
+        months: Array.from(years, ([year, months]) =>
+            Array.from(months, ([month, value]) => ({
+                year,
+                month,
+                value
+            }))
+        ).flat()
+    }));
+}
+
+export async function weekdayPerLocation() {
+    const data = await processData();
+
+    const rollup = d3.rollup(
+        data,
+        v => d3.sum(v, d => d.totaal),
+        d => d.locatie,
+        d => d.year,
+        d => d.day
+    );
+
+    return Array.from(rollup, ([locatie, years]) => ({
+        locatie,
+        days: Array.from(years, ([year, days]) =>
+            Array.from(days, ([day, value]) => ({
+                year,
+                day,
+                value
+            }))
+        ).flat()
+    }));
+}
 
 export async function hourlyPerLocation() {
     const data = await processData();
@@ -36,12 +85,18 @@ export async function hourlyPerLocation() {
         data,
         v => d3.sum(v, d => d.totaal),
         d => d.locatie,
-        d => (d.day === 0 || d.day === 6 ? "Weekend" : "Weekday"),
+        d => d.year,
         d => d.hour
     );
 
-    return Array.from(rollup, ([locatie, months]) => ({
+    return Array.from(rollup, ([locatie, years]) => ({
         locatie,
-        months: Array.from(months, ([month, hour, value]) => [month, hour, value])
+        hours: Array.from(years, ([year, hours]) =>
+            Array.from(hours, ([hour, value]) => ({
+                year,
+                hour,
+                value
+            }))
+        ).flat()
     }));
 }

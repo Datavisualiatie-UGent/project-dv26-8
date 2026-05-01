@@ -2,37 +2,48 @@ import * as Plot from "npm:@observablehq/plot";
 import * as d3 from "d3";
 import * as Inputs from "@observablehq/inputs";
 
-export function getYearsView(data) {
-  return Inputs.checkbox(
-    data.flatMap(d => d.year),
-    {
-      label: "Year",
-      unique: true,
-      sort: true
-    }
-  );
+
+export function getYearsView(data) {    
+    return Inputs.checkbox(
+        data,
+        {
+            label: " ",
+            unique: true,
+            sort: true
+        }
+    );
 }
 
 export function getModeView() {
     return Inputs.select(
         ["month", "weekday", "hourly"],
         {
-            label: "Trend",
+            label: "Trend ",
             value: "month",
             format: d => ({
-                month: "Month",
-                weekday: "Weekday Pattern",
-                hourly: "Hourly"
+                month: "Maandelijks",
+                weekday: "Weekdag",
+                hourly: "Uurlijks"
             })[d]
         }
     );
-
 }
 
 // inspiration: https://fil.github.io/pangea/plot/multiple-line-chart-hover
-export function trendLijn(data, xLabel, yLabel, { width, height } = {}) {
+export function trendLijn(data, type, yLabel, { width, height } = {}) {
+    const xLabel =
+        type === "month" ? "Maand" :
+            type === "weekday" ? "Dag" :
+                "Uur";
 
-    console.log(data);
+    const xKey =
+        type === "month" ? "month" :
+            type === "weekday" ? "day" :
+                "hour";
+
+    const months = ["Jan", "Feb", "Maa", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"];
+    const days = ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"];
+
 
     const yearColor = new Map([
         [2017, "#7f7f7f"],
@@ -56,25 +67,30 @@ export function trendLijn(data, xLabel, yLabel, { width, height } = {}) {
             color: "black"
         },
         x: {
-            domain: d3.range(12),
-            tickFormat: d => [
-                "Jan", "Feb", "Maa", "Apr", "Mei", "Jun",
-                "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"
-            ][d],
-            label: xLabel.charAt(0).toUpperCase() + xLabel.slice(1),
+            domain:
+                type === "month" ? d3.range(12) :
+                    type === "weekday" ? d3.range(7) :
+                        d3.range(24),
+
+            tickFormat:
+                type === "month" ? d => months[d]
+                    : type === "weekday" ? d => days[d]
+                        : d => `${d}:00`,
+            label: xLabel,
         },
         y: {
             grid: true,
-            label: yLabel.charAt(0).toUpperCase() + yLabel.slice(1),
+            label: yLabel,
         },
         marks: [
             //Plot.ruleY([0], {stroke: "#e5e7eb"}),
 
             Plot.lineY(data, {
-                x: "month",
+                x: xKey,
                 y: "value",
 
                 stroke: d => yearColor.get(d.year),
+
                 z: "year",
 
                 tip: {
