@@ -18,7 +18,7 @@ async function processData() {
             return {
                 locatie: d.locatie,
                 date: t,
-                year: t.getFullYear(),
+                jaar: t.getFullYear(),
                 month: t.getMonth(),
                 day: t.getDay(),
                 hour: t.getHours(),
@@ -39,15 +39,15 @@ export async function monthlyWithYear() {
         data,
         v => d3.sum(v, d => d.totaal),
         d => d.locatie,
-        d => d.year,
+        d => d.jaar,
         d => d.month
     );
 
     return Array.from(rollup, ([locatie, years]) => ({
         locatie,
-        months: Array.from(years, ([year, months]) =>
+        months: Array.from(years, ([jaar, months]) =>
             Array.from(months, ([month, value]) => ({
-                year,
+                jaar,
                 month,
                 value
             }))
@@ -62,15 +62,15 @@ export async function weekdayPerLocation() {
         data,
         v => d3.sum(v, d => d.totaal),
         d => d.locatie,
-        d => d.year,
+        d => d.jaar,
         d => d.day
     );
 
     return Array.from(rollup, ([locatie, years]) => ({
         locatie,
-        days: Array.from(years, ([year, days]) =>
+        days: Array.from(years, ([jaar, days]) =>
             Array.from(days, ([day, value]) => ({
-                year,
+                jaar,
                 day,
                 value
             }))
@@ -85,15 +85,15 @@ export async function hourlyPerLocation() {
         data,
         v => d3.sum(v, d => d.totaal),
         d => d.locatie,
-        d => d.year,
+        d => d.jaar,
         d => d.hour
     );
 
     return Array.from(rollup, ([locatie, years]) => ({
         locatie,
-        hours: Array.from(years, ([year, hours]) =>
+        hours: Array.from(years, ([jaar, hours]) =>
             Array.from(hours, ([hour, value]) => ({
-                year,
+                jaar,
                 hour,
                 value
             }))

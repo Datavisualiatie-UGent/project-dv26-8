@@ -7,7 +7,6 @@ export function getYearsView(data) {
     return Inputs.checkbox(
         data,
         {
-            label: " ",
             unique: true,
             sort: true
         }
@@ -18,7 +17,6 @@ export function getModeView() {
     return Inputs.select(
         ["month", "weekday", "hourly"],
         {
-            label: "Trend ",
             value: "month",
             format: d => ({
                 month: "Maandelijks",
@@ -29,7 +27,7 @@ export function getModeView() {
     );
 }
 
-// inspiration: https://fil.github.io/pangea/plot/multiple-line-chart-hover
+// Inspiration: https://fil.github.io/pangea/plot/multiple-line-chart-hover
 export function trendLijn(data, type, yLabel, { width, height } = {}) {
     const xLabel =
         type === "month" ? "Maand" :
@@ -61,6 +59,7 @@ export function trendLijn(data, type, yLabel, { width, height } = {}) {
     return Plot.plot({
         width,
         height,
+        marginLeft: 50,
         className: "trendlijn",
         style: {
             background: "white",
@@ -83,15 +82,13 @@ export function trendLijn(data, type, yLabel, { width, height } = {}) {
             label: yLabel,
         },
         marks: [
-            //Plot.ruleY([0], {stroke: "#e5e7eb"}),
-
             Plot.lineY(data, {
                 x: xKey,
                 y: "value",
 
-                stroke: d => yearColor.get(d.year),
+                stroke: d => yearColor.get(d.jaar),
 
-                z: "year",
+                z: "jaar",
 
                 tip: {
                     render(index, scales, values, dimensions, context, next) {
