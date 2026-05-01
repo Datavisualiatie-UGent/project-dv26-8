@@ -56,17 +56,17 @@ const selectedData = (location) => {
 }
 ```
 
-<div class="drukte-page">
-  <section class="drukte-hero">
+<div class="page">
+  <section class="page-hero">
     <h2>Drukte</h2>
-    <p>Maandelijkse trends van fietsers, globaal en per telpaal.</p>
+    <div class="page-hero-subtitle">Maandelijkse trends van fietsers, globaal en per telpaal.</div>
   </section>
 
-  <section class="drukte-card">
+  <section class="card card--chart">
     ${resize((width) => drukte(parsed, "Gemiddelde fietsers", {width, height: 400}))}
   </section>
 
-  <section class="drukte-card drukte-card--with-controls">
+  <section class="card card--chart card--with-controls">
     ${locationInput}
     ${resize((width) => drukte(selectedData(selectedLocation), "Aantal fietsers", {width, height: 400}))}
   </section>

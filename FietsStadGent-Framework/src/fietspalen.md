@@ -79,10 +79,10 @@ const sortControls = html`<div class="ranking-controls">
 ```js
 const mapCard = resize((width) => {
   const shell = document.createElement("div");
-  shell.className = "kaart-shell";
+  shell.className = "map-shell";
 
   const container = document.createElement("div");
-  container.className = "kaart-shell-inner";
+  container.className = "map-shell-inner";
 
   const map = L.map(container, {
     zoomControl: true,
@@ -291,35 +291,35 @@ const mapCard = resize((width) => {
 });
 ```
 
-<div class="fietspalen-page">
-  <section class="fietspalen-hero">
+<div class="page">
+  <section class="page-hero">
     <h2>Fietstelpalen in Gent</h2>
-    <p>Interactieve kaart en ranking op basis van totaal getelde fietsers per telpaal.</p>
+    <div class="page-hero-subtitle">Interactieve kaart en ranking op basis van totaal getelde fietsers per telpaal.</div>
   </section>
 
   <section class="overview-grid">
-    <article class="overview-card">
-      <p class="overview-label">Aantal telpalen</p>
-      <p class="overview-value">${nf.format(totalStations)}</p>
+    <article class="card card--overview">
+      <p class="metric-label">Aantal telpalen</p>
+      <p class="metric-value">${nf.format(totalStations)}</p>
     </article>
-    <article class="overview-card">
-      <p class="overview-label">Totaal fietsers</p>
-      <p class="overview-value">${nf.format(totalCyclists)}</p>
+    <article class="card card--overview">
+      <p class="metric-label">Totaal fietsers</p>
+      <p class="metric-value">${nf.format(totalCyclists)}</p>
     </article>
-    <article class="overview-card">
-      <p class="overview-label">Gemiddeld per paal</p>
-      <p class="overview-value">${nf.format(Math.round(avgCyclists))}</p>
+    <article class="card card--overview">
+      <p class="metric-label">Gemiddeld per paal</p>
+      <p class="metric-value">${nf.format(Math.round(avgCyclists))}</p>
     </article>
-    <article class="overview-card">
-      <p class="overview-label">Top telpaal</p>
-      <p class="overview-value">${sortedLocations[0] ? sortedLocations[0].name : "Onbekend"}</p>
+    <article class="card card--overview">
+      <p class="metric-label">Top telpaal</p>
+      <p class="metric-value">${sortedLocations[0] ? sortedLocations[0].name : "Onbekend"}</p>
     </article>
   </section>
 
-  <details class="ranking-card" open>
-    <summary class="ranking-summary-bar">
+  <details class="card card--ranking" open>
+    <summary class="ranking-header">
       <h3>Ranking van telpalen</h3>
-      <span class="ranking-summary-toggle">Open / sluit</span>
+      <span class="ranking-toggle">Open / sluit</span>
     </summary>
     <div class="ranking-header">
       ${sortControls}
@@ -357,21 +357,21 @@ const mapCard = resize((width) => {
   </details>
 
   <section class="overview-grid">
-    <article class="overview-card">
-      <p class="overview-label">Oudste telpaal</p>
-      <p class="overview-value">${oldestStation ? `${oldestStation.name} (${Math.trunc(oldestStation.buildYear)})` : "Onbekend"}</p>
+    <article class="card card--overview">
+      <p class="metric-label">Oudste telpaal</p>
+      <p class="metric-value">${oldestStation ? `${oldestStation.name} (${Math.trunc(oldestStation.buildYear)})` : "Onbekend"}</p>
     </article>
-    <article class="overview-card">
-      <p class="overview-label">Nieuwste telpaal</p>
-      <p class="overview-value">${newestStation ? `${newestStation.name} (${Math.trunc(newestStation.buildYear)})` : "Onbekend"}</p>
+    <article class="card card--overview">
+      <p class="metric-label">Nieuwste telpaal</p>
+      <p class="metric-value">${newestStation ? `${newestStation.name} (${Math.trunc(newestStation.buildYear)})` : "Onbekend"}</p>
     </article>
-    <article class="overview-card">
-      <p class="overview-label">Top 3 samen</p>
-      <p class="overview-value">${nf.format(sortedLocations.slice(0, 3).reduce((sum, d) => sum + d.total, 0))}</p>
+    <article class="card card--overview">
+      <p class="metric-label">Top 3 samen</p>
+      <p class="metric-value">${nf.format(sortedLocations.slice(0, 3).reduce((sum, d) => sum + d.total, 0))}</p>
     </article>
-    <article class="overview-card">
-      <p class="overview-label">Mediaan (ruw)</p>
-      <p class="overview-value">${(() => {
+    <article class="card card--overview">
+      <p class="metric-label">Mediaan (ruw)</p>
+      <p class="metric-value">${(() => {
         if (sortedLocations.length === 0) return "0";
         const asc = [...sortedLocations].map((d) => d.total).sort((a, b) => a - b);
         const mid = Math.floor(asc.length / 2);
@@ -380,12 +380,12 @@ const mapCard = resize((width) => {
       })()}</p>
     </article>
   </section>
+  <div>
+    <div class="card card--map">
+      ${mapCard}
+    </div>
+    <p class="map-caption map-note">Klik op een pin om de gegevens van die telpaal in het infopaneel te zien.</p>
+  </div>
 </div>
 
-<div class="card map-card">
-  ${mapCard}
-</div>
 
-<div class="grid grid-cols-1" style="margin-top: 0.5rem;">
-  <p class="map-caption">Klik op een pin om de gegevens van die telpaal in het infopaneel te zien.</p>
-</div>

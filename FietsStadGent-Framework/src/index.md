@@ -8,7 +8,7 @@ theme: dashboard
   <h2>Is Gent echt een fietshoofdstad? Start hier met jullie visualisatieproject.</h2>
 </div>
 
-<div class="grid grid-cols-3" style="grid-auto-rows: 1fr;">
+<div class="grid grid-cols-3 nav-grid">
   <a class="card nav-card" href="/visualisaties-plot">
     <h3>Observable Plot</h3>
     <p>Snel interactieve grafieken op basis van declaratieve syntax.</p>

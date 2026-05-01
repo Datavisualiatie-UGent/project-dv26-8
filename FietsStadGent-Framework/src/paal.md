@@ -34,13 +34,15 @@ const osmHref = hasCoordinates
   : null;
 
 const stationContent = station
-  ? html`<section class="pole-hero">
+  ? html`
+    <div class="page">
+      <section class="page-hero page-hero--compact">
         <h2>${station.name || station.code}</h2>
-        <div class="pole-subtitle">Code ${station.code} · Fietstelpaal in Gent</div>
+        <div class="page-hero-subtitle">Code ${station.code} · Fietstelpaal in Gent</div>
       </section>
 
       <section class="pole-grid">
-        <article class="pole-card">
+        <article class="card card--detail">
           <h3>Algemene info</h3>
           <dl class="pole-list">
             <dt>Code</dt><dd>${station.code}</dd>
@@ -50,7 +52,7 @@ const stationContent = station
           </dl>
         </article>
 
-        <article class="pole-card">
+        <article class="card card--detail">
           <h3>Locatie</h3>
           <dl class="pole-list">
             <dt>Lat</dt><dd>${hasCoordinates ? station.lat.toFixed(6) : "Onbekend"}</dd>
@@ -59,7 +61,7 @@ const stationContent = station
         </article>
       </section>
 
-      <section class="pole-card">
+      <section class="card card--detail">
         <h3>Verkeersprofiel</h3>
         <div class="pole-metrics">
           <div class="metric">
@@ -83,19 +85,23 @@ const stationContent = station
           ? html`<a class="pole-button secondary" target="_blank" rel="noopener noreferrer" href="${osmHref}">Bekijk op OSM</a>`
           : null}
       </section>
+    </div>
     `
-  : html`<section class="pole-hero">
+  : html`
+    <div class="page">
+      <section class="page-hero page-hero--compact">
         <h2>Telpaal niet gevonden</h2>
-        <div class="pole-subtitle">Kies een telpaal via de kaart om detailinformatie te bekijken.</div>
+        <div class="page-hero-subtitle">Kies een telpaal via de kaart om detailinformatie te bekijken.</div>
       </section>
       <section class="pole-actions">
         <a class="pole-button primary" href="/fietspalen">Ga naar de kaart</a>
       </section>
+    </div>
     `;
 ```
 
-<div class="pole-page-shell">
-  <div class="pole-page">
+<div class="page-shell">
+  <div class="page">
     ${stationContent}
   </div>
 </div>
