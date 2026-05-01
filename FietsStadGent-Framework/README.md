@@ -59,7 +59,7 @@ Source data is loaded from CSV and normalized via shared loader code.
 
 - Shared transformation logic: `src/components/bike-data.js`
 - Build-time JSON loaders:
-  - `src/data/locaties.json.js`
+  - `src/data/locations.json.js`
   - `src/data/fietspalen.json.js`
 - Map boundary file:
   - `src/data/OSMB-71785c830e71f3607aaeffc6b51538d7206c36a0.geojson`
@@ -91,7 +91,7 @@ When running `npm run dev` or `npm run build`, Observable executes the data load
 │  │  ├─ agg_year.csv
 │  │  ├─ locations_with_totals.csv
 │  │  ├─ fietspalen.json.js
-│  │  ├─ locaties.json.js
+│  │  ├─ locations.json.js
 │  │  ├─ OSMB-71785c830e71f3607aaeffc6b51538d7206c36a0.geojson
 │  │  ├─ events.json
 │  │  └─ launches.csv.js

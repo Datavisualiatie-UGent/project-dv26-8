@@ -11,7 +11,7 @@ import * as d3 from "npm:d3";
 
 ```js
 const bikeSummary = await FileAttachment("data/fietspalen.json").json();
-const locations = await FileAttachment("data/locaties.json").json();
+const locations = await FileAttachment("data/locations.json").json();
 const yearly = bikeSummary.yearlyTotals;
 const topLocations = bikeSummary.topLocations;
 ```

@@ -11,7 +11,7 @@ import {html} from "npm:htl";
 ```js
 const gentBoundaryGeo = await FileAttachment("data/OSMB-71785c830e71f3607aaeffc6b51538d7206c36a0.geojson").json();
 
-const locations = await FileAttachment("data/locaties.json").json();
+const locations = await FileAttachment("data/locations.json").json();
 
 if (!globalThis.__fietsMapBridge) {
   globalThis.__fietsMapBridge = {focusPole: null, resetView: null, selectedCode: null};

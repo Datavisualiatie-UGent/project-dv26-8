@@ -7,7 +7,7 @@ theme: dashboard
 ```js
 import {html} from "npm:htl";
 
-const locations = await FileAttachment("data/locaties.json").json();
+const locations = await FileAttachment("data/locations.json").json();
 
 const params = new URLSearchParams(location.search);
 const code = params.get("code") || (locations[0]?.code ?? null);
