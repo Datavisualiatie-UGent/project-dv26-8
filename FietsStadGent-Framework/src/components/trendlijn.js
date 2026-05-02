@@ -28,7 +28,7 @@ export function getModeView() {
 }
 
 // Inspiration: https://fil.github.io/pangea/plot/multiple-line-chart-hover
-export function trendLijn(data, type, yLabel, { width, height } = {}) {
+export function trendLijn(data, type, yLabel, { width, height, isPct = false  } = {}) {
     const xLabel =
         type === "month" ? "Maand" :
             type === "weekday" ? "Dag" :
@@ -80,8 +80,14 @@ export function trendLijn(data, type, yLabel, { width, height } = {}) {
         y: {
             grid: true,
             label: yLabel,
-            domain: yLabel.includes("Index") ? [0, d3.max(data, d => d.value)] : undefined,
-            tickFormat: yLabel.includes("Index") ? d => `${d}` : undefined
+
+            domain: isPct
+                ? [d3.min(data, d => d.value), d3.max(data, d => d.value)]
+                : undefined,
+
+            tickFormat: isPct
+                ? d => `${d}%`
+                : d => d
         },
         marks: [
             ...(yLabel.includes("Index") ? [

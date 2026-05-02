@@ -13,98 +13,44 @@ import { getModeView, getYearsView, trendLijn } from "./components/trendlijn.js"
 
 // Data
 const dict = {
-  month: await FileAttachment("data/monthlyWithYear.json").json(),
-  weekday: await FileAttachment("data/weekdayPerLocation.json").json(),
-  hourly: await FileAttachment("data/hourlyPerLocation.json").json()
+  month: await FileAttachment("data/monthly.json").json(),
+  weekday: await FileAttachment("data/weekly.json").json(),
+  hourly: await FileAttachment("data/hourly.json").json()
 };
 
+
+console.log(dict["hourly"]);
+
 const allYears = Array.from(new Set(
-  Object.values(dict).flatMap(arr =>
-    arr.flatMap(d =>
-      (d.months ?? d.days ?? d.hours ?? []).map(v => v.jaar)
-    )
-    .filter(d => d !== undefined)
+  Object.values(dict).flatMap(d =>
+    d.normal.global.data.map(v => v.jaar)
   )
 ));
 
-
-// TODO: add a clear checkbox button, add year label to line color
+// TODO: add a clear checkbox button, add year label to line color + remove duplicates
 
 // Global data
-function selectedData(mode) {
-  return dict[mode].flatMap(d => {
-    if (mode === "weekday") return d.days;
-    if (mode === "hourly") return d.hours;
-    return d.months;
-  });
-}
+function selectData(mode, type, loc = "", variant = "normal") {
+  const dataset = dict[mode][variant];
 
-const aggregateData = (mode, t = "sum") => {
-  const data = selectedData(mode);
+  let data;
+
+  if (type === "globaal") {
+    data = dataset.global.data;
+  } else {
+    const found = dataset.perLocation.find(d => d.locatie === loc);
+    data = found ? found.data : [];
+  }
 
   const key =
     mode === "month" ? "month" :
     mode === "weekday" ? "day" :
     "hour";
 
-  const reducer =
-    t === "mean"
-      ? v => d3.mean(v, d => d.value)
-      : v => d3.sum(v, d => d.value);
-
-  const grouped = d3.rollup(
-    data,
-    reducer,
-    d => d.jaar,
-    d => d[key]
+  return data.sort((a, b) =>
+    a.jaar - b.jaar || a[key] - b[key]
   );
-
-  return Array.from(grouped, ([jaar, level1]) =>
-    Array.from(level1, ([x, value]) => ({
-      jaar,
-      [key]: x,
-      value
-    }))
-  ).flat().sort((a, b) => a.jaar - b.jaar || a[key] - b[key]);
-};
-
-
-// Individual trend data
-
-const selectedDataPerLocation = (loc, mode) => {
-  const key =
-    mode === "month" ? "month" :
-    mode === "weekday" ? "day" :
-    "hour";
-
-  const data = dict[mode];
-
-  if (!data) {
-    console.error("Mode bestaat niet:", mode);
-    return [];
-  }
-
-  const found = data.find(d => d.locatie === loc);
-  if (!found) return [];
-
-  let filtered = found.months;
-
-  if (mode === "weekday") filtered = found.days;
-  if (mode === "hourly") filtered = found.hours;
-
-  return filtered.sort((a, b) => a.jaar - b.jaar || a[key] - b[key]);
-};
-
-const selectData = (mode, type, loc = "") => {
-  
-  if(type === "globaal") {
-    return aggregateData(mode, "sum");
-  }
-
-  return selectedDataPerLocation(loc, mode);
 }
-
-// Extra
 
 // Global trend components
 const modeView = getModeView();
@@ -118,9 +64,9 @@ const type = Generators.input(typeView);
 
 // Individual trend components
 const locationView = Inputs.select(
-  dict["month"].map(d => d.locatie),
+  dict["month"].normal.perLocation.map(d => d.locatie),
   {
-    value: dict["month"][0].locatie,
+    value: dict["month"].normal.perLocation[0].locatie,
   }
 );
 
@@ -140,34 +86,40 @@ const modeIndividual = Generators.input(modeViewIndividual);
 const yearCheckBoxIndividual = getYearsView(allYears);
 const yearsIndividual = Generators.input(yearCheckBoxIndividual);
 
-// tweede grafiek
-function toIndex(data, mode) {
-  const key =
-    mode === "month" ? "month" :
-    mode === "weekday" ? "day" :
-    "hour";
+// Idem maar voor pct
 
-  const grouped = d3.group(data, d => d.jaar);
+const modeViewPct = getModeView();
+const modePct = Generators.input(modeView);
 
-  return Array.from(grouped, ([jaar, values]) => {
-    // Zorg dat ze correct gesorteerd zijn
-    values = values.sort((a, b) => a[key] - b[key]);
+const yearCheckBoxPct = getYearsView(allYears);
+const yearsPct = Generators.input(yearCheckBoxPct);
 
-    const base = values[0]?.value ?? 1;
+const typeViewPct = Inputs.radio(["globaal", "telpaal"], {value: "globaal"})
+const typePct = Generators.input(typeViewPct);
 
-    return values.map(d => ({
-      ...d,
-      value: (d.value / base) * 100
-    }));
-  }).flat();
-}
+// Individual trend components
+const locationViewPct = Inputs.select(
+  dict["month"].normal.perLocation.map(d => d.locatie),
+  {
+    value: dict["month"].normal.perLocation[0].locatie,
+  }
+);
 
-const rawData = selectData(mode, type, location)
-  .filter(d => years.includes(d.jaar));
+locationViewPct.querySelector("select").disabled =
+  typeViewPct.value === "globaal";
 
-const indexData = toIndex(rawData, mode);
+typeViewPct.addEventListener("input", () => {
+  locationViewPct.querySelector("select").disabled =
+    typeViewPct.value === "globaal";
+});
 
+const locationPct = Generators.input(locationViewPct);
 
+const modeViewIndividualPct = getModeView();
+const modeIndividualPct = Generators.input(modeViewIndividualPct);
+
+const yearCheckBoxIndividualPct = getYearsView(allYears);
+const yearsIndividualPct = Generators.input(yearCheckBoxIndividualPct);
 
 ```
 
@@ -271,7 +223,7 @@ const indexData = toIndex(rawData, mode);
   <section class="trendlijn-card">
     ${resize((width) =>
       trendLijn(
-        selectData(mode, type, location)
+        selectData(mode, type, location, "normal")
           .filter(d => years.includes(d.jaar)),
         mode,
         "Aantal fietsers",
@@ -281,7 +233,34 @@ const indexData = toIndex(rawData, mode);
   </section>
   
   <section class="trendlijn-card">
-    
+    <div class="controls-vertical">
+      <div class="control-block">
+        <div class="control-label">Locatie</div>
+        ${locationViewPct}
+      </div>
+      <div class="control-block">
+        <div class="control-label">Trend</div>
+        ${modeView}
+      </div>
+      <div class="control-block">
+        <div class="control-label">Jaar</div>
+        ${yearCheckBoxPct}
+      </div>
+      <div class="control-block">
+        <div class="control-label">type</div>
+        ${typeViewPct}
+      </div>
+    </div>
   </section>
-
+  <section class="trendlijn-card">
+    ${resize((width) =>
+      trendLijn(
+        selectData(modePct, typePct, locationPct, "pct")
+          .filter(d => yearsPct.includes(d.jaar)),
+        modePct,
+        "Procentuele verandering t.o.v. 2020",
+        { width, height: 400, isPct: true }
+      )
+    )}
+  </section>
 </div>
