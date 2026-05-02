@@ -39,7 +39,7 @@ function selectedData(mode) {
   });
 }
 
-const aggregateData = (mode, type = "mean") => {
+const aggregateData = (mode, t = "sum") => {
   const data = selectedData(mode);
 
   const key =
@@ -48,7 +48,7 @@ const aggregateData = (mode, type = "mean") => {
     "hour";
 
   const reducer =
-    type === "mean"
+    t === "mean"
       ? v => d3.mean(v, d => d.value)
       : v => d3.sum(v, d => d.value);
 
@@ -71,13 +71,6 @@ const aggregateData = (mode, type = "mean") => {
 
 // Individual trend data
 
-const locationView = Inputs.select(
-  dict["month"].map(d => d.locatie),
-  {
-    value: dict["month"][0].locatie
-  }
-);
-
 const selectedDataPerLocation = (loc, mode) => {
   const key =
     mode === "month" ? "month" :
@@ -85,6 +78,12 @@ const selectedDataPerLocation = (loc, mode) => {
     "hour";
 
   const data = dict[mode];
+
+  if (!data) {
+    console.error("Mode bestaat niet:", mode);
+    return [];
+  }
+
   const found = data.find(d => d.locatie === loc);
   if (!found) return [];
 
@@ -93,8 +92,17 @@ const selectedDataPerLocation = (loc, mode) => {
   if (mode === "weekday") filtered = found.days;
   if (mode === "hourly") filtered = found.hours;
 
-  return filtered.sort((a, b) => a.jaar - b.jaar || a[key] - b[key])
+  return filtered.sort((a, b) => a.jaar - b.jaar || a[key] - b[key]);
 };
+
+const selectData = (mode, type, loc = "") => {
+  
+  if(type === "globaal") {
+    return aggregateData(mode, "sum");
+  }
+
+  return selectedDataPerLocation(loc, mode);
+}
 
 // Extra
 
@@ -105,8 +113,25 @@ const mode = Generators.input(modeView);
 const yearCheckBox = getYearsView(allYears);
 const years = Generators.input(yearCheckBox);
 
+const typeView = Inputs.radio(["globaal", "telpaal"], {value: "globaal"})
+const type = Generators.input(typeView);
 
 // Individual trend components
+const locationView = Inputs.select(
+  dict["month"].map(d => d.locatie),
+  {
+    value: dict["month"][0].locatie,
+  }
+);
+
+locationView.querySelector("select").disabled =
+  typeView.value === "globaal";
+
+typeView.addEventListener("input", () => {
+  locationView.querySelector("select").disabled =
+    typeView.value === "globaal";
+});
+
 const location = Generators.input(locationView);
 
 const modeViewIndividual = getModeView();
@@ -114,6 +139,35 @@ const modeIndividual = Generators.input(modeViewIndividual);
 
 const yearCheckBoxIndividual = getYearsView(allYears);
 const yearsIndividual = Generators.input(yearCheckBoxIndividual);
+
+// tweede grafiek
+function toIndex(data, mode) {
+  const key =
+    mode === "month" ? "month" :
+    mode === "weekday" ? "day" :
+    "hour";
+
+  const grouped = d3.group(data, d => d.jaar);
+
+  return Array.from(grouped, ([jaar, values]) => {
+    // Zorg dat ze correct gesorteerd zijn
+    values = values.sort((a, b) => a[key] - b[key]);
+
+    const base = values[0]?.value ?? 1;
+
+    return values.map(d => ({
+      ...d,
+      value: (d.value / base) * 100
+    }));
+  }).flat();
+}
+
+const rawData = selectData(mode, type, location)
+  .filter(d => years.includes(d.jaar));
+
+const indexData = toIndex(rawData, mode);
+
+
 
 ```
 
@@ -197,54 +251,37 @@ const yearsIndividual = Generators.input(yearCheckBoxIndividual);
   <section class="trendlijn-card">
     <div class="controls-vertical">
       <div class="control-block">
-        <div class="control-block">
-          <div class="control-label">Trend</div>
-          ${modeView}
-        </div>
-        <div class="control-block">
-          <div class="control-label">Jaar</div>
-          ${yearCheckBox}
-        </div>
+        <div class="control-label">Locatie</div>
+        ${locationView}
+      </div>
+      <div class="control-block">
+        <div class="control-label">Trend</div>
+        ${modeView}
+      </div>
+      <div class="control-block">
+        <div class="control-label">Jaar</div>
+        ${yearCheckBox}
+      </div>
+      <div class="control-block">
+        <div class="control-label">type</div>
+        ${typeView}
+      </div>
     </div>
   </section>
   <section class="trendlijn-card">
     ${resize((width) =>
       trendLijn(
-        aggregateData(mode, "mean")
+        selectData(mode, type, location)
           .filter(d => years.includes(d.jaar)),
         mode,
-        "Gemiddelde fietsers",
+        "Aantal fietsers",
         { width, height: 400 }
       )
     )}
   </section>
-
+  
   <section class="trendlijn-card">
-    <div class="controls-vertical">
-      <div class="control-block">
-        <div class="control-label">Locatie</div>
-          ${locationView}
-        </div>
-        <div class="control-block">
-          <div class="control-label">Trend</div>
-          ${modeViewIndividual}
-        </div>
-        <div class="control-block">
-          <div class="control-label">Jaar</div>
-          ${yearCheckBoxIndividual}
-        </div>
-    </div>
-  </section>
-  <section class="trendlijn-card">
-    ${resize((width) =>
-      trendLijn(
-        selectedDataPerLocation(location, modeIndividual)
-          .filter(d => yearsIndividual.includes(d.jaar)),
-        modeIndividual,
-        "Aantal fietsers",
-        { width, height: 400 }
-      )
-  )}
+    
   </section>
 
 </div>

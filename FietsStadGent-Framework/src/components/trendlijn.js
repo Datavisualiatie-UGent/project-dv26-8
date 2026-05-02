@@ -59,7 +59,7 @@ export function trendLijn(data, type, yLabel, { width, height } = {}) {
     return Plot.plot({
         width,
         height,
-        marginLeft: 50,
+        marginLeft: 60,
         className: "trendlijn",
         style: {
             background: "white",
@@ -80,8 +80,16 @@ export function trendLijn(data, type, yLabel, { width, height } = {}) {
         y: {
             grid: true,
             label: yLabel,
+            domain: yLabel.includes("Index") ? [0, d3.max(data, d => d.value)] : undefined,
+            tickFormat: yLabel.includes("Index") ? d => `${d}` : undefined
         },
         marks: [
+            ...(yLabel.includes("Index") ? [
+                Plot.ruleY([100], {
+                    stroke: "#999",
+                    strokeDasharray: "4 2"
+                })
+            ] : []),
             Plot.lineY(data, {
                 x: xKey,
                 y: "value",
