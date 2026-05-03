@@ -10,7 +10,7 @@ async function processData() {
     return d3
         .dsvFormat(";")
         .parse(text, d => {
-            const t = new Date(d.ordening);
+            const t = new Date(`${d.datum} ${d.uur5minuten}`);
 
             return {
                 locatie: d.locatie,
@@ -23,7 +23,8 @@ async function processData() {
         })
         .filter(d =>
             d.locatie &&
-            Number.isFinite(d.totaal)
+            Number.isFinite(d.totaal) &&
+            !Number.isNaN(d.jaar)
         );
 }
 
