@@ -1,4 +1,6 @@
+import { max } from "d3";
 import * as Plot from "npm:@observablehq/plot";
+import * as d3 from "npm:d3";
 
 const weekdayNames = [
   "ma",
@@ -10,15 +12,17 @@ const weekdayNames = [
   "zo"
 ];
 
-export function heatmap(rows, {width, height} = {}) {
+export function heatmap(rows, year, {width, height} = {}) {
     const monthLabels = rows.filter((d, i, arr) =>
         i === 0 || d.month !== arr[i - 1].month
     );
-    console.log(monthLabels);
+    const maxWeek = d3.max(rows, d => d.week);
+
     return Plot.plot({
         width: width,
         height: height,
         marginTop: 20,
+        marginRight: 30,
         x: {
             axis: null,
         },
@@ -42,10 +46,18 @@ export function heatmap(rows, {width, height} = {}) {
 
             Plot.text(monthLabels, {
                 x: "week",
-                y: (_) => "ma",
+                y: () => "ma",
                 text: "month",
                 dy: -20,
                 // textAnchor: "start",
+            }),
+
+            Plot.text([{}], {
+                x: () => maxWeek + 1,
+                y: () => "do",
+                text: () => new Date(year, 0, 1).toLocaleDateString("nl-BE", { year: "numeric" }),
+                textAnchor: "end",
+                dx: 30,
             })
         ]
     });
