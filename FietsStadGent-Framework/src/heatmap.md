@@ -6,8 +6,14 @@ theme: dashboard
 ```js
 import { heatmap } from "./components/heatmap.js";
 import * as d3 from "npm:d3";
+import * as Inputs from "@observablehq/inputs";
+import { Generators } from "@observablehq/stdlib";
 
 const data = await FileAttachment("data/dailyAvg.json").json();
+
+const years = [...new Set(data.map(d => new Date(d.day).getFullYear()))].sort();
+const yearInput = Inputs.checkbox(years, {label: "Selecteer jaren", value: [2025], format: x => x.toString()});
+const selectedYears = Generators.input(yearInput);
 
 const parsed = data
 .map(d => {
@@ -32,7 +38,9 @@ const parsed = data
       month: month,
       week: week,
     };
-}).filter(d => d.day.getFullYear() === 2021).sort((a, b) => a.day - b.day);
+});
+
+const valueDomain = d3.extent(parsed, d => d.value);
 ```
 
 <div class="page">
@@ -43,7 +51,8 @@ const parsed = data
     </div>
   </section>
 
-  <section class="card card--chart card--with-controls">
-    ${resize((width) => heatmap(parsed, 2025, {width, height: 200}))}
+  <section class="card">
+    ${yearInput}
+    ${selectedYears.map(year => heatmap(parsed.filter(d => d.day.getFullYear() === year), year, {width, height: 200, colorDomain: valueDomain}))}
   </section>
 </div>

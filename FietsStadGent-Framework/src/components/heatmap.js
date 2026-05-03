@@ -12,7 +12,7 @@ const weekdayNames = [
   "zo"
 ];
 
-export function heatmap(rows, year, {width, height} = {}) {
+export function heatmap(rows, year, {width, height, colorDomain} = {}) {
     const monthLabels = rows.filter((d, i, arr) =>
         i === 0 || d.month !== arr[i - 1].month
     );
@@ -32,8 +32,9 @@ export function heatmap(rows, year, {width, height} = {}) {
             axisLine: false,
         },
         color: {
-            label: "Average",
-            scheme: "greens"
+            label: "Gemiddelde",
+            scheme: "greens",
+            domain: colorDomain
         },
         marks: [
            Plot.axisY({tickSize: 0}),
@@ -41,7 +42,7 @@ export function heatmap(rows, year, {width, height} = {}) {
                 x: "week",
                 y: "weekday",
                 fill: "value",
-                title: d => `${d.day.toLocaleDateString("nl-BE")}: ${d.value.toFixed(2)} average bikes`
+                title: d => `${d3.timeFormat("%A %d %B %Y")(d.day)}:\n${d.value.toFixed(2)} gemiddelde fietsen`
             }),
 
             Plot.text(monthLabels, {
