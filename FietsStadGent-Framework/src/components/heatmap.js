@@ -12,7 +12,7 @@ const weekdayNames = [
   "zo"
 ];
 
-export function heatmap(rows, year, {width, height, colorDomain} = {}) {
+export function heatmap(rows, year, description, {width, height, colorDomain} = {}) {
     const monthLabels = rows.filter((d, i, arr) =>
         i === 0 || d.month !== arr[i - 1].month
     );
@@ -42,7 +42,7 @@ export function heatmap(rows, year, {width, height, colorDomain} = {}) {
                 x: "week",
                 y: "weekday",
                 fill: "value",
-                title: d => `${d3.timeFormat("%A %d %B %Y")(d.day)}:\n${d.value.toFixed(2)} gemiddelde fietsen`
+                title: d => `${d3.timeFormat("%A %d %B %Y")(d.day)}:\n${d.value.toFixed(2)} ${description}`
             }),
 
             Plot.text(monthLabels, {

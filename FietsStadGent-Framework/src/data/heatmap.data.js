@@ -9,13 +9,13 @@ async function processData() {
   return d3
     .dsvFormat(";")
     .parse(text, d => ({
-      locatie: d.locatie,
+      location: d.locatie,
       date: new Date(d.datum),
       totaal: Number(String(d.totaal).replace(",", "."))
     }))
     .filter(
       d =>
-        d.locatie &&
+        d.location &&
         d.date instanceof Date &&
         !Number.isNaN(d.date.getTime()) &&
         Number.isFinite(d.totaal)
@@ -28,12 +28,12 @@ export async function dailyPerLocation() {
   const rollup = d3.rollup(
     data,
     values => d3.sum(values, d => d.totaal),
-    d => d.locatie,
+    d => d.location,
     d => d3.timeDay(d.date)
   );
 
-  return Array.from(rollup, ([locatie, days]) => ({
-    locatie,
+  return Array.from(rollup, ([location, days]) => ({
+    location,
     days: Array.from(days, ([day, total]) => [day, total])
   }));
 }
