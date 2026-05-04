@@ -23,19 +23,19 @@ console.log(dict["hourly"]);
 
 const allYears = Array.from(new Set(
   Object.values(dict).flatMap(d =>
-    d.normal.global.data.map(v => v.jaar)
+    d.absoluut.global.data.map(v => v.jaar)
   )
 ));
 
 // TODO: add a clear checkbox button, add year label to line color + remove duplicates
 
 // Global data
-function selectData(mode, type, loc = "", variant = "normal") {
+function selectData(mode, variant, loc = null, type = "global") {
   const dataset = dict[mode][variant];
 
   let data;
 
-  if (type === "globaal") {
+  if (type === "global") {
     data = dataset.global.data;
   } else {
     const found = dataset.perLocation.find(d => d.locatie === loc);
@@ -52,74 +52,22 @@ function selectData(mode, type, loc = "", variant = "normal") {
   );
 }
 
-// Global trend components
 const modeView = getModeView();
 const mode = Generators.input(modeView);
 
 const yearCheckBox = getYearsView(allYears);
 const years = Generators.input(yearCheckBox);
 
-const typeView = Inputs.radio(["globaal", "telpaal"], {value: "globaal"})
+const typeView = Inputs.radio(["absoluut", "relatief"], { value: "absoluut" });
 const type = Generators.input(typeView);
 
-// Individual trend components
 const locationView = Inputs.select(
-  dict["month"].normal.perLocation.map(d => d.locatie),
+  dict["month"].absoluut.perLocation.map(d => d.locatie),
   {
-    value: dict["month"].normal.perLocation[0].locatie,
+    value: dict["month"].absoluut.perLocation[0].locatie,
   }
 );
-
-locationView.querySelector("select").disabled =
-  typeView.value === "globaal";
-
-typeView.addEventListener("input", () => {
-  locationView.querySelector("select").disabled =
-    typeView.value === "globaal";
-});
-
 const location = Generators.input(locationView);
-
-const modeViewIndividual = getModeView();
-const modeIndividual = Generators.input(modeViewIndividual);
-
-const yearCheckBoxIndividual = getYearsView(allYears);
-const yearsIndividual = Generators.input(yearCheckBoxIndividual);
-
-// Idem maar voor pct
-
-const modeViewPct = getModeView();
-const modePct = Generators.input(modeView);
-
-const yearCheckBoxPct = getYearsView(allYears);
-const yearsPct = Generators.input(yearCheckBoxPct);
-
-const typeViewPct = Inputs.radio(["globaal", "telpaal"], {value: "globaal"})
-const typePct = Generators.input(typeViewPct);
-
-// Individual trend components
-const locationViewPct = Inputs.select(
-  dict["month"].normal.perLocation.map(d => d.locatie),
-  {
-    value: dict["month"].normal.perLocation[0].locatie,
-  }
-);
-
-locationViewPct.querySelector("select").disabled =
-  typeViewPct.value === "globaal";
-
-typeViewPct.addEventListener("input", () => {
-  locationViewPct.querySelector("select").disabled =
-    typeViewPct.value === "globaal";
-});
-
-const locationPct = Generators.input(locationViewPct);
-
-const modeViewIndividualPct = getModeView();
-const modeIndividualPct = Generators.input(modeViewIndividualPct);
-
-const yearCheckBoxIndividualPct = getYearsView(allYears);
-const yearsIndividualPct = Generators.input(yearCheckBoxIndividualPct);
 
 ```
 
@@ -173,7 +121,7 @@ const yearsIndividualPct = Generators.input(yearCheckBoxIndividualPct);
 
   .control-label {
     font-size: 0.85rem;
-    color: #374151; /* zacht grijs */
+    color: #374151;
   }
 
   label {
@@ -203,10 +151,6 @@ const yearsIndividualPct = Generators.input(yearCheckBoxIndividualPct);
   <section class="trendlijn-card">
     <div class="controls-vertical">
       <div class="control-block">
-        <div class="control-label">Locatie</div>
-        ${locationView}
-      </div>
-      <div class="control-block">
         <div class="control-label">Trend</div>
         ${modeView}
       </div>
@@ -215,7 +159,7 @@ const yearsIndividualPct = Generators.input(yearCheckBoxIndividualPct);
         ${yearCheckBox}
       </div>
       <div class="control-block">
-        <div class="control-label">type</div>
+        <div class="control-label">Type</div>
         ${typeView}
       </div>
     </div>
@@ -223,10 +167,10 @@ const yearsIndividualPct = Generators.input(yearCheckBoxIndividualPct);
   <section class="trendlijn-card">
     ${resize((width) =>
       trendLijn(
-        selectData(mode, type, location, "normal")
+        selectData(mode, type, null, "global")
           .filter(d => years.includes(d.jaar)),
         mode,
-        "Aantal fietsers",
+        type === "absoluut" ? "Aantal fietsers" : "Procentuele verandering t.o.v. 2020",
         { width, height: 400 }
       )
     )}
@@ -236,30 +180,18 @@ const yearsIndividualPct = Generators.input(yearCheckBoxIndividualPct);
     <div class="controls-vertical">
       <div class="control-block">
         <div class="control-label">Locatie</div>
-        ${locationViewPct}
-      </div>
-      <div class="control-block">
-        <div class="control-label">Trend</div>
-        ${modeView}
-      </div>
-      <div class="control-block">
-        <div class="control-label">Jaar</div>
-        ${yearCheckBoxPct}
-      </div>
-      <div class="control-block">
-        <div class="control-label">type</div>
-        ${typeViewPct}
+        ${locationView}
       </div>
     </div>
   </section>
   <section class="trendlijn-card">
     ${resize((width) =>
       trendLijn(
-        selectData(modePct, typePct, locationPct, "pct")
-          .filter(d => yearsPct.includes(d.jaar)),
-        modePct,
-        "Procentuele verandering t.o.v. 2020",
-        { width, height: 400, isPct: true }
+        selectData(mode, type, location, "perLocation")
+          .filter(d => years.includes(d.jaar)),
+        mode,
+        type === "absoluut" ? "Aantal fietsers" : "Procentuele verandering t.o.v. 2020",
+        { width, height: 400, isPerLocation: true }
       )
     )}
   </section>

@@ -156,11 +156,11 @@ async function buildComplete(key) {
     )[0];
 
     return {
-        normal: {
+        absoluut: { //normal
             global: normalGlobal,
             perLocation: normalPerLocation
         },
-        pct: {
+        relatief: { //percentage
             global: pctGlobal,
             perLocation: pctPerLocation
         }

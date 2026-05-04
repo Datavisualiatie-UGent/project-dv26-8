@@ -96,6 +96,10 @@ export function trendLijn(data, type, yLabel, { width, height, isPct = false  } 
                     strokeDasharray: "4 2"
                 })
             ] : []),
+            Plot.ruleY([0], {
+                stroke: "#000",
+                strokeDasharray: "2 2"
+            }),
             Plot.lineY(data, {
                 x: xKey,
                 y: "value",
