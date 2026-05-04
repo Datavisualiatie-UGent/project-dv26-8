@@ -11,7 +11,7 @@ import * as d3 from "npm:d3";
 
 ```js
 const bikeSummary = await FileAttachment("data/fietspalen.json").json();
-const locaties = await FileAttachment("data/locaties.json").json();
+const locations = await FileAttachment("data/locations.json").json();
 const yearly = bikeSummary.yearlyTotals;
 const topLocations = bikeSummary.topLocations;
 ```
@@ -79,7 +79,7 @@ resize((width) => {
 
   const y = d3
     .scaleBand()
-    .domain(topLocations.map((d) => d.location).reverse())
+    .domain(topLocations.map((d) => d.name).reverse())
     .range([height - margin.bottom, margin.top])
     .padding(0.2);
 
@@ -107,7 +107,7 @@ resize((width) => {
     .data(topLocations)
     .join("rect")
     .attr("x", margin.left)
-    .attr("y", (d) => y(d.location))
+    .attr("y", (d) => y(d.name))
     .attr("width", (d) => x(d.total) - margin.left)
     .attr("height", y.bandwidth());
 

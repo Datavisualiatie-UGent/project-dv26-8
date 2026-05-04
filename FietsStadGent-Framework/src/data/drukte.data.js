@@ -1,7 +1,9 @@
+// src/data/drukte.data.js
 import * as d3 from "d3";
 import { readFile, writeFile } from "fs/promises";
 
-const filePath = new URL("./data_fietspalen.csv", import.meta.url);
+// Use the cleaned CSV produced by the preprocessor.
+const filePath = new URL("./fietspalen_clean.csv", import.meta.url);
 
 async function processData() {
   const text = await readFile(filePath, "utf-8");
@@ -9,13 +11,13 @@ async function processData() {
   return d3
     .dsvFormat(";")
     .parse(text, d => ({
-      locatie: d.locatie,
+      location: d.locatie,
       date: new Date(d.datum),
-      totaal: +d.totaal
+      total: +d.totaal
     }))
     .filter(d =>
-      d.locatie &&
-      Number.isFinite(d.totaal) &&
+      d.location &&
+      Number.isFinite(d.total) &&
       d.date instanceof Date &&
       !Number.isNaN(d.date.getTime())
     );
@@ -26,13 +28,13 @@ export async function monthlyPerLocation() {
 
   const rollup = d3.rollup(
     data,
-    v => d3.sum(v, d => d.totaal),
-    d => d.locatie,
+    v => d3.sum(v, d => d.total),
+    d => d.location,
     d => d3.timeMonth(d.date)
   );
 
-  return Array.from(rollup, ([locatie, months]) => ({
-    locatie,
+  return Array.from(rollup, ([location, months]) => ({
+    location,
     months: Array.from(months, ([month, value]) => [month, value])
   }));
 }
