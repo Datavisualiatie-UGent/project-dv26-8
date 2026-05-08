@@ -5,6 +5,8 @@ theme: dashboard
 
 ```js
 import { drukte } from "./components/drukte.js";
+import * as Inputs from "@observablehq/inputs";
+import { Generators } from "@observablehq/stdlib";
 
 // Load precomputed monthly averages
 const data = await FileAttachment("data/monthlyAvg.json").json();
@@ -27,11 +29,14 @@ const parsed = data
   .filter(d => d.month !== null && Number.isFinite(d.avg))
   .sort((a, b) => a.month - b.month);
 
+const useSeasonInput = Inputs.toggle({
+  label: "Seizoenen tonen",
+  value: false
+});
+const showSeason = Generators.input(useSeasonInput);
 ```
 
 ```js
-import * as Inputs from "@observablehq/inputs";
-import { Generators } from "@observablehq/stdlib";
 
 const data2 = await FileAttachment("data/monthlyPerLocation.json").json();
 
@@ -63,11 +68,12 @@ const selectedData = (location) => {
   </section>
 
   <section class="card card--chart">
-    ${resize((width) => drukte(parsed, "Gemiddelde fietsers", {width, height: 400}))}
+    ${useSeasonInput}
+    ${resize((width) => drukte(parsed, "Gemiddelde fietsers", showSeason, {width, height: 400}))}
   </section>
 
   <section class="card card--chart card--with-controls">
     ${locationInput}
-    ${resize((width) => drukte(selectedData(selectedLocation), "Aantal fietsers", {width, height: 400}))}
+    ${resize((width) => drukte(selectedData(selectedLocation), "Aantal fietsers", showSeason, {width, height: 400}))}
   </section>
 </div>
