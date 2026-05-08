@@ -24,6 +24,8 @@ export function drukte(data, yLabel, showSeason, {width, height} = {}) {
     width,
     height,
     marginTop: 30,
+    marginLeft: 50,
+    marginBottom: 25,
     color: showSeason
       ? {
           domain: ['lente', 'zomer', 'herfst', 'winter'],
