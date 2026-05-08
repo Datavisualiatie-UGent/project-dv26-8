@@ -157,12 +157,42 @@
     padding: 0.85rem;
 }
 
-.pole-selector-card {
-    max-width: 34rem;
-}
 
 .pole-input-label {
-  margin-right: 0.5rem
+    color: var(--text-label);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.pole-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 0.7rem;
+}
+
+.pole-toolbar-input {
+    flex: 1 1 22rem;
+    min-width: 14rem;
+}
+
+.pole-toolbar-input label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.55rem;
+}
+
+.pole-toolbar-input select {
+    min-width: 14rem;
+    max-width: 100%;
+}
+
+.pole-actions--toolbar {
+    margin-left: auto;
+    justify-content: flex-end;
 }
 
 .card--ranking,
@@ -639,6 +669,19 @@
 @media (max-width: 640px) {
     .overview-grid {
         grid-template-columns: 1fr;
+    }
+
+    .pole-toolbar {
+        align-items: stretch;
+    }
+
+    .pole-toolbar-input,
+    .pole-actions--toolbar {
+        flex: 1 1 100%;
+    }
+
+    .pole-actions--toolbar .button {
+        text-align: center;
     }
 
     .pole-info-panel {

@@ -73,7 +73,7 @@ const stationMonthlyData = monthlyDataForStation(station);
 const poleInput = Inputs.select(
   totals.map((d) => d.code),
   {
-    label: html`<label class="pole-input-label">Kies een telpaal</label>`,
+    label: html`<span class="pole-input-label">Verander van telpaal</span>`,
     value: code,
     format: (value) => {
       const item = locationByCode.get(value);
@@ -105,8 +105,18 @@ const stationContent = station
         <div class="page-hero-subtitle">Code ${station.code} - Fietstelpaal in Gent</div>
       </section>
 
-      <section class="card card--detail pole-selector-card">
-        ${poleInput}
+      <section class="card card--detail">
+        <div class="pole-toolbar">
+          <div class="pole-toolbar-input">
+            ${poleInput}
+          </div>
+          <div class="pole-actions pole-actions--toolbar">
+            <a class="button primary" href="/fietspalen">Terug naar kaart</a>
+            ${osmHref
+              ? html`<a class="button secondary" target="_blank" rel="noopener noreferrer" href="${osmHref}">Bekijk op OSM</a>`
+              : null}
+          </div>
+        </div>
       </section>
 
       <section class="pole-grid">
@@ -160,12 +170,6 @@ const stationContent = station
           : html`<p class="empty-note">Voor deze telpaal is geen maanddata gevonden.</p>`}
       </section>
 
-      <section class="pole-actions">
-        <a class="button primary" href="/fietspalen">Terug naar kaart</a>
-        ${osmHref
-          ? html`<a class="button secondary" target="_blank" rel="noopener noreferrer" href="${osmHref}">Bekijk op OSM</a>`
-          : null}
-      </section>
     </div>
     `
   : html`
