@@ -34,7 +34,8 @@ export function heatmap(rows, year, description, {width, height, colorDomain} = 
         color: {
             label: "Gemiddelde",
             scheme: "greens",
-            domain: colorDomain
+            domain: year !== undefined ? colorDomain : undefined
+            // domain: colorDomain
         },
         marks: [
            Plot.axisY({tickSize: 0}),
@@ -56,10 +57,10 @@ export function heatmap(rows, year, description, {width, height, colorDomain} = 
             Plot.text([{}], {
                 x: () => maxWeek + 1,
                 y: () => "do",
-                text: () => new Date(year, 0, 1).toLocaleDateString("nl-BE", { year: "numeric" }),
+                text: () => year !== undefined ? new Date(year, 0, 1).toLocaleDateString("nl-BE", { year: "numeric" }) : "",
                 textAnchor: "end",
                 dx: 30,
-            })
+            }),
         ]
     });
 }
