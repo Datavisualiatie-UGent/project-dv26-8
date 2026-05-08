@@ -3,3 +3,4 @@ data/*.csv
 
 hello-framework/
 data/__pycache__/
+.history/
