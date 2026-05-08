@@ -9,6 +9,7 @@ export default {
     {name: "Globaal", path: "/fietspalen"},
     {name: "Telpaal", path: "/paal"},
     {name: "Drukte", path: "/drukte"},
+    {name: "Vergelijking", path: "/vergelijking"},
   ],
 
   // Content to add to the head of the page, e.g. for a favicon:
