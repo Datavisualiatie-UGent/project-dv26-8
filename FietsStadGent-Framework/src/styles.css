@@ -129,9 +129,36 @@
     gap: 0.9rem;
 }
 
+.chart-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: start;
+    justify-content: space-between;
+    gap: 0.75rem;
+}
+
+.chart-header h3 {
+    margin: 0;
+    color: var(--text-main);
+    font-size: 1rem;
+}
+
+.chart-header p,
+.section-copy,
+.empty-note {
+    margin: 0.25rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.45;
+}
+
 .card--detail {
     border-color: rgba(15, 118, 110, 0.18);
     padding: 0.85rem;
+}
+
+.pole-selector-card {
+    max-width: 34rem;
 }
 
 .card--ranking,
@@ -207,7 +234,7 @@
 }
 
 .sort-chip,
-.pole-button,
+.button,
 .show-map-button,
 .pole-info-link {
     text-decoration: none;
@@ -328,6 +355,12 @@
     gap: 0.8rem;
 }
 
+.comparison-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+}
+
 .pole-list {
     display: grid;
     grid-template-columns: 6.2rem 1fr;
@@ -370,7 +403,7 @@
     gap: 0.6rem;
 }
 
-.pole-button {
+.button {
     display: inline-block;
     border-radius: 999px;
     padding: 0.52rem 0.9rem;
@@ -378,19 +411,19 @@
     font-size: 0.82rem;
 }
 
-.pole-button.primary {
+.button.primary {
     color: #fff !important;
     -webkit-text-fill-color: #fff;
     background: var(--accent);
 }
 
-.pole-button.secondary {
+.button.secondary {
     color: var(--text-main) !important;
     -webkit-text-fill-color: var(--text-main);
     background: var(--border-soft);
 }
 
-.pole-button:hover {
+.button:hover {
     transform: translateY(-1px);
 }
 
@@ -582,7 +615,9 @@
 }
 
 @media (max-width: 760px) {
-    .pole-grid {
+
+    .pole-grid,
+    .comparison-grid {
         grid-template-columns: 1fr;
     }
 
