@@ -44,7 +44,8 @@ export function drukte(data, yLabel, showSeason, {width, height} = {}) {
       labelAnchor: "right",
     },
     y: {
-      label: yLabel
+      label: yLabel,
+      grid: true,
     },
     marks: [
       Plot.barY(data, {
