@@ -69,6 +69,15 @@ const locationView = Inputs.select(
 );
 const location = Generators.input(locationView);
 
+const modeViewLocation = getModeView();
+const modeLocation = Generators.input(modeViewLocation);
+
+const yearCheckBoxLocation = getYearsView(allYears);
+const yearsLocation = Generators.input(yearCheckBoxLocation);
+
+const typeViewLocation = Inputs.radio(["absoluut", "relatief"], { value: "absoluut" });
+const typeLocation = Generators.input(typeViewLocation);
+
 ```
 
 <style>
@@ -147,7 +156,6 @@ const location = Generators.input(locationView);
     <h2>Trend</h2>
     <p>Fietsers aan fietspalen doorheen de tijd.</p>
   </section>
-
   <section class="trendlijn-card">
     <div class="controls-vertical">
       <div class="control-block">
@@ -175,21 +183,32 @@ const location = Generators.input(locationView);
       )
     )}
   </section>
-  
   <section class="trendlijn-card">
     <div class="controls-vertical">
       <div class="control-block">
         <div class="control-label">Locatie</div>
         ${locationView}
       </div>
+      <div class="control-block">
+        <div class="control-label">Trend</div>
+        ${modeViewLocation}
+      </div>
+      <div class="control-block">
+        <div class="control-label">Jaar</div>
+        ${yearCheckBoxLocation}
+      </div>
+      <div class="control-block">
+        <div class="control-label">Type</div>
+        ${typeViewLocation}
+      </div>
     </div>
   </section>
   <section class="trendlijn-card">
     ${resize((width) =>
       trendLijn(
-        selectData(mode, type, location, "perLocation")
-          .filter(d => years.includes(d.jaar)),
-        mode,
+        selectData(modeLocation, typeLocation, location, "perLocation")
+          .filter(d => yearsLocation.includes(d.jaar)),
+        modeLocation,
         type === "absoluut" ? "Aantal fietsers" : "Procentuele verandering t.o.v. 2020",
         { width, height: 400, isPerLocation: true }
       )
