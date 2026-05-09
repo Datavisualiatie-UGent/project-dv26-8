@@ -13,11 +13,13 @@ async function processData() {
   return d3
     .dsvFormat(";")
     .parse(text, d => ({
+      code: d.code,
       location: d.locatie,
       date: parseMonth(d.month),
       total: +d.totaal
     }))
     .filter(d =>
+      d.code &&
       d.location &&
       Number.isFinite(d.total) &&
       d.date instanceof Date &&
@@ -31,12 +33,13 @@ export async function monthlyPerLocation() {
   const rollup = d3.rollup(
     data,
     v => v[0].total,
-    d => d.location,
+    d => d.code,
     d => d3.timeMonth(d.date)
   );
 
-  return Array.from(rollup, ([location, months]) => ({
-    location,
+  return Array.from(rollup, ([code, months]) => ({
+    code,
+    location: data.find(d => d.code === code)?.location ?? code,
     months: Array.from(months, ([month, value]) => [month, value])
   }));
 }
