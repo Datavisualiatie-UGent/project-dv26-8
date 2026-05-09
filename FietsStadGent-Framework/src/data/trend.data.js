@@ -1,16 +1,16 @@
 import * as d3 from "d3";
 import { readFile } from "fs/promises";
 
-const filePath = new URL("./data_fietspalen.csv", import.meta.url);
+const filePath = new URL("./agg_hour.csv", import.meta.url);
 
 
-async function processData() {
+async function processData(key) {
     const text = await readFile(filePath, "utf-8");
 
     return d3
         .dsvFormat(";")
         .parse(text, d => {
-            const t = new Date(`${d.datum} ${d.uur5minuten}`);
+            const t = new Date(d.hour);
 
             return {
                 locatie: d.locatie,
@@ -138,7 +138,7 @@ function calculatePctChange(rollup, key) {
 
 
 async function buildComplete(key) {
-    const data = await processData();
+    const data = await processData(key);
 
     // rollups
     const rollupPerLocation = makeRollup(data, key, true);
