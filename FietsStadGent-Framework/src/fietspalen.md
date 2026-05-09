@@ -6,12 +6,38 @@ theme: dashboard
 ```js
 import L from "npm:leaflet";
 import {html} from "npm:htl";
+import * as Inputs from "@observablehq/inputs";
+import {Generators} from "@observablehq/stdlib";
+import {drukte} from "./components/drukte.js";
 ```
 
 ```js
 const gentBoundaryGeo = await FileAttachment("data/OSMB-71785c830e71f3607aaeffc6b51538d7206c36a0.geojson").json();
 
 const locations = await FileAttachment("data/locations.json").json();
+const monthlyAverage = await FileAttachment("data/monthlyAvg.json").json();
+
+const parseMonth = (value) => {
+  if (value == null) return null;
+  const raw = String(value).trim();
+  if (!raw) return null;
+  const month = new Date(raw);
+  return Number.isNaN(month.getTime()) ? null : month;
+};
+
+const parsedMonthlyAverage = monthlyAverage
+  .map((d) => ({
+    ...d,
+    month: parseMonth(d.month)
+  }))
+  .filter((d) => d.month !== null && Number.isFinite(d.avg))
+  .sort((a, b) => a.month - b.month);
+
+const useSeasonInput = Inputs.toggle({
+  label: "Seizoenen tonen",
+  value: false
+});
+const showSeason = Generators.input(useSeasonInput);
 
 if (!globalThis.__fietsMapBridge) {
   globalThis.__fietsMapBridge = {focusPole: null, resetView: null, selectedCode: null};
@@ -386,6 +412,15 @@ const mapCard = resize((width) => {
     </div>
     <p class="map-caption map-note">Klik op een pin om de gegevens van die telpaal in het infopaneel te zien.</p>
   </div>
+
+  <section class="card card--chart card--with-controls">
+    <div class="chart-header">
+      <div>
+        <h3>Maandelijkse drukte</h3>
+        <p>Gemiddeld aantal fietsers per maand over alle telpalen.</p>
+      </div>  
+    </div>
+    ${useSeasonInput}
+    ${resize((width) => drukte(parsedMonthlyAverage, "Gemiddelde fietsers", showSeason, {width, height: 400}))}
+  </section>
 </div>
-
-
