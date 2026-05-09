@@ -1,12 +1,11 @@
+// trendLijn.js
 import * as Plot from "npm:@observablehq/plot";
 import * as d3 from "d3";
-import * as Inputs from "@observablehq/inputs";
 
 import { yearColor } from "./trendlijn_helper.js";
 
 // Inspiration: https://fil.github.io/pangea/plot/multiple-line-chart-hover
 export function trendLijn(data, mode, yLabel, { width, height, isPct } = {}) {
-    console.log(data);
     const xLabel =
         mode === "month" ? "Maand" :
             mode === "day" ? "Dag" :

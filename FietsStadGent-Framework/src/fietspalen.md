@@ -1,4 +1,5 @@
 ---
+title: Globaal
 toc: false
 theme: dashboard
 ---
@@ -10,6 +11,8 @@ import * as Inputs from "@observablehq/inputs";
 import {Generators} from "@observablehq/stdlib";
 import {drukte} from "./components/drukte.js";
 import {heatmap} from "./components/heatmap.js";
+import {trendLijn} from "./components/trendlijn.js";
+import {getModeView, getYearsView} from "./components/trendlijn_helper.js";
 import * as d3 from "npm:d3";
 ```
 
@@ -20,6 +23,27 @@ const locations = await FileAttachment("data/locations.json").json();
 const monthlyAverage = await FileAttachment("data/monthlyAvg.json").json();
 const dailyAverage = await FileAttachment("data/dailyAvg.json").json();
 
+// Trendline data
+const trendDict = {
+  month: await FileAttachment("data/monthly.json").json(),
+  day: await FileAttachment("data/weekly.json").json(),
+  hour: await FileAttachment("data/hourly.json").json()
+};
+
+const allYears = Array.from(new Set(
+  Object.values(trendDict).flatMap(d =>
+    d.absoluut.global.data.map(v => v.jaar)
+  )
+));
+
+function selectGlobalData(mode, type) {
+  return trendDict[mode][type].global.data.sort((a, b) =>
+    a.jaar - b.jaar || a[mode] - b[mode]
+  );
+}
+```
+
+```js
 const parseMonth = (value) => {
   if (value == null) return null;
   const raw = String(value).trim();
@@ -367,6 +391,18 @@ const mapCard = resize((width) => {
 });
 ```
 
+```js
+// Trendline controls for the global chart
+const trendModeView = getModeView();
+const trendMode = Generators.input(trendModeView);
+
+const trendYearCheckBox = getYearsView(allYears);
+const trendYears = Generators.input(trendYearCheckBox);
+
+const trendTypeView = Inputs.radio(["absoluut", "relatief"], { value: "absoluut" });
+const trendType = Generators.input(trendTypeView);
+```
+
 <div class="page">
   <section class="page-hero">
     <h2>Fietstelpalen in Gent</h2>
@@ -456,6 +492,7 @@ const mapCard = resize((width) => {
       })()}</p>
     </article>
   </section>
+
   <div>
     <div class="card card--map">
       ${mapCard}
@@ -483,5 +520,37 @@ const mapCard = resize((width) => {
     </div>
     ${heatmapYearInput}
     ${selectedHeatmapYears.map((year) => heatmap(selectedHeatmapData(year), year !== "Alle jaren" ? year : undefined, "gemiddeld aantal fietsers", {width, height: 200, colorDomain: heatmapValueDomain}))}
+  </section>
+
+  <section class="card card--chart card--with-controls">
+    <div class="chart-header">
+      <div>
+        <h3>Trend — alle telpalen</h3>
+        <p>Fietsers aan alle telpalen doorheen de tijd.</p>
+      </div>
+    </div>
+    <div class="controls-vertical">
+      <div class="control-block">
+        <div class="control-label">Trend</div>
+        ${trendModeView}
+      </div>
+      <div class="control-block">
+        <div class="control-label">Jaar</div>
+        ${trendYearCheckBox}
+      </div>
+      <div class="control-block">
+        <div class="control-label">Type</div>
+        ${trendTypeView}
+      </div>
+    </div>
+    ${resize((width) =>
+      trendLijn(
+        selectGlobalData(trendMode, trendType)
+          .filter(d => trendYears.map(Number).includes(Number(d.jaar))),
+        trendMode,
+        trendType === "absoluut" ? "Aantal fietsers" : "Procentuele verandering t.o.v. 2020",
+        { width, height: 400, isPct: trendType === "relatief" }
+      )
+    )}
   </section>
 </div>
