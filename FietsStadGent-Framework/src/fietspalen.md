@@ -6,12 +6,88 @@ theme: dashboard
 ```js
 import L from "npm:leaflet";
 import {html} from "npm:htl";
+import * as Inputs from "@observablehq/inputs";
+import {Generators} from "@observablehq/stdlib";
+import {drukte} from "./components/drukte.js";
+import {heatmap} from "./components/heatmap.js";
+import * as d3 from "npm:d3";
 ```
 
 ```js
 const gentBoundaryGeo = await FileAttachment("data/OSMB-71785c830e71f3607aaeffc6b51538d7206c36a0.geojson").json();
 
 const locations = await FileAttachment("data/locations.json").json();
+const monthlyAverage = await FileAttachment("data/monthlyAvg.json").json();
+const dailyAverage = await FileAttachment("data/dailyAvg.json").json();
+
+const parseMonth = (value) => {
+  if (value == null) return null;
+  const raw = String(value).trim();
+  if (!raw) return null;
+  const month = new Date(raw);
+  return Number.isNaN(month.getTime()) ? null : month;
+};
+
+const parsedMonthlyAverage = monthlyAverage
+  .map((d) => ({
+    ...d,
+    month: parseMonth(d.month)
+  }))
+  .filter((d) => d.month !== null && Number.isFinite(d.avg))
+  .sort((a, b) => a.month - b.month);
+
+function processBikeData(day, value) {
+  const date = new Date(day);
+  const start = d3.timeYear(date);
+  let week = d3.timeWeek.count(start, date);
+  const weekday = date.toLocaleString("nl-BE", {weekday: "short"});
+  const month = date.toLocaleString("nl-BE", {month: "short"});
+
+  if (weekday === "zo") week -= 1;
+
+  return {
+    day: date,
+    value,
+    weekday,
+    month,
+    week
+  };
+}
+
+const dailyAverageAllYears = d3.rollup(
+  dailyAverage,
+  (values) => d3.mean(values, (d) => d.avg),
+  (d) => {
+    const date = new Date(d.day);
+    return `${date.getMonth()}-${date.getDate()}`;
+  }
+);
+
+const heatmapData = dailyAverage.map((d) => processBikeData(d.day, d.avg));
+const heatmapDataAllYears = Array.from(dailyAverageAllYears, ([day, value]) => {
+  const [month, date] = day.split("-").map(Number);
+  return processBikeData(new Date(2024, month, date), value);
+});
+
+const heatmapYears = [...new Set(heatmapData.map((d) => d.day.getFullYear()))].sort().concat("Alle jaren");
+const heatmapYearInput = Inputs.checkbox(heatmapYears, {
+  label: "Selecteer jaren",
+  value: heatmapYears.includes(2025) ? [2025] : heatmapYears.slice(0, 1),
+  format: (value) => value.toString()
+});
+const selectedHeatmapYears = Generators.input(heatmapYearInput);
+const heatmapValueDomain = d3.extent(heatmapData, (d) => d.value);
+
+const selectedHeatmapData = (year) => {
+  if (year === "Alle jaren") return heatmapDataAllYears;
+  return heatmapData.filter((d) => d.day.getFullYear() === year);
+};
+
+const useSeasonInput = Inputs.toggle({
+  label: "Seizoenen tonen",
+  value: false
+});
+const showSeason = Generators.input(useSeasonInput);
 
 if (!globalThis.__fietsMapBridge) {
   globalThis.__fietsMapBridge = {focusPole: null, resetView: null, selectedCode: null};
@@ -386,6 +462,26 @@ const mapCard = resize((width) => {
     </div>
     <p class="map-caption map-note">Klik op een pin om de gegevens van die telpaal in het infopaneel te zien.</p>
   </div>
+
+  <section class="card card--chart card--with-controls">
+    <div class="chart-header">
+      <div>
+        <h3>Maandelijkse drukte</h3>
+        <p>Gemiddeld aantal fietsers per maand over alle telpalen.</p>
+      </div>  
+    </div>
+    ${useSeasonInput}
+    ${resize((width) => drukte(parsedMonthlyAverage, "Gemiddelde fietsers", showSeason, {width, height: 400}))}
+  </section>
+
+  <section class="card card--chart card--with-controls">
+    <div class="chart-header">
+      <div>
+        <h3>Dagelijkse fietsdrukte</h3>
+        <p>Gemiddeld aantal fietsers per dag over alle telpalen.</p>
+      </div>
+    </div>
+    ${heatmapYearInput}
+    ${selectedHeatmapYears.map((year) => heatmap(selectedHeatmapData(year), year !== "Alle jaren" ? year : undefined, "gemiddeld aantal fietsers", {width, height: 200, colorDomain: heatmapValueDomain}))}
+  </section>
 </div>
-
-

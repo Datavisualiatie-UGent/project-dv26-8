@@ -5,21 +5,21 @@ theme: dashboard
 
 <div class="hero">
   <h1>FietsStadGent</h1>
-  <h2>Is Gent echt een fietshoofdstad? Start hier met jullie visualisatieproject.</h2>
+  <h2>Is Gent echt een fietshoofdstad?</h2>
 </div>
 
 <div class="grid grid-cols-3 nav-grid">
-  <a class="card nav-card" href="/visualisaties-plot">
-    <h3>Observable Plot</h3>
-    <p>Snel interactieve grafieken op basis van declaratieve syntax.</p>
+  <a class="card nav-card" href="/fietspalen">
+    <h3>Globaal</h3>
+    <p>Globale data.</p>
   </a>
-  <a class="card nav-card" href="/visualisaties-d3">
-    <h3>D3.js</h3>
-    <p>Laag-niveau controle voor maatwerk visualisaties en interactie.</p>
+  <a class="card nav-card" href="/paal">
+    <h3>Telpaal</h3>
+    <p>Data over een specifieke paal.</p>
   </a>
-  <a class="card nav-card" href="/visualisaties-vega-lite">
-    <h3>Vega-Lite</h3>
-    <p>Grammar of graphics met compacte specs en sterke defaults.</p>
+  <a class="card nav-card" href="/vergelijking">
+    <h3>Vergelijk telpalen</h3>
+    <p>Telpalen vergelijken met elkaar.</p>
   </a>
 </div>
 

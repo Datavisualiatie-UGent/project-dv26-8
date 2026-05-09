@@ -3,5 +3,5 @@
 node_modules/
 yarn-error.log
 
-src/data/*.csv
 .history
+src/data/fietspalen_clean.csv
