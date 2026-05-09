@@ -7,10 +7,14 @@ theme: dashboard
 ```js
 import {html} from "npm:htl";
 import * as Inputs from "@observablehq/inputs";
+import {Generators} from "@observablehq/stdlib";
 import {drukte} from "./components/drukte.js";
+import {heatmap} from "./components/heatmap.js";
+import * as d3 from "npm:d3";
 
 const locations = await FileAttachment("data/locations.json").json();
 const monthlyPerLocation = await FileAttachment("data/monthlyPerLocation.json").json();
+const dailyPerLocation = await FileAttachment("data/dailyPerLocation.json").json();
 
 const params = new URLSearchParams(location.search);
 const requestedCode = params.get("code");
@@ -58,6 +62,13 @@ const monthlyByNormalizedLocation = new Map(
   monthlyPerLocation.map((d) => [normalizeLocation(d.location), d])
 );
 
+const dailyByNormalizedLocation = new Map(
+  dailyPerLocation.map((d) => [normalizeLocation(d.location), d])
+);
+const dailyByCode = new Map(
+  dailyPerLocation.map((d) => [d.code, d])
+);
+
 function monthlyDataForStation(station) {
   if (!station) return [];
   const match = monthlyByNormalizedLocation.get(normalizeLocation(station.name));
@@ -71,6 +82,62 @@ function monthlyDataForStation(station) {
 }
 
 const stationMonthlyData = monthlyDataForStation(station);
+
+function processBikeData(day, value) {
+  const date = new Date(day);
+  const start = d3.timeYear(date);
+  let week = d3.timeWeek.count(start, date);
+  const weekday = date.toLocaleString("nl-BE", {weekday: "short"});
+  const month = date.toLocaleString("nl-BE", {month: "short"});
+
+  if (weekday === "zo") week -= 1;
+
+  return {
+    day: date,
+    value,
+    weekday,
+    month,
+    week
+  };
+}
+
+function dailyDataForStation(station) {
+  if (!station) return [];
+  const match = dailyByCode.get(station.code) ?? dailyByNormalizedLocation.get(normalizeLocation(station.name));
+  return match?.days
+    .map(([day, value]) => processBikeData(day, value))
+    .filter((d) => !Number.isNaN(d.day.getTime()) && Number.isFinite(d.value))
+    .sort((a, b) => a.day - b.day) ?? [];
+}
+
+function dailyAllYearsData(data) {
+  const rolled = d3.rollup(
+    data,
+    (values) => d3.mean(values, (d) => d.value),
+    (d) => `${d.day.getMonth()}-${d.day.getDate()}`
+  );
+
+  return Array.from(rolled, ([day, value]) => {
+    const [month, date] = day.split("-").map(Number);
+    return processBikeData(new Date(2024, month, date), value);
+  });
+}
+
+const stationDailyData = dailyDataForStation(station);
+const stationDailyAllYearsData = dailyAllYearsData(stationDailyData);
+const stationHeatmapYears = [...new Set(stationDailyData.map((d) => d.day.getFullYear()))].sort().concat("Alle jaren");
+const stationHeatmapYearInput = Inputs.checkbox(stationHeatmapYears, {
+  label: "Selecteer jaren",
+  value: stationHeatmapYears.includes(2025) ? [2025] : stationHeatmapYears.slice(0, 1),
+  format: (value) => value.toString()
+});
+const selectedStationHeatmapYears = Generators.input(stationHeatmapYearInput);
+const stationHeatmapValueDomain = d3.extent(stationDailyData, (d) => d.value);
+
+const selectedStationHeatmapData = (year) => {
+  if (year === "Alle jaren") return stationDailyAllYearsData;
+  return stationDailyData.filter((d) => d.day.getFullYear() === year);
+};
 
 const poleInput = Inputs.select(
   totals.map((d) => d.code),
@@ -203,5 +270,19 @@ const stationContent = station
   <div class="page">
     ${stationContent}
     ${station ? resize((width) => stationMonthlyChart(stationMonthlyData, {width, height: 400})) : null}
+    ${station ? html`
+      <section class="card card--chart card--with-controls">
+        <div class="chart-header">
+          <div>
+            <h3>Dagelijkse fietsdrukte</h3>
+            <p>Gemeten fietsers per dag voor deze telpaal.</p>
+          </div>
+        </div>
+        ${stationDailyData.length ? stationHeatmapYearInput : null}
+        ${stationDailyData.length
+          ? selectedStationHeatmapYears.map((year) => heatmap(selectedStationHeatmapData(year), year !== "Alle jaren" ? year : undefined, "aantal fietsers", {width, height: 200, colorDomain: stationHeatmapValueDomain}))
+          : html`<p class="empty-note">Voor deze telpaal is geen dagdata gevonden.</p>`}
+      </section>
+    ` : null}
   </div>
 </div>

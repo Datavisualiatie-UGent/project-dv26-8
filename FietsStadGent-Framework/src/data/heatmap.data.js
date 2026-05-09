@@ -9,12 +9,14 @@ async function processData() {
   return d3
     .dsvFormat(";")
     .parse(text, d => ({
+      code: d.code,
       location: d.locatie,
       date: new Date(d.datum),
       totaal: Number(String(d.totaal).replace(",", "."))
     }))
     .filter(
       d =>
+        d.code &&
         d.location &&
         d.date instanceof Date &&
         !Number.isNaN(d.date.getTime()) &&
@@ -28,14 +30,18 @@ export async function dailyPerLocation() {
   const rollup = d3.rollup(
     data,
     v => v[0].totaal,
+    d => d.code,
     d => d.location,
     d => d3.timeDay(d.date)
   );
 
-  return Array.from(rollup, ([location, days]) => ({
-    location,
-    days: Array.from(days, ([day, total]) => [day, total])
-  }));
+  return Array.from(rollup, ([code, locations]) =>
+    Array.from(locations, ([location, days]) => ({
+      code,
+      location,
+      days: Array.from(days, ([day, total]) => [day, total])
+    }))
+  ).flat();
 }
 
 export async function dailyAvg() {
