@@ -1,7 +1,7 @@
 import * as d3 from "d3";
 import { readFile } from "fs/promises";
 
-const filePath = new URL("./data_fietspalen.csv", import.meta.url);
+const filePath = new URL("./agg_day.csv", import.meta.url);
 
 async function processData() {
   const text = await readFile(filePath, "utf-8");
@@ -27,7 +27,7 @@ export async function dailyPerLocation() {
 
   const rollup = d3.rollup(
     data,
-    values => d3.sum(values, d => d.totaal),
+    v => v[0].totaal,
     d => d.location,
     d => d3.timeDay(d.date)
   );
