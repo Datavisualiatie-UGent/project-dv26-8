@@ -3,7 +3,9 @@ import * as d3 from "d3";
 import { readFile, writeFile } from "fs/promises";
 
 // Use the cleaned CSV produced by the preprocessor.
-const filePath = new URL("./fietspalen_clean.csv", import.meta.url);
+const filePath = new URL("./agg_month.csv", import.meta.url);
+
+const parseMonth = d3.timeParse("%Y-%m");
 
 async function processData() {
   const text = await readFile(filePath, "utf-8");
@@ -12,7 +14,7 @@ async function processData() {
     .dsvFormat(";")
     .parse(text, d => ({
       location: d.locatie,
-      date: new Date(d.datum),
+      date: parseMonth(d.month),
       total: +d.totaal
     }))
     .filter(d =>
@@ -28,7 +30,7 @@ export async function monthlyPerLocation() {
 
   const rollup = d3.rollup(
     data,
-    v => d3.sum(v, d => d.total),
+    v => v[0].total,
     d => d.location,
     d => d3.timeMonth(d.date)
   );

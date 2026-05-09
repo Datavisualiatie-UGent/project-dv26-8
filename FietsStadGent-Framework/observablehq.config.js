@@ -8,22 +8,7 @@ export default {
     {name: "Home", path: "/"},
     {name: "Globaal", path: "/fietspalen"},
     {name: "Telpaal", path: "/paal"},
-    {name: "Drukte", path: "/drukte"},
-    {
-      name: "Framework Starters",
-      pages: [
-        {name: "Observable Plot", path: "/visualisaties-plot"},
-        {name: "D3.js", path: "/visualisaties-d3"},
-        {name: "Vega-Lite", path: "/visualisaties-vega-lite"}
-      ]
-    },
-    {
-      name: "Examples",
-      pages: [
-        {name: "Dashboard", path: "/example-dashboard"},
-        {name: "Report", path: "/example-report"},
-      ]
-    }
+    {name: "Vergelijking", path: "/vergelijking"},
   ],
 
   // Content to add to the head of the page, e.g. for a favicon:
