@@ -160,19 +160,6 @@ const stationContent = station
         </div>
       </section>
 
-      <section class="card card--chart card--with-controls">
-        <div class="chart-header">
-          <div>
-            <h3>Maandelijkse drukte</h3>
-            <p>Gemeten fietsers per maand voor deze telpaal.</p>
-          </div>
-        </div>
-        ${useSeasonInput}
-        ${stationMonthlyData.length
-          ? resize((width) => drukte(stationMonthlyData, "Aantal fietsers", showSeason, {width, height: 400}))
-          : html`<p class="empty-note">Voor deze telpaal is geen maanddata gevonden.</p>`}
-      </section>
-
     </div>
     `
   : html`
@@ -191,5 +178,17 @@ const stationContent = station
 <div class="page-shell">
   <div class="page">
     ${stationContent}
+    <section class="card card--chart card--with-controls">
+      <div class="chart-header">
+        <div>
+          <h3>Maandelijkse drukte</h3>
+          <p>Gemeten fietsers per maand voor deze telpaal.</p>
+        </div>
+      </div>
+      ${useSeasonInput}
+      ${stationMonthlyData.length
+        ? resize((width) => drukte(stationMonthlyData, "Aantal fietsers", showSeason, {width, height: 400}))
+        : html`<p class="empty-note">Voor deze telpaal is geen maanddata gevonden.</p>`}
+    </section>
   </div>
 </div>
