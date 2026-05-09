@@ -2,59 +2,24 @@ import * as Plot from "npm:@observablehq/plot";
 import * as d3 from "d3";
 import * as Inputs from "@observablehq/inputs";
 
-
-export function getYearsView(data) {    
-    return Inputs.checkbox(
-        data,
-        {
-            unique: true,
-            sort: true
-        }
-    );
-}
-
-export function getModeView() {
-    return Inputs.select(
-        ["month", "weekday", "hourly"],
-        {
-            value: "month",
-            format: d => ({
-                month: "Maandelijks",
-                weekday: "Weekdag",
-                hourly: "Uurlijks"
-            })[d]
-        }
-    );
-}
+import { yearColor } from "./trendlijn_helper.js";
 
 // Inspiration: https://fil.github.io/pangea/plot/multiple-line-chart-hover
-export function trendLijn(data, type, yLabel, { width, height, isPct = false  } = {}) {
+export function trendLijn(data, mode, yLabel, { width, height, isPct } = {}) {
+    console.log(data);
     const xLabel =
-        type === "month" ? "Maand" :
-            type === "weekday" ? "Dag" :
+        mode === "month" ? "Maand" :
+            mode === "day" ? "Dag" :
                 "Uur";
 
     const xKey =
-        type === "month" ? "month" :
-            type === "weekday" ? "day" :
+        mode === "month" ? "month" :
+            mode === "day" ? "day" :
                 "hour";
 
     const months = ["Jan", "Feb", "Maa", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"];
     const days = ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"];
 
-
-    const yearColor = new Map([
-        [2017, "#7f7f7f"],
-        [2018, "#bcbd22"],
-        [2019, "#e377c2"],
-        [2020, "#17becf"],
-        [2021, "#1f77b4"],
-        [2022, "#ff7f0e"],
-        [2023, "#2ca02c"],
-        [2024, "#d62728"],
-        [2025, "#9467bd"],
-        [2026, "#8c564b"]
-    ]);
 
     return Plot.plot({
         width,
@@ -67,13 +32,13 @@ export function trendLijn(data, type, yLabel, { width, height, isPct = false  } 
         },
         x: {
             domain:
-                type === "month" ? d3.range(12) :
-                    type === "weekday" ? d3.range(7) :
+                mode === "month" ? d3.range(12) :
+                    mode === "day" ? d3.range(7) :
                         d3.range(24),
 
             tickFormat:
-                type === "month" ? d => months[d]
-                    : type === "weekday" ? d => days[d]
+                mode === "month" ? d => months[d]
+                    : mode === "day" ? d => days[d]
                         : d => `${d}:00`,
             label: xLabel,
         },
@@ -86,8 +51,8 @@ export function trendLijn(data, type, yLabel, { width, height, isPct = false  } 
                 : undefined,
 
             tickFormat: isPct
-                ? d => `${d}%`
-                : d => d
+                ? d => `${d3.format(".0f")(d)}%`
+                : d3.format(",")
         },
         marks: [
             ...(yLabel.includes("Index") ? [
@@ -116,7 +81,21 @@ export function trendLijn(data, type, yLabel, { width, height, isPct = false  } 
                         return next(index, scales, values, dimensions, context);
                     }
                 }
-            })
+            }),
+            Plot.text(
+                Array.from(yearColor, ([jaar, color]) => ({
+                    jaar,
+                    color
+                })),
+                {
+                    x: width - 70,
+                    y: (_, i) => 20 + i * 18,
+                    text: d => d.jaar,
+                    fill: d => d.color,
+                    fontWeight: "bold",
+                    frameAnchor: "top-right"
+                }
+            )
         ]
     });
 }

@@ -9,17 +9,16 @@ theme: dashboard
 import * as d3 from "d3";
 import * as Inputs from "@observablehq/inputs";
 import { Generators } from "@observablehq/stdlib";
-import { getModeView, getYearsView, trendLijn } from "./components/trendlijn.js";
+import { trendLijn } from "./components/trendlijn.js";
+import { getModeView, getYearsView } from "./components/trendlijn_helper.js";
 
 // Data
 const dict = {
   month: await FileAttachment("data/monthly.json").json(),
-  weekday: await FileAttachment("data/weekly.json").json(),
-  hourly: await FileAttachment("data/hourly.json").json()
+  day: await FileAttachment("data/weekly.json").json(),
+  hour: await FileAttachment("data/hourly.json").json()
 };
 
-
-console.log(dict["hourly"]);
 
 const allYears = Array.from(new Set(
   Object.values(dict).flatMap(d =>
@@ -28,27 +27,22 @@ const allYears = Array.from(new Set(
 ));
 
 // TODO: add a clear checkbox button, add year label to line color + remove duplicates
-
 // Global data
-function selectData(mode, variant, loc = null, type = "global") {
-  const dataset = dict[mode][variant];
+function selectData(mode, type, loc = null, kind = "global") {
+
+  const dataset = dict[mode][type];
 
   let data;
 
-  if (type === "global") {
+  if (kind === "global") {
     data = dataset.global.data;
   } else {
     const found = dataset.perLocation.find(d => d.locatie === loc);
     data = found ? found.data : [];
   }
 
-  const key =
-    mode === "month" ? "month" :
-    mode === "weekday" ? "day" :
-    "hour";
-
   return data.sort((a, b) =>
-    a.jaar - b.jaar || a[key] - b[key]
+    a.jaar - b.jaar || a[mode] - b[mode]
   );
 }
 
@@ -176,10 +170,10 @@ const typeLocation = Generators.input(typeViewLocation);
     ${resize((width) =>
       trendLijn(
         selectData(mode, type, null, "global")
-          .filter(d => years.includes(d.jaar)),
+          .filter(d => years.map(Number).includes(Number(d.jaar))),
         mode,
         type === "absoluut" ? "Aantal fietsers" : "Procentuele verandering t.o.v. 2020",
-        { width, height: 400 }
+        { width, height: 400, isPct: type === "relatief" }
       )
     )}
   </section>
@@ -207,10 +201,10 @@ const typeLocation = Generators.input(typeViewLocation);
     ${resize((width) =>
       trendLijn(
         selectData(modeLocation, typeLocation, location, "perLocation")
-          .filter(d => yearsLocation.includes(d.jaar)),
+          .filter(d => yearsLocation.map(Number).includes(Number(d.jaar))),
         modeLocation,
-        type === "absoluut" ? "Aantal fietsers" : "Procentuele verandering t.o.v. 2020",
-        { width, height: 400, isPerLocation: true }
+        typeLocation === "absoluut" ? "Aantal fietsers" : "Procentuele verandering t.o.v. 2020",
+        { width, height: 400, isPct: typeLocation === "relatief" }
       )
     )}
   </section>

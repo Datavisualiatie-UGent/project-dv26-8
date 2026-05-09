@@ -55,19 +55,18 @@ function buildNormal(rollup, key, isGlobal = false) {
             locatie: "global",
             data: Array.from(rollup, ([jaar, groups]) =>
                 Array.from(groups, ([k, value]) => ({
-                    jaar,
+                    jaar: Number(jaar),
                     [key]: k,
                     value
                 }))
             ).flat()
         };
     }
-
     return Array.from(rollup, ([locatie, years]) => ({
         locatie,
         data: Array.from(years, ([jaar, groups]) =>
             Array.from(groups, ([k, value]) => ({
-                jaar,
+                jaar: Number(jaar), 
                 [key]: k,
                 value
             }))
