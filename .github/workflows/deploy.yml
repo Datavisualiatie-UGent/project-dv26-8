@@ -11,6 +11,10 @@ on:
 jobs:
     deploy:
         runs-on: ubuntu-latest
+
+        defaults:
+            run:
+                working-directory: FietsStatGent-Framework
         permissions:
             contents: read
             pages: write
@@ -24,14 +28,13 @@ jobs:
               with:
                   node-version: 22
                   cache: npm
-            - working-directory: FietsStatGent-Framework
-              run: npm ci
-            - working-directory: FietsStatGent-Framework
-              run: npm run build
+                  cache-dependency-path: FietsStatGent-Framework/package-lock.json
+            - run: npm ci
+            - run: npm run build
             - uses: actions/configure-pages@v4
             - uses: actions/upload-pages-artifact@v3
               with:
-                  path: dist
+                  path: FietsStatGent-Framework/dist
             - name: Deploy
               id: deployment
               uses: actions/deploy-pages@v4
