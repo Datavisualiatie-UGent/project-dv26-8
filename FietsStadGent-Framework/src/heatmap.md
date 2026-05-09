@@ -90,7 +90,7 @@ const yearInput2 = Inputs.checkbox(years, {
   format: x => x.toString()
 });
 const selectedYears2 = Generators.input(yearInput2);
-const valueDomain2 = d3.extent(data2.flatMap(d => d.data), d => d.value);
+const valueDomain2 = data2.map(d => ({location: d.location, value: d3.extent(d.data, d => d.value)}));
 
 const selectedData2 = (location, year) => {
   if (year === "Alle jaren") return dataAllYears2.filter(d => d.location === location).map(d => d.data);
@@ -114,6 +114,6 @@ const selectedData2 = (location, year) => {
   <section class="card">
     ${locationInput}
     ${yearInput2}
-    ${selectedYears2.map(year => heatmap(selectedData2(selectedLocation, year), year !== "Alle jaren" ? year : undefined, "aantal fietsers", {width, height: 200, colorDomain: valueDomain2}))}
+    ${selectedYears2.map(year => heatmap(selectedData2(selectedLocation, year), year !== "Alle jaren" ? year : undefined, "aantal fietsers", {width, height: 200, colorDomain: valueDomain2.find(d => d.location === selectedLocation).value}))}
   </section>
 </div>
