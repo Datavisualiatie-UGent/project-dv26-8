@@ -14,7 +14,7 @@ jobs:
 
         defaults:
             run:
-                working-directory: FietsStatGent-Framework
+                working-directory: FietsStadGent-Framework
         permissions:
             contents: read
             pages: write
@@ -28,13 +28,13 @@ jobs:
               with:
                   node-version: 22
                   cache: npm
-                  cache-dependency-path: FietsStatGent-Framework/package-lock.json
+                  cache-dependency-path: FietsStadGent-Framework/package-lock.json
             - run: npm ci
             - run: npm run build
             - uses: actions/configure-pages@v4
             - uses: actions/upload-pages-artifact@v3
               with:
-                  path: FietsStatGent-Framework/dist
+                  path: FietsStadGent-Framework/dist
             - name: Deploy
               id: deployment
               uses: actions/deploy-pages@v4
