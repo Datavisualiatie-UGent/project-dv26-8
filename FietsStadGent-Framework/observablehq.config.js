@@ -8,6 +8,7 @@ export default {
     {name: "Home", path: "/"},
     {name: "Globaal", path: "/fietspalen"},
     {name: "Telpaal", path: "/paal"},
+    {name: "Heatmap", path: "/heatmap"},
     {name: "Vergelijking", path: "/vergelijking"},
   ],
 
