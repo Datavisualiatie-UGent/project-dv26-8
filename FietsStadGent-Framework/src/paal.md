@@ -7,7 +7,6 @@ theme: dashboard
 ```js
 import {html} from "npm:htl";
 import * as Inputs from "@observablehq/inputs";
-import {Generators} from "@observablehq/stdlib";
 import {drukte} from "./components/drukte.js";
 
 const locations = await FileAttachment("data/locations.json").json();
@@ -92,13 +91,38 @@ poleInput.addEventListener("input", () => {
   }
 });
 
-const selectedPoleCode = Generators.input(poleInput);
+function stationMonthlyChart(data, {width, height = 400} = {}) {
+  const card = document.createElement("div");
+  card.className = "card card--chart card--with-controls";
 
-const useSeasonInput = Inputs.toggle({
-  label: "Seizoenen tonen",
-  value: false
-});
-const showSeason = Generators.input(useSeasonInput);
+  const header = html`<div class="chart-header">
+    <div>
+      <h3>Maandelijkse drukte</h3>
+      <p>Gemeten fietsers per maand voor deze telpaal.</p>
+    </div>
+  </div>`;
+
+  const seasonInput = Inputs.toggle({
+    label: "Seizoenen tonen",
+    value: false
+  });
+
+  const plotContainer = document.createElement("div");
+
+  function renderChart() {
+    plotContainer.replaceChildren(
+      data.length
+        ? drukte(data, "Aantal fietsers", seasonInput.value, {width, height})
+        : html`<p class="empty-note">Voor deze telpaal is geen maanddata gevonden.</p>`
+    );
+  }
+
+  seasonInput.addEventListener("input", renderChart);
+  renderChart();
+
+  card.append(header, seasonInput, plotContainer);
+  return card;
+}
 
 const stationContent = station
   ? html`
@@ -178,17 +202,6 @@ const stationContent = station
 <div class="page-shell">
   <div class="page">
     ${stationContent}
-    <section class="card card--chart card--with-controls">
-      <div class="chart-header">
-        <div>
-          <h3>Maandelijkse drukte</h3>
-          <p>Gemeten fietsers per maand voor deze telpaal.</p>
-        </div>
-      </div>
-      ${useSeasonInput}
-      ${stationMonthlyData.length
-        ? resize((width) => drukte(stationMonthlyData, "Aantal fietsers", showSeason, {width, height: 400}))
-        : html`<p class="empty-note">Voor deze telpaal is geen maanddata gevonden.</p>`}
-    </section>
+    ${station ? resize((width) => stationMonthlyChart(stationMonthlyData, {width, height: 400})) : null}
   </div>
 </div>
