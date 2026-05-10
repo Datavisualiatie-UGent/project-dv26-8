@@ -1,21 +1,20 @@
 import * as Inputs from "@observablehq/inputs";
 import { html } from "htl";
+import * as d3 from "d3";
 
+export const YEAR_COLORS = new Map(
+    d3.range(2018, 2027).map((year, i) => [
+        year,
+        d3.schemeTableau10.concat(d3.schemePaired)[i]
+    ])
+);
 
-export const yearColor = new Map([
-    [2017, "#4E79A7"],
-    [2018, "#F28E2B"],
-    [2019, "#59A14F"],
-    [2020, "#E15759"],
-    [2021, "#B07AA1"],
-    [2022, "#EDC948"],
-    [2023, "#76B7B2"],
-    [2024, "#9C755F"],
-    [2025, "#BAB0AC"],
-    [2026, "#FF9DA7"]
-]);
+export function getYearColor(year) {
+    return YEAR_COLORS.get(year) || "#999";
+}
 
 export function getYearsView(allYears) {
+
     let recentYear = [];
     if (allYears.length > 0) {
         recentYear = (allYears.length >= 2) ? [allYears[allYears.length - 2]] : [allYears[allYears.length - 1]];
@@ -25,7 +24,7 @@ export function getYearsView(allYears) {
         unique: true,
         sort: true,
         format: d => {
-            const color = yearColor.get(d) || "#999";
+            const color = getYearColor(d) || "#999";
             return html`
                 <span style="color: ${color}; font-weight: bold; margin-right: 0.5rem;">
                     ${d}

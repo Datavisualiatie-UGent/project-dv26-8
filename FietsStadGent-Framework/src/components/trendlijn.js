@@ -2,7 +2,7 @@
 import * as Plot from "npm:@observablehq/plot";
 import * as d3 from "d3";
 
-import { yearColor } from "./trendlijn_helper.js";
+import { getYearColor } from "./trendlijn_helper.js";
 
 // Inspiration: https://fil.github.io/pangea/plot/multiple-line-chart-hover
 export function trendLijn(data, mode, yLabel, { width, height, isPct } = {}) {
@@ -25,7 +25,6 @@ export function trendLijn(data, mode, yLabel, { width, height, isPct } = {}) {
             : mode === "day"
                 ? width * 0.075
                 : width * 0.025;
-    
 
     return Plot.plot({
         width,
@@ -74,18 +73,18 @@ export function trendLijn(data, mode, yLabel, { width, height, isPct } = {}) {
                 x: xKey,
                 y: "value",
                 curve: "linear",
-                stroke: d => yearColor.get(d.jaar),
+                stroke: d => getYearColor(d.jaar),
 
                 z: "jaar",
 
                 channels: {
                     Jaar: "jaar",
-                    Waarde: "value" 
+                    Waarde: "value"
                 },
 
                 tip: {
                     format: {
-                        x: false, 
+                        x: false,
                         Jaar: d => `${d}`,
                         y: false,
                         z: false,
@@ -101,7 +100,7 @@ export function trendLijn(data, mode, yLabel, { width, height, isPct } = {}) {
                     }
                 },
             }),
-            
+
         ]
     });
 }
