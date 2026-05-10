@@ -32,7 +32,7 @@ export function heatmap(rows, year, description, {width, height, colorDomain} = 
             axisLine: false,
         },
         color: {
-            label: "Gemiddelde",
+            label: description,
             scheme: "greens",
             domain: year !== undefined ? colorDomain : undefined
             // domain: colorDomain
@@ -43,7 +43,17 @@ export function heatmap(rows, year, description, {width, height, colorDomain} = 
                 x: "week",
                 y: "weekday",
                 fill: "value",
-                title: d => `${d3.timeFormat("%A %d %B %Y")(d.day)}:\n${d.value.toFixed(2)} ${description}`
+                channels: {
+                    dag: "day",
+                },
+                tip: {
+                    format: {
+                        fill: true,
+                        dag: (d) => d.toLocaleDateString("nl-BE", { month: "long", day: "numeric" }),
+                        x: false,
+                        y: false,
+                    }
+                }
             }),
 
             Plot.text(monthLabels, {

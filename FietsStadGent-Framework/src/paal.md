@@ -332,7 +332,7 @@ const poleTrendType = Generators.input(poleTrendTypeView);
         </div>
         ${stationDailyData.length ? stationHeatmapYearInput : null}
         ${stationDailyData.length
-          ? selectedStationHeatmapYears.map((year) => heatmap(selectedStationHeatmapData(year), year !== "Alle jaren" ? year : undefined, "aantal fietsers", {width, height: 200, colorDomain: stationHeatmapValueDomain}))
+          ? selectedStationHeatmapYears.map((year) => heatmap(selectedStationHeatmapData(year), year !== "Alle jaren" ? year : undefined, year !== "Alle jaren" ? "aantal fietsers" : "gemiddeld aantal fietsers", {width, height: 200, colorDomain: stationHeatmapValueDomain}))
           : html`<p class="empty-note">Voor deze telpaal is geen dagdata gevonden.</p>`}
       </section>
     ` : null}

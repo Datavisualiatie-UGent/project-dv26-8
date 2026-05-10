@@ -54,6 +54,13 @@ export function drukte(data, yLabel, showSeason, {width, height} = {}) {
         x: "month",
         y: "avg",
         fill: d => showSeason ? seasonColors[getSeason(d.month)] : d.month.getFullYear().toString(),
+        tip: {
+          format: {
+            y: true,
+            x: (d) => d.toLocaleDateString("nl-BE", { month: "long", year: "numeric" }),
+            fill: false,
+          }
+        }
       })
     ]
   });
