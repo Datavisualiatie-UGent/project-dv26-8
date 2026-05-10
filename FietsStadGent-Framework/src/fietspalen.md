@@ -406,8 +406,8 @@ trendTypeView.addEventListener("input", () => {
   if (trendTypeView.value === "relatief") {
     const years = trendYearCheckBox.value.map(Number);
 
-    if (!years.includes(2020)) {
-      trendYearCheckBox.value = [...years, 2020];
+    if (!years.includes(2025)) {
+      trendYearCheckBox.value = [...years, 2025];
       trendYearCheckBox.dispatchEvent(new Event("input"));
     }
   }
@@ -559,7 +559,7 @@ trendTypeView.addEventListener("input", () => {
         selectGlobalData(trendMode, trendType)
           .filter(d => trendYears.map(Number).includes(Number(d.jaar))),
         trendMode,
-        trendType === "absoluut" ? "Aantal fietsers" : "Procentuele verandering t.o.v. 2020",
+        trendType === "absoluut" ? "Aantal fietsers" : "Procentuele verandering t.o.v. 2025",
         { width, height: 400, isPct: trendType === "relatief" }
       )
     )}

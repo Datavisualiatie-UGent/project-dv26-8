@@ -119,14 +119,14 @@ function calculatePctChange(rollup, key) {
                 });
         }
 
-        // baseline 2020
-        const base2020 = result.filter(d => d.jaar === 2020);
+        // baseline 2025
+        const base2025 = result.filter(d => d.jaar === 2025);
 
         return {
             code,
             locatie,
             data: result.map(d => {
-                const ref = base2020.find(
+                const ref = base2025.find(
                     r => r[key] === d[key]
                 );
 

@@ -321,8 +321,8 @@ poleTrendTypeView.addEventListener("input", () => {
   if (poleTrendTypeView.value === "relatief") {
     const years = poleTrendYearCheckBox.value.map(Number);
 
-    if (!years.includes(2020)) {
-      poleTrendYearCheckBox.value = [...years, 2020];
+    if (!years.includes(2025)) {
+      poleTrendYearCheckBox.value = [...years, 2025];
       poleTrendYearCheckBox.dispatchEvent(new Event("input"));
     }
   }
@@ -377,7 +377,7 @@ poleTrendTypeView.addEventListener("input", () => {
             ? trendLijn(
                 data,
                 poleTrendMode,
-                poleTrendType === "absoluut" ? "Aantal fietsers" : "Procentuele verandering t.o.v. 2020",
+                poleTrendType === "absoluut" ? "Aantal fietsers" : "Procentuele verandering t.o.v. 2025",
                 { width, height: 400, isPct: poleTrendType === "relatief" }
               )
             : html`<p class="empty-note">Geen trenddata gevonden voor deze telpaal.</p>`;
