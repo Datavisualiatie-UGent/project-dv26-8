@@ -17,7 +17,6 @@ export const yearColor = new Map([
 
 export function getYearsView(allYears) {
     return Inputs.checkbox(allYears, {
-        value: allYears,
         unique: true,
         sort: true,
         format: d => {
