@@ -87,11 +87,11 @@ const dailyAverageAllYears = d3.rollup(
   }
 );
 
-const heatmapData = dailyAverage.map((d) => processBikeData(d.day, d.avg));
+const heatmapData = dailyAverage.map((d) => processBikeData(d.day, d.avg)).sort((a, b) => a.day - b.day);
 const heatmapDataAllYears = Array.from(dailyAverageAllYears, ([day, value]) => {
   const [month, date] = day.split("-").map(Number);
   return processBikeData(new Date(2024, month, date), value);
-});
+}).sort((a, b) => a.day - b.day);
 
 const heatmapYears = [...new Set(heatmapData.map((d) => d.day.getFullYear()))].sort().concat("Alle jaren");
 const heatmapYearInput = Inputs.checkbox(heatmapYears, {
