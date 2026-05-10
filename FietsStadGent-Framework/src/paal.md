@@ -12,6 +12,7 @@ import {drukte} from "./components/drukte.js";
 import {heatmap} from "./components/heatmap.js";
 import {trendLijn} from "./components/trendlijn.js";
 import {getModeView, getYearsView} from "./components/trendlijn_helper.js";
+import {collectTrendYearsForStation, getDailyDataForStation, getMonthlyDataForStation, getTrendDataForStation, parseMonth, processBikeData} from "./components/station_data.js";
 import * as d3 from "npm:d3";
 
 const locations = await FileAttachment("data/locations.json").json();
@@ -51,72 +52,22 @@ const osmHref = hasCoordinates
   ? `https://www.openstreetmap.org/?mlat=${station.lat}&mlon=${station.long}#map=17/${station.lat}/${station.long}`
   : null;
 
-const parseMonth = (value) => {
-  if (value == null) return null;
-  const raw = String(value).trim();
-  if (!raw) return null;
-  const month = new Date(raw);
-  return Number.isNaN(month.getTime()) ? null : month;
-};
-
-const normalizeLocation = (value) =>
-  String(value ?? "")
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/\([^)]*\)/g, "")
-    .replace(/[^a-z0-9]/g, "");
-
-const monthlyByNormalizedLocation = new Map(
-  monthlyPerLocation.map((d) => [normalizeLocation(d.location), d])
-);
-
-const dailyByNormalizedLocation = new Map(
-  dailyPerLocation.map((d) => [normalizeLocation(d.location), d])
-);
-const dailyByCode = new Map(
-  dailyPerLocation.map((d) => [d.code, d])
-);
-
 function monthlyDataForStation(station) {
   if (!station) return [];
-  const match = monthlyByNormalizedLocation.get(normalizeLocation(station.name));
-  return match?.months
-    .map(([month, value]) => ({
-      month: parseMonth(month),
-      avg: value
+  return getMonthlyDataForStation(monthlyPerLocation, station)
+    .map((d) => ({
+      month: parseMonth(d.month),
+      avg: d.avg
     }))
-    .filter((d) => d.month !== null && Number.isFinite(d.avg))
-    .sort((a, b) => a.month - b.month) ?? [];
+    .filter((d) => d.month !== null && Number.isFinite(d.avg));
 }
 
 const stationMonthlyData = monthlyDataForStation(station);
 
-function processBikeData(day, value) {
-  const date = new Date(day);
-  const start = d3.timeYear(date);
-  let week = d3.timeWeek.count(start, date);
-  const weekday = date.toLocaleString("nl-BE", {weekday: "short"});
-  const month = date.toLocaleString("nl-BE", {month: "short"});
-
-  if (weekday === "zo") week -= 1;
-
-  return {
-    day: date,
-    value,
-    weekday,
-    month,
-    week
-  };
-}
-
 function dailyDataForStation(station) {
   if (!station) return [];
-  const match = dailyByCode.get(station.code) ?? dailyByNormalizedLocation.get(normalizeLocation(station.name));
-  return match?.days
-    .map(([day, value]) => processBikeData(day, value))
-    .filter((d) => !Number.isNaN(d.day.getTime()) && Number.isFinite(d.value))
-    .sort((a, b) => a.day - b.day) ?? [];
+  return getDailyDataForStation(dailyPerLocation, station)
+    .filter((d) => !Number.isNaN(d.day.getTime()) && Number.isFinite(d.value));
 }
 
 function dailyAllYearsData(data) {
@@ -148,27 +99,7 @@ const selectedStationHeatmapData = (year) => {
   return stationDailyData.filter((d) => d.day.getFullYear() === year);
 };
 
-// ── Trendline: build per-location data for the current station ───────────────
-// Look up the station's locatie name as stored in the trend data, then filter.
-function selectLocationTrendData(mode, type, stationCode) {
-  const dataset = trendDict[mode][type];
-  const found = dataset.perLocation.find(d => d.code === stationCode);
-  if (!found) return [];
-  return found.data.sort((a, b) => a.jaar - b.jaar || a[mode] - b[mode]);
-}
-
-const stationCode = station?.code ?? null;
-
-// Derive available years for this station from all trend datasets
-const stationTrendYears = station
-  ? Array.from(new Set(
-      Object.values(trendDict).flatMap(d =>
-        d.absoluut.perLocation
-          .filter(p => p.code === stationCode)
-          .flatMap(p => p.data.map(v => v.jaar))
-      )
-    )).sort()
-  : [];
+const stationTrendYears = collectTrendYearsForStation(trendDict, station);
 
 // Fall back to global years if none found for this station
 const trendAllYears = stationTrendYears.length > 0
@@ -371,7 +302,7 @@ poleTrendTypeView.addEventListener("input", () => {
           </div>
         </div>
         ${resize((width) => {
-          const data = selectLocationTrendData(poleTrendMode, poleTrendType, stationCode)
+          const data = getTrendDataForStation(trendDict, poleTrendMode, poleTrendType, station)
             .filter(d => poleTrendYears.map(Number).includes(Number(d.jaar)));
           return data.length
             ? trendLijn(
