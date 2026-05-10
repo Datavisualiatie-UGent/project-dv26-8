@@ -84,15 +84,30 @@ export function trendLijn(data, mode, yLabel, { width, height, isPct } = {}) {
 
                 z: "jaar",
 
-                tip: {
-                    render(index, scales, values, dimensions, context, next) {
-                        const path = d3.select(context.ownerSVGElement)
-                            .selectAll("[aria-label=line] path");
+                channels: {
+                    Jaar: "jaar",
+                    Waarde: "value" 
+                },
 
-                        return next(index, scales, values, dimensions, context);
+                tip: {
+                    format: {
+                        x: false, 
+                        Jaar: d => `${d}`,
+                        y: false,
+                        z: false,
+                        jaar: false,
+                        Waarde: (d) => isPct ? `${d.toFixed(1)}%` : d3.format(",")(d),
+                    },
+                    channels: {
+                        [xLabel]: d => {
+                            if (mode === "month") return months[d.month];
+                            if (mode === "day") return days[d.day];
+                            return `${d.hour}:00`;
+                        }
                     }
-                }
+                },
             }),
+            
         ]
     });
 }
