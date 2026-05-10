@@ -27,7 +27,7 @@ LOCATION_COLUMNS_TO_KEEP = [
     "begindatum",
 ]
 
-CODE_FIXES = {"LOU": "HAV"}
+CODE_FIXES = {"LOU": "HAV", "DAZK": "DAZ"}
 
 # ------------------------------------------------------------
 # Helpers
