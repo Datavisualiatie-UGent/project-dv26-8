@@ -311,11 +311,23 @@ const stationContent = station
 const poleTrendModeView = getModeView();
 const poleTrendMode = Generators.input(poleTrendModeView);
 
+const poleTrendTypeView = Inputs.radio(["absoluut", "relatief"], { value: "absoluut" });
+const poleTrendType = Generators.input(poleTrendTypeView);
+
 const poleTrendYearCheckBox = getYearsView(trendAllYears);
 const poleTrendYears = Generators.input(poleTrendYearCheckBox);
 
-const poleTrendTypeView = Inputs.radio(["absoluut", "relatief"], { value: "absoluut" });
-const poleTrendType = Generators.input(poleTrendTypeView);
+poleTrendTypeView.addEventListener("input", () => {
+  if (poleTrendTypeView.value === "relatief") {
+    const years = poleTrendYearCheckBox.value.map(Number);
+
+    if (!years.includes(2020)) {
+      poleTrendYearCheckBox.value = [...years, 2020];
+      poleTrendYearCheckBox.dispatchEvent(new Event("input"));
+    }
+  }
+});
+
 ```
 
 <div class="page-shell">

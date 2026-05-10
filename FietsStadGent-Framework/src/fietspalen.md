@@ -401,6 +401,17 @@ const trendYears = Generators.input(trendYearCheckBox);
 
 const trendTypeView = Inputs.radio(["absoluut", "relatief"], { value: "absoluut" });
 const trendType = Generators.input(trendTypeView);
+
+trendTypeView.addEventListener("input", () => {
+  if (trendTypeView.value === "relatief") {
+    const years = trendYearCheckBox.value.map(Number);
+
+    if (!years.includes(2020)) {
+      trendYearCheckBox.value = [...years, 2020];
+      trendYearCheckBox.dispatchEvent(new Event("input"));
+    }
+  }
+});
 ```
 
 <div class="page">

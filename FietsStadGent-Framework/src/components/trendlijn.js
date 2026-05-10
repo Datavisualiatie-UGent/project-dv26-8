@@ -55,7 +55,10 @@ export function trendLijn(data, mode, yLabel, { width, height, isPct } = {}) {
             label: yLabel,
 
             domain: isPct
-                ? [d3.min(data, d => d.value), d3.max(data, d => d.value)]
+                ? [
+                    Math.min(0, d3.min(data, d => d.value)),
+                    Math.max(0, d3.max(data, d => d.value))
+                ]
                 : undefined,
 
             tickFormat: isPct
@@ -63,7 +66,7 @@ export function trendLijn(data, mode, yLabel, { width, height, isPct } = {}) {
                 : d3.format(",")
         },
         marks: [
-            ...(yLabel.includes("Index") ? [
+            ...(yLabel.includes("verandering") ? [
                 Plot.ruleY([100], {
                     stroke: "#999",
                     strokeDasharray: "4 2"
