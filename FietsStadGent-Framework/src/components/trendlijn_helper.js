@@ -16,7 +16,9 @@ export const yearColor = new Map([
     ]);
 
 export function getYearsView(allYears) {
+    const recentYear = (allYears.length >= 2) ? allYears[allYears.length - 2] : allYears[allYears.length - 1];
     return Inputs.checkbox(allYears, {
+        value: [recentYear],
         unique: true,
         sort: true,
         format: d => {
