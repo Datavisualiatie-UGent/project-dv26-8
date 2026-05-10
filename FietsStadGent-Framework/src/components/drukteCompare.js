@@ -10,7 +10,7 @@ export function drukte(data, yLabel, {width, height} = {}) {
     marginBottom: 25,
     color: 
        {
-        //   scheme: d3.schemeTableau10.concat(d3.schemeSet3),
+          range: d3.schemeTableau10.concat(d3.schemeSet3),
           legend: true,
         },
     x: {
@@ -30,12 +30,16 @@ export function drukte(data, yLabel, {width, height} = {}) {
         y: "avg",
         fill: "location",
         // opacity: 0.6,
+        channels: {
+            Locatie: "location",
+        },
         tip: {
           format: {
+            Locatie: true,
             y: true,
             x: (d) => d.toLocaleDateString("nl-BE", { month: "long", year: "numeric" }),
-            fill: true,
-          }
+            fill: false,
+          },
         }
       })
     ]
