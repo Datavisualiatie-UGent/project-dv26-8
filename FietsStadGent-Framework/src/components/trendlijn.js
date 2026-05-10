@@ -19,6 +19,13 @@ export function trendLijn(data, mode, yLabel, { width, height, isPct } = {}) {
     const months = ["Jan", "Feb", "Maa", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"];
     const days = ["Zo", "Ma", "Di", "Wo", "Do", "Vr", "Za"];
 
+    const sidePadding =
+        mode === "month"
+            ? width * 0.04
+            : mode === "day"
+                ? width * 0.075
+                : width * 0.025;
+    
 
     return Plot.plot({
         width,
@@ -30,6 +37,8 @@ export function trendLijn(data, mode, yLabel, { width, height, isPct } = {}) {
             color: "black"
         },
         x: {
+            insetLeft: -sidePadding,
+            insetRight: -sidePadding,
             domain:
                 mode === "month" ? d3.range(12) :
                     mode === "day" ? d3.range(7) :
@@ -67,7 +76,7 @@ export function trendLijn(data, mode, yLabel, { width, height, isPct } = {}) {
             Plot.lineY(data, {
                 x: xKey,
                 y: "value",
-
+                curve: "linear",
                 stroke: d => yearColor.get(d.jaar),
 
                 z: "jaar",
@@ -81,20 +90,6 @@ export function trendLijn(data, mode, yLabel, { width, height, isPct } = {}) {
                     }
                 }
             }),
-            Plot.text(
-                Array.from(yearColor, ([jaar, color]) => ({
-                    jaar,
-                    color
-                })),
-                {
-                    x: width - 70,
-                    y: (_, i) => 20 + i * 18,
-                    text: d => d.jaar,
-                    fill: d => d.color,
-                    fontWeight: "bold",
-                    frameAnchor: "top-right"
-                }
-            )
         ]
     });
 }
