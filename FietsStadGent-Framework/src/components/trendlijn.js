@@ -66,12 +66,6 @@ export function trendLijn(data, mode, yLabel, { width, height, isPct } = {}) {
                 : d3.format(",")
         },
         marks: [
-            ...(yLabel.includes("verandering") ? [
-                Plot.ruleY([100], {
-                    stroke: "#999",
-                    strokeDasharray: "4 2"
-                })
-            ] : []),
             Plot.ruleY([0], {
                 stroke: "#000",
                 strokeDasharray: "2 2"
