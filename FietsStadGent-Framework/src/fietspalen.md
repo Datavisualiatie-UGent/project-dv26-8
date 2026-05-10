@@ -13,6 +13,7 @@ import {drukte} from "./components/drukte.js";
 import {heatmap} from "./components/heatmap.js";
 import {trendLijn} from "./components/trendlijn.js";
 import {getModeView, getYearsView} from "./components/trendlijn_helper.js";
+import {parseMonth, processBikeData} from "./components/station_data.js";
 import * as d3 from "npm:d3";
 ```
 
@@ -44,14 +45,6 @@ function selectGlobalData(mode, type) {
 ```
 
 ```js
-const parseMonth = (value) => {
-  if (value == null) return null;
-  const raw = String(value).trim();
-  if (!raw) return null;
-  const month = new Date(raw);
-  return Number.isNaN(month.getTime()) ? null : month;
-};
-
 const parsedMonthlyAverage = monthlyAverage
   .map((d) => ({
     ...d,
@@ -59,24 +52,6 @@ const parsedMonthlyAverage = monthlyAverage
   }))
   .filter((d) => d.month !== null && Number.isFinite(d.avg))
   .sort((a, b) => a.month - b.month);
-
-function processBikeData(day, value) {
-  const date = new Date(day);
-  const start = d3.timeYear(date);
-  let week = d3.timeWeek.count(start, date);
-  const weekday = date.toLocaleString("nl-BE", {weekday: "short"});
-  const month = date.toLocaleString("nl-BE", {month: "short"});
-
-  if (weekday === "zo") week -= 1;
-
-  return {
-    day: date,
-    value,
-    weekday,
-    month,
-    week
-  };
-}
 
 const dailyAverageAllYears = d3.rollup(
   dailyAverage,
