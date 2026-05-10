@@ -1,3 +1,4 @@
+// trend.data.js
 import * as d3 from "d3";
 import { readFile } from "fs/promises";
 
@@ -13,6 +14,7 @@ async function processData(key) {
             const t = new Date(d.hour);
 
             return {
+                code: d.code,
                 locatie: d.locatie,
                 jaar: t.getFullYear(),
                 month: t.getMonth(),
@@ -22,6 +24,7 @@ async function processData(key) {
             };
         })
         .filter(d =>
+            d.code &&
             d.locatie &&
             Number.isFinite(d.totaal) &&
             !Number.isNaN(d.jaar)
@@ -34,6 +37,7 @@ function makeRollup(data, key, includeLocation = true) {
         return d3.rollup(
             data,
             v => d3.sum(v, d => d.totaal),
+            d => d.code,
             d => d.locatie,
             d => d.jaar,
             d => d[key]
@@ -62,21 +66,25 @@ function buildNormal(rollup, key, isGlobal = false) {
             ).flat()
         };
     }
-    return Array.from(rollup, ([locatie, years]) => ({
-        locatie,
-        data: Array.from(years, ([jaar, groups]) =>
-            Array.from(groups, ([k, value]) => ({
-                jaar: Number(jaar), 
-                [key]: k,
-                value
-            }))
-        ).flat()
-    }));
+    return Array.from(rollup, ([code, locations]) =>
+        Array.from(locations, ([locatie, years]) => ({
+            code,
+            locatie,
+            data: Array.from(years, ([jaar, groups]) =>
+                Array.from(groups, ([k, value]) => ({
+                    jaar: Number(jaar), 
+                    [key]: k,
+                    value
+                }))
+            ).flat()
+        }))
+    ).flat();
 }
 
 
 function calculatePctChange(rollup, key) {
-    return Array.from(rollup, ([locatie, years]) => {
+    return Array.from(rollup, ([code, locations]) =>
+      Array.from(locations, ([locatie, years]) => {
         const all = Array.from(years, ([jaar, groups]) =>
             Array.from(groups, ([k, value]) => ({
                 jaar,
@@ -115,6 +123,7 @@ function calculatePctChange(rollup, key) {
         const base2020 = result.filter(d => d.jaar === 2020);
 
         return {
+            code,
             locatie,
             data: result.map(d => {
                 const ref = base2020.find(
@@ -132,7 +141,7 @@ function calculatePctChange(rollup, key) {
                 };
             })
         };
-    });
+    })).flat();
 }
 
 
@@ -150,7 +159,7 @@ async function buildComplete(key) {
     // pct
     const pctPerLocation = calculatePctChange(rollupPerLocation, key);
     const pctGlobal = calculatePctChange(
-        new Map([["global", rollupGlobal]]),
+        new Map([["global", new Map([["global", rollupGlobal]])]]),
         key
     )[0];
 

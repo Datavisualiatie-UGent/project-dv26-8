@@ -10,11 +10,20 @@ import * as Inputs from "@observablehq/inputs";
 import {Generators} from "@observablehq/stdlib";
 import {drukte} from "./components/drukte.js";
 import {heatmap} from "./components/heatmap.js";
+import {trendLijn} from "./components/trendlijn.js";
+import {getModeView, getYearsView} from "./components/trendlijn_helper.js";
 import * as d3 from "npm:d3";
 
 const locations = await FileAttachment("data/locations.json").json();
 const monthlyPerLocation = await FileAttachment("data/monthlyPerLocation.json").json();
 const dailyPerLocation = await FileAttachment("data/dailyPerLocation.json").json();
+
+// Trendline data
+const trendDict = {
+  month: await FileAttachment("data/monthly.json").json(),
+  day: await FileAttachment("data/weekly.json").json(),
+  hour: await FileAttachment("data/hourly.json").json()
+};
 
 const params = new URLSearchParams(location.search);
 const requestedCode = params.get("code");
@@ -138,6 +147,37 @@ const selectedStationHeatmapData = (year) => {
   if (year === "Alle jaren") return stationDailyAllYearsData;
   return stationDailyData.filter((d) => d.day.getFullYear() === year);
 };
+
+// ── Trendline: build per-location data for the current station ───────────────
+// Look up the station's locatie name as stored in the trend data, then filter.
+function selectLocationTrendData(mode, type, stationCode) {
+  const dataset = trendDict[mode][type];
+  const found = dataset.perLocation.find(d => d.code === stationCode);
+  if (!found) return [];
+  return found.data.sort((a, b) => a.jaar - b.jaar || a[mode] - b[mode]);
+}
+
+const stationCode = station?.code ?? null;
+
+// Derive available years for this station from all trend datasets
+const stationTrendYears = station
+  ? Array.from(new Set(
+      Object.values(trendDict).flatMap(d =>
+        d.absoluut.perLocation
+          .filter(p => p.code === stationCode)
+          .flatMap(p => p.data.map(v => v.jaar))
+      )
+    )).sort()
+  : [];
+
+// Fall back to global years if none found for this station
+const trendAllYears = stationTrendYears.length > 0
+  ? stationTrendYears
+  : Array.from(new Set(
+      Object.values(trendDict).flatMap(d =>
+        d.absoluut.global.data.map(v => v.jaar)
+      )
+    ));
 
 const poleInput = Inputs.select(
   totals.map((d) => d.code),
@@ -266,6 +306,18 @@ const stationContent = station
     `;
 ```
 
+```js
+// Reactive trendline controls for the station detail page
+const poleTrendModeView = getModeView();
+const poleTrendMode = Generators.input(poleTrendModeView);
+
+const poleTrendYearCheckBox = getYearsView(trendAllYears);
+const poleTrendYears = Generators.input(poleTrendYearCheckBox);
+
+const poleTrendTypeView = Inputs.radio(["absoluut", "relatief"], { value: "absoluut" });
+const poleTrendType = Generators.input(poleTrendTypeView);
+```
+
 <div class="page-shell">
   <div class="page">
     ${stationContent}
@@ -280,8 +332,44 @@ const stationContent = station
         </div>
         ${stationDailyData.length ? stationHeatmapYearInput : null}
         ${stationDailyData.length
-          ? selectedStationHeatmapYears.map((year) => heatmap(selectedStationHeatmapData(year), year !== "Alle jaren" ? year : undefined, "aantal fietsers", {width, height: 200, colorDomain: stationHeatmapValueDomain}))
+          ? selectedStationHeatmapYears.map((year) => heatmap(selectedStationHeatmapData(year), year !== "Alle jaren" ? year : undefined, year !== "Alle jaren" ? "aantal fietsers" : "gemiddeld aantal fietsers", {width, height: 200, colorDomain: stationHeatmapValueDomain}))
           : html`<p class="empty-note">Voor deze telpaal is geen dagdata gevonden.</p>`}
+      </section>
+    ` : null}
+    ${station ? html`
+      <section class="card card--chart card--with-controls">
+        <div class="chart-header">
+          <div>
+            <h3>Trend — ${station.name}</h3>
+            <p>Fietsers aan deze telpaal doorheen de tijd.</p>
+          </div>
+        </div>
+        <div class="controls-vertical">
+          <div class="control-block">
+            <div class="control-label">Trend</div>
+            ${poleTrendModeView}
+          </div>
+          <div class="control-block">
+            <div class="control-label">Jaar</div>
+            ${poleTrendYearCheckBox}
+          </div>
+          <div class="control-block">
+            <div class="control-label">Type</div>
+            ${poleTrendTypeView}
+          </div>
+        </div>
+        ${resize((width) => {
+          const data = selectLocationTrendData(poleTrendMode, poleTrendType, stationCode)
+            .filter(d => poleTrendYears.map(Number).includes(Number(d.jaar)));
+          return data.length
+            ? trendLijn(
+                data,
+                poleTrendMode,
+                poleTrendType === "absoluut" ? "Aantal fietsers" : "Procentuele verandering t.o.v. 2020",
+                { width, height: 400, isPct: poleTrendType === "relatief" }
+              )
+            : html`<p class="empty-note">Geen trenddata gevonden voor deze telpaal.</p>`;
+        })}
       </section>
     ` : null}
   </div>
