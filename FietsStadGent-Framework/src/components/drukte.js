@@ -18,7 +18,7 @@ export function drukte(data, yLabel, showSeason, {width, height} = {}) {
   };
 
   const years = Array.from(new Set(data.map(d => d.month.getFullYear().toString()))).sort();
-  const yearColors = d3.schemeTableau10.concat(d3.schemeSet3).slice(0, years.length);
+  const yearColors = d3.schemeTableau10.concat(d3.schemePaired).slice(0, years.length);
 
   return Plot.plot({
     width,

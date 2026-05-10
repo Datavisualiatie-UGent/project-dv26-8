@@ -2,7 +2,7 @@
 import * as Plot from "npm:@observablehq/plot";
 import * as d3 from "d3";
 
-import { yearColor } from "./trendlijn_helper.js";
+import { getYearColor } from "./trendlijn_helper.js";
 
 // Inspiration: https://fil.github.io/pangea/plot/multiple-line-chart-hover
 export function trendLijn(data, mode, yLabel, { width, height, isPct } = {}) {
@@ -25,7 +25,6 @@ export function trendLijn(data, mode, yLabel, { width, height, isPct } = {}) {
             : mode === "day"
                 ? width * 0.075
                 : width * 0.025;
-    
 
     return Plot.plot({
         width,
@@ -55,7 +54,10 @@ export function trendLijn(data, mode, yLabel, { width, height, isPct } = {}) {
             label: yLabel,
 
             domain: isPct
-                ? [d3.min(data, d => d.value), d3.max(data, d => d.value)]
+                ? [
+                    Math.min(0, d3.min(data, d => d.value)),
+                    Math.max(0, d3.max(data, d => d.value))
+                ]
                 : undefined,
 
             tickFormat: isPct
@@ -63,12 +65,6 @@ export function trendLijn(data, mode, yLabel, { width, height, isPct } = {}) {
                 : d3.format(",")
         },
         marks: [
-            ...(yLabel.includes("Index") ? [
-                Plot.ruleY([100], {
-                    stroke: "#999",
-                    strokeDasharray: "4 2"
-                })
-            ] : []),
             Plot.ruleY([0], {
                 stroke: "#000",
                 strokeDasharray: "2 2"
@@ -77,19 +73,34 @@ export function trendLijn(data, mode, yLabel, { width, height, isPct } = {}) {
                 x: xKey,
                 y: "value",
                 curve: "linear",
-                stroke: d => yearColor.get(d.jaar),
+                stroke: d => getYearColor(d.jaar),
 
                 z: "jaar",
 
-                tip: {
-                    render(index, scales, values, dimensions, context, next) {
-                        const path = d3.select(context.ownerSVGElement)
-                            .selectAll("[aria-label=line] path");
+                channels: {
+                    Jaar: "jaar",
+                    Waarde: "value"
+                },
 
-                        return next(index, scales, values, dimensions, context);
+                tip: {
+                    format: {
+                        x: false,
+                        Jaar: d => `${d}`,
+                        y: false,
+                        z: false,
+                        jaar: false,
+                        Waarde: (d) => isPct ? `${d.toFixed(1)}%` : d3.format(",")(d),
+                    },
+                    channels: {
+                        [xLabel]: d => {
+                            if (mode === "month") return months[d.month];
+                            if (mode === "day") return days[d.day];
+                            return `${d.hour}:00`;
+                        }
                     }
-                }
+                },
             }),
+
         ]
     });
 }
