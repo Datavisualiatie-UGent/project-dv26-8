@@ -39,7 +39,7 @@ const selectLocations = Inputs.checkbox(
     format: (value) => {
       const item = locationByCode.get(value);
       return item ? `${item.name} (${item.code})` : value;
-    }
+    },
   }
 );
 const selectedLocations = Generators.input(selectLocations);
@@ -84,7 +84,9 @@ const verkeersprofielPlot = (location) => {
 
   <section class="card card--detail">
     <h3>Selectie van telpalen</h3>
-    ${selectLocations}
+    <div class="pole-options">
+      ${selectLocations}
+    </div>
   </section>
 
   <section class="card card--detail">
