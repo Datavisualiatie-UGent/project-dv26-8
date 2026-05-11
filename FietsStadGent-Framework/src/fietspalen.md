@@ -534,7 +534,7 @@ trendTypeView.addEventListener("input", () => {
         selectGlobalData(trendMode, trendType)
           .filter(d => trendYears.map(Number).includes(Number(d.jaar))),
         trendMode,
-        trendType === "absoluut" ? "Aantal fietsers" : "Procentuele verandering t.o.v. 2025",
+        trendType === "absoluut" ? "Gemiddelde aantal fietsers" : "Procentuele verandering t.o.v. 2025",
         { width, height: 400, isPct: trendType === "relatief" }
       )
     )}

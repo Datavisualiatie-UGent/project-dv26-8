@@ -308,7 +308,7 @@ poleTrendTypeView.addEventListener("input", () => {
             ? trendLijn(
                 data,
                 poleTrendMode,
-                poleTrendType === "absoluut" ? "Aantal fietsers" : "Procentuele verandering t.o.v. 2025",
+                poleTrendType === "absoluut" ? "Gemiddelde aantal fietsers" : "Procentuele verandering t.o.v. 2025",
                 { width, height: 400, isPct: poleTrendType === "relatief" }
               )
             : html`<p class="empty-note">Geen trenddata gevonden voor deze telpaal.</p>`;
