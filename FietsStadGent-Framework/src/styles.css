@@ -428,6 +428,12 @@
     gap: 0.6rem;
 }
 
+.pole-metrics-vergelijking {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.6rem;
+}
+
 .metric {
     border-radius: 10px;
     background: var(--surface-muted);

@@ -54,7 +54,11 @@ const verkeersprofielPlot = (location) => {
   return html`
     <div class="pole-verkeersprofiel">
       <h4>${data.name} (${data.code})</h4>
-      <div class="pole-metrics">
+      <div class="pole-metrics-vergelijking">
+        <div class="metric">
+          <p class="metric-label">Bouwjaar</p>
+          <p class="metric-value">${data.buildYear}</p>
+        </div>
         <div class="metric">
           <p class="metric-label">Totaal fietsers</p>
           <p class="metric-value">${totalLabel}</p>
