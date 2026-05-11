@@ -363,7 +363,7 @@ import {html} from "npm:htl";
     <p class="stat-desc">Fietstelpalen</p>
   </div>
   <div class="stat-item">
-    <p class="stat-number">70M+</p>
+    <p class="stat-number">67M+</p>
     <p class="stat-desc">Geregistreerde fietsers</p>
   </div>
   <div class="stat-item">
