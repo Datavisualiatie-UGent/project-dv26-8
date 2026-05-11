@@ -227,7 +227,6 @@ const trendLegend = (codes) => {
   </section>
 
   <section class="card card--detail">
-<<<<<<< HEAD
     <h3>Trend Vergelijking</h3>
     <p class="text-muted">Vergelijk de tijdslijnen van verschillende telpalen binnen één jaar.</p>
     <div 
@@ -278,16 +277,3 @@ const trendLegend = (codes) => {
     })}
   </section>
 </div>
-=======
-    <h3>Weekdagprofiel</h3>
-    <p class="section-copy">Het gemiddeld aantal fietsers per weekdag onthult of een telpaal voornamelijk pendel- of recreatief gebruik kent. Werkdagpieken (ma–vr) wijzen op pendelroutes; weekendpieken suggereren recreatieve trajecten.</p>
-    <p class="section-copy" style="font-style:italic; opacity:0.7;">— Grafiek wordt hier toegevoegd —</p>
-  </section>
-
-  <section class="card card--detail">
-    <h3>Uurlijks patroon</h3>
-    <p class="section-copy">De uurlijkse grafiek toont het gemiddeld aantal fietsers per uur van de dag. Op pendelroutes verwacht je twee duidelijke pieken: een ochtendspits (7–9u) en een avondspits (16–18u). Op recreatieve routes is de spreiding gelijkmatiger, met een piek in de late ochtend of middag.</p>
-    <p class="section-copy" style="font-style:italic; opacity:0.7;">— Grafiek wordt hier toegevoegd —</p>
-  </section>
-</div>
->>>>>>> 636fa5c5214705d74b5a8d12cd9d7daecb855e85
