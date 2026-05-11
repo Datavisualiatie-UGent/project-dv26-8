@@ -969,7 +969,7 @@
 /* ─── Responsive ────────────────────────────────────────────────────────────── */
 .pole-options {
   display: block; /* wrapper stays simple */
-  margin-top: 0.35rem;
+  margin-top: 12px;
 }
 
 .pole-options form {
