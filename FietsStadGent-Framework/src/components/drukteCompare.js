@@ -7,7 +7,7 @@ export function drukte(data, yLabel, {width, height} = {}) {
     height,
     marginTop: 30,
     marginLeft: 50,
-    marginBottom: 25,
+    marginBottom: 30,
     color: 
        {
           range: d3.schemeTableau10.concat(d3.schemeSet3),
