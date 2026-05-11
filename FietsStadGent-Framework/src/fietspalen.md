@@ -339,7 +339,6 @@ const mapCard = resize((width) => {
     // Keep top/bottom spacing visually balanced while accounting for pin height.
     const horizontalPadding = 10;
     const verticalPadding = 10;
-
     map.fitBounds(bounds, {
       paddingTopLeft: [horizontalPadding, verticalPadding],
       paddingBottomRight: [horizontalPadding, verticalPadding],
@@ -393,6 +392,12 @@ trendTypeView.addEventListener("input", () => {
   <section class="page-hero">
     <h2>Fietstelpalen in Gent</h2>
     <div class="page-hero-subtitle">Interactieve kaart en ranking op basis van totaal getelde fietsers per telpaal.</div>
+  </section>
+
+  <section class="card card--detail" style="padding: 1rem 1.1rem;">
+    <p style="margin:0; font-size:0.9rem; color:var(--text-muted); line-height:1.6;">
+      Deze pagina geeft een <strong>globaal overzicht</strong> van alle fietstelpalen in Gent. De cijfers zijn gecumuleerd over de volledige meetperiode (2018–2026). Via de ranking en de kaart kan je snel zien welke locaties het drukst zijn. Verder op de pagina vind je grafieken die de drukte doorheen de maanden, dagen en jaren in kaart brengen — voor alle telpalen samen.
+    </p>
   </section>
 
   <section class="overview-grid">
@@ -483,14 +488,14 @@ trendTypeView.addEventListener("input", () => {
     <div class="card card--map">
       ${mapCard}
     </div>
-    <p class="map-caption map-note">Klik op een pin om de gegevens van die telpaal in het infopaneel te zien.</p>
+    <p class="map-caption map-note">Klik op een pin om de gegevens van die telpaal in het infopaneel te zien. Gebruik de ⊙-knop om de kaart te hercentreren.</p>
   </div>
 
   <section class="card card--chart card--with-controls">
     <div class="chart-header">
       <div>
         <h3>Maandelijkse drukte</h3>
-        <p>Gemiddeld aantal fietsers per maand over alle telpalen.</p>
+        <p>Gemiddeld aantal fietsers per maand, samengesteld over alle telpalen. De seizoenswissel is duidelijk zichtbaar: de zomermaanden (juni–augustus) zijn drukker door recreatief gebruik, terwijl oktober en september piekmaanden zijn door de combinatie van recreatief en pendelverkeer. Schakel "Seizoenen tonen" in om lente, zomer, herfst en winter te kleuren.</p>
       </div>  
     </div>
     ${useSeasonInput}
@@ -501,7 +506,7 @@ trendTypeView.addEventListener("input", () => {
     <div class="chart-header">
       <div>
         <h3>Dagelijkse fietsdrukte</h3>
-        <p>Gemiddeld aantal fietsers per dag over alle telpalen.</p>
+        <p>Heatmap van het gemiddeld aantal fietsers per dag, verdeeld per week en weekdag. Elke cel stelt één dag voor — hoe groener, hoe meer fietsers. Je ziet in één oogopslag welke periodes structureel druk of rustig zijn: donkere winters, actieve zomers en uitschieters in specifieke weken. Selecteer meerdere jaren om ze te vergelijken.</p>
       </div>
     </div>
     ${heatmapYearInput}
@@ -512,7 +517,7 @@ trendTypeView.addEventListener("input", () => {
     <div class="chart-header">
       <div>
         <h3>Trend — alle telpalen</h3>
-        <p>Fietsers aan alle telpalen doorheen de tijd.</p>
+        <p>Trendlijnen tonen hoe het fietsgebruik doorheen het jaar verloopt, opgesplitst per jaar. In <em>absoluut</em> modus zie je de ruwe telcijfers; in <em>relatief</em> modus worden alle jaren vergeleken ten opzichte van 2025. Zo lees je af of recente jaren drukker of rustiger waren. Schakel tussen maandelijkse, weekdagse en uurlijkse aggregatie voor een ander perspectief.</p>
       </div>
     </div>
     <div class="controls-vertical">
