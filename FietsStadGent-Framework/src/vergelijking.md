@@ -79,7 +79,7 @@ const verkeersprofielPlot = (location) => {
 <div class="page">
   <section class="page-hero">
     <h2>Vergelijking</h2>
-    <div class="page-hero-subtitle">Ruimte om later meerdere fietstelpalen naast elkaar te vergelijken.</div>
+    <div class="page-hero-subtitle">Vergelijk meerdere fietstelpalen met elkaar.</div>
   </section>
 
   <section class="card card--detail">
@@ -95,7 +95,7 @@ const verkeersprofielPlot = (location) => {
   </section>
 
   <section class="card card--detail">
-    <h3>Vergelijkende grafieken</h3>
+    <h3>Maandelijkse drukte</h3>
     ${resize((width) => drukte(normalizedMonthlyPerLocation.filter(d => selectedLocations.includes(d.code)), "Aantal fietsers", {width, height: 400}))}
   </section>
 </div>
