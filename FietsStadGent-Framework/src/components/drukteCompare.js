@@ -2,6 +2,7 @@ import * as Plot from "npm:@observablehq/plot";
 import * as d3 from "d3";
 
 export function drukte(data, yLabel, {width, height} = {}) {
+  const sorted = [...data].sort((a, b) => (a.avg - b.avg))
   return Plot.plot({
     width,
     height,
