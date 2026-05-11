@@ -136,7 +136,7 @@ function stationMonthlyChart(data, {width, height = 400} = {}) {
   const header = html`<div class="chart-header">
     <div>
       <h3>Maandelijkse drukte</h3>
-      <p>Gemeten fietsers per maand voor deze telpaal.</p>
+      <p>Totaal aantal geregistreerde fietsers per maand voor deze telpaal. De grafiek onthult of het gebruik overwegend seizoensgebonden is (zomerpieken = recreatief) of gelijkmatiger verdeeld (pendel). Een hoge winter/zomer-verhouding wijst op structureel pendelgebruik. Kleur per jaar maakt het makkelijk om groeijaren te spotten.</p>
     </div>
   </div>`;
 
@@ -171,6 +171,9 @@ const stationContent = station
       </section>
 
       <section class="card card--detail">
+        <p style="margin:0 0 0.9rem; font-size:0.9rem; color:var(--text-muted); line-height:1.6;">
+          Deze pagina toont alle beschikbare data voor de telpaal <strong>${station.name}</strong>. Gebruik het dropdown-menu hieronder om naar een andere telpaal te navigeren. Via de knop "Terug naar kaart" ga je terug naar het globale overzicht met alle locaties.
+        </p>
         <div class="pole-toolbar">
           <div class="pole-toolbar-input">
             ${poleInput}
@@ -206,6 +209,9 @@ const stationContent = station
 
       <section class="card card--detail">
         <h3>Verkeersprofiel</h3>
+        <p style="margin:0 0 0.8rem; font-size:0.88rem; color:var(--text-muted); line-height:1.55;">
+          Het totaal aantal fietsers is de som van alle geregistreerde passages sinds de ingebruikname van de telpaal. De rang vergelijkt deze paal met alle andere Gentse telpalen. Het aandeel geeft aan welk percentage van het totale Gentse fietsverkeer langs deze locatie passeert.
+        </p>
         <div class="pole-metrics">
           <div class="metric">
             <p class="metric-label">Totaal fietsers</p>
@@ -270,7 +276,7 @@ poleTrendTypeView.addEventListener("input", () => {
         <div class="chart-header">
           <div>
             <h3>Dagelijkse fietsdrukte</h3>
-            <p>Gemeten fietsers per dag voor deze telpaal.</p>
+            <p>Heatmap van het aantal fietsers per dag. Elke cel stelt één dag voor: hoe groener de kleur, hoe meer fietsers er gepasseerd zijn. Je herkent meteen rustige periodes (vakantie, feestdagen, winter) en drukke weken. Door meerdere jaren te vergelijken kan je zien of de paal groeit, krimpt of stabiel blijft. "Alle jaren" toont het gemiddelde over alle beschikbare meetjaren.</p>
           </div>
         </div>
         ${stationDailyData.length ? stationHeatmapYearInput : null}
@@ -284,7 +290,7 @@ poleTrendTypeView.addEventListener("input", () => {
         <div class="chart-header">
           <div>
             <h3>Trend — ${station.name}</h3>
-            <p>Fietsers aan deze telpaal doorheen de tijd.</p>
+            <p>Vergelijk de fietsintensiteit voor deze specifieke telpaal doorheen de jaren. In <em>absoluut</em> modus zie je de ruwe telcijfers per maand, weekdag of uur. In <em>relatief</em> modus worden alle jaren uitgedrukt als procentuele afwijking ten opzichte van 2025 — zo lees je direct af of een jaar boven of onder het referentieniveau zit. Het weekdagprofiel onthult of dit een pendelroute is (piek ma–vr) of eerder recreatief (piek za–zo).</p>
           </div>
         </div>
         <div class="controls-vertical">
