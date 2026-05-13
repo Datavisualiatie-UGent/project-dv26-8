@@ -33,26 +33,33 @@ CODE_FIXES = {"LOU": "HAV", "DAZK": "DAZ"}
 # Helpers
 # ------------------------------------------------------------
 
+def parse_time_value(value):
+    if pd.isna(value):
+        return None
+
+    text = str(value).strip()
+    if not text or text.lower() == "nan":
+        return None
+
+    if "T" in text:
+        text = text.split("T", 1)[1]
+
+    parts = text.split(":")
+    if len(parts) >= 2 and parts[0].isdigit() and parts[1].isdigit():
+        hour = int(parts[0])
+        minute = parts[1]
+        return f"{hour:02d}:{minute}"
+
+    if text.isdigit() and len(text) in (3, 4):
+        text = text.zfill(4)
+        return f"{text[:2]}:{text[2:]}"
+
+    return None
 
 def normalize_columns(df):
     """Normalize column names by stripping whitespace, converting to lowercase, and removing BOM characters."""
     df.columns = df.columns.str.strip().str.lower().str.replace("\ufeff", "")
     return df
-
-
-def fix_time(x):
-    if pd.isna(x):
-        return None
-    x = str(x)
-
-    if ":" in x:
-        return x[:5]
-
-    if len(x) == 4:
-        return x[:2] + ":" + x[2:]
-
-    return None
-
 
 def load_and_clean(path):
     """Load raw CSV and remove useless columns."""
@@ -66,10 +73,7 @@ def load_and_clean(path):
     df = df[COLUMNS_TO_KEEP].copy()
     df["code"] = df["code"].astype("string").str.strip().str.upper().replace(CODE_FIXES)
     df["locatie"] = df["locatie"].astype("string").str.strip()
-    df["uur5minuten"] = (
-        df["uur5minuten"].astype(str).str.extract(r"(\d{1,2}:\d{2}|\d{3,4})")[0]
-    )
-    df["uur5minuten"] = df["uur5minuten"].apply(fix_time)
+    df["uur5minuten"] = df["uur5minuten"].apply(parse_time_value)
 
     df["timestamp"] = pd.to_datetime(
         df["datum"].astype("string") + " " + df["uur5minuten"], errors="coerce"
@@ -84,7 +88,6 @@ def load_and_clean(path):
     print(f"Cleaned data has {len(df)} rows after processing.")
 
     return df
-
 
 def aggregate(df):
     """
@@ -106,7 +109,6 @@ def aggregate(df):
 
     return df_day, df_month, df_year, df_hour, df_totals
 
-
 def clean_locations(
     path, output="../FietsStadGent-Framework/src/data/locations_clean.csv"
 ):
@@ -126,7 +128,6 @@ def clean_locations(
     print(f"Cleaned locations written to {output}")
     return df_clean
 
-
 def load_totals_or_regenerate(df, totals_path):
     if totals_path and os.path.exists(totals_path):
         print(f"Loading totals from {totals_path}")
@@ -141,7 +142,6 @@ def load_totals_or_regenerate(df, totals_path):
     totals_df.to_csv("total_counts_per_location.csv", sep=";", index=False)
     return totals_df
 
-
 def merge_locations_with_totals(
     loc_df,
     totals_df,
@@ -153,11 +153,9 @@ def merge_locations_with_totals(
     merged.to_csv(output, sep=";", index=False)
     print(f"Merged locations with totals written to {output}")
 
-
 # ------------------------------------------------------------
 # CLI
 # ------------------------------------------------------------
-
 
 def main():
     parser = argparse.ArgumentParser(description="Preprocess Gent fietstelpaal data.")
@@ -179,12 +177,14 @@ def main():
         # Use utf-8-sig to handle BOM if present
         df = pd.read_csv(args.input, sep=";", encoding="utf-8-sig")
         df = normalize_columns(df)
+        if "uur5minuten" in df.columns:
+            df["uur5minuten"] = df["uur5minuten"].apply(parse_time_value)
         # Ensure timestamp column exists and is datetime
         if "timestamp" not in df.columns:
             if "datum" in df.columns and "uur5minuten" in df.columns:
-                df["uur5minuten"] = df["uur5minuten"].astype(str).str.zfill(8)
                 df["timestamp"] = pd.to_datetime(
-                    df["datum"] + " " + df["uur5minuten"], errors="coerce"
+                    df["datum"].astype("string") + " " + df["uur5minuten"],
+                    errors="coerce",
                 )
         else:
             df["timestamp"] = pd.to_datetime(df["timestamp"], errors="coerce")
@@ -239,7 +239,6 @@ def main():
         merge_locations_with_totals(loc_df, totals_df)
 
     print("Done.")
-
 
 if __name__ == "__main__":
     main()

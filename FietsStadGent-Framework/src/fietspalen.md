@@ -558,9 +558,9 @@ trendTypeView.addEventListener("input", () => {
     </p>
   </section>
   
-  <hr class="page-separator" />
+  <!-- <hr class="page-separator" />
   
   <div class="page-footer">
     <p><strong>Opmerking:</strong> Deze data worden verzameld door vaste telpalen en geven dus een momentopname van het fietsverkeer op specifieke locaties. Ze weerspiegelen niet het volledige fietsgedrag in Gent — veel fietsers rijden op routes zonder telpalen. Daarnaast kunnen extreme weersomstandigheden, grote evenementen en seizoensgebonden factoren lokale uitschieters veroorzaken.</p>
-  </div>
+  </div> -->
 </div>

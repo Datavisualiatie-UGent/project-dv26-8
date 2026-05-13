@@ -44,7 +44,7 @@ What happens:
 - Data is standardized:
   - `code` → uppercase + whitespace removed
   - known fixes applied (`LOU → HAV`)
-  - `uur5minuten` → zero-padded (`0:00:00 → 00:00:00`)
+  - `uur5minuten` → normalized to `HH:MM` from either legacy `HH:MM` values, compact `HHMM` values, or ISO-like API timestamps such as `0001-01-01T00:15:00+00:00`
 - A timestamp column is created:
   - `timestamp = datum + uur5minuten`
 - Numeric columns are converted safely (`errors="coerce"`)
@@ -75,6 +75,8 @@ or using cleaned data:
 ```bash
 python preprocess.py ../FietsStadGent-Framework/src/data/fietspalen_clean.csv --data-is-clean --aggregate
 ```
+
+When `--data-is-clean` is used, the script still normalizes `uur5minuten` before rebuilding `timestamp`, so mixed input formats stay consistent.
 
 This generates:
 
