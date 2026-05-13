@@ -30,9 +30,6 @@ export function trendLijn(data, mode, yLabel, { width, height, isPct } = {}) {
     const range = extent[1] - extent[0];
     const mean = d3.mean(data, d => d.value);
 
-    // alleen inzoomen als variatie klein is
-    const shouldZoom = range / mean < 0.2;
-
     return Plot.plot({
         width,
         height,
@@ -59,9 +56,9 @@ export function trendLijn(data, mode, yLabel, { width, height, isPct } = {}) {
         y: {
             grid: true,
             label: yLabel,
-            domain: shouldZoom
-                ? [extent[0] * 0.98, extent[1] * 1.02]
-                : [0, extent[1] * 1.1],
+            domain: isPct
+                ? [d3.min(data, d => d.value), d3.max(data, d => d.value)]
+                : undefined,
 
             tickFormat: isPct
                 ? d => `${d3.format(".0f")(d)}%`
@@ -153,39 +150,30 @@ export function trendLijnVergelijking(
     const range = extent[1] - extent[0];
     const mean = d3.mean(data, d => d.value);
 
-    const shouldZoom = range / mean < 0.2;
-
     return Plot.plot({
 
         width,
         height,
-
         marginLeft: 60,
-
         className: "trendlijn-vergelijking",
-
         style: {
             background: "white",
             color: "black"
         },
-
         color: {
             legend: true,
             label: "Locatie",
             range: d3.schemeTableau10.concat(d3.schemeSet3)
         },
-
         x: {
             insetLeft: -sidePadding,
             insetRight: -sidePadding,
-
             domain:
                 mode === "month"
                     ? d3.range(12)
                     : mode === "day"
                         ? d3.range(7)
                         : d3.range(24),
-
             tickFormat:
                 mode === "month"
                     ? d => months[d]
@@ -199,10 +187,7 @@ export function trendLijnVergelijking(
         y: {
             grid: true,
             label: yLabel,
-
-            domain: shouldZoom
-                ? [extent[0] * 0.98, extent[1] * 1.02]
-                : [0, extent[1] * 1.1]
+            domain: undefined
         },
 
         marks: [
