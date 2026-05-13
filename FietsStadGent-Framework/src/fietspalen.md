@@ -31,14 +31,23 @@ const trendDict = {
   hour: await FileAttachment("data/hourly.json").json()
 };
 
+
 const allYears = Array.from(new Set(
   Object.values(trendDict).flatMap(d =>
     d.absoluut.global.data.map(v => v.jaar)
   )
 ));
 
-function selectGlobalData(mode, type) {
-  return trendDict[mode][type].global.data.sort((a, b) =>
+function selectGlobalData(mode, type, baseYear) {
+
+  let selected = trendDict[mode][type].global;
+
+  if(type === "relatief") {
+    selected = selected[baseYear];
+    
+  }
+
+  return selected.data.sort((a, b) =>
     a.jaar - b.jaar || a[mode] - b[mode]
   );
 }
@@ -366,6 +375,11 @@ const mapCard = resize((width) => {
 ```
 
 ```js
+
+const allAvailableYears = Array.from(
+  new Set(trendDict.month.absoluut.global.data.map(d => Number(d.jaar)))
+).sort((a, b) => a - b);
+
 // Trendline controls for the global chart
 const trendModeView = getModeView();
 const trendMode = Generators.input(trendModeView);
@@ -376,16 +390,12 @@ const trendYears = Generators.input(trendYearCheckBox);
 const trendTypeView = Inputs.radio(["absoluut", "relatief"], { value: "absoluut" });
 const trendType = Generators.input(trendTypeView);
 
-trendTypeView.addEventListener("input", () => {
-  if (trendTypeView.value === "relatief") {
-    const years = trendYearCheckBox.value.map(Number);
+const baseYearTrendSelect = Inputs.select(allAvailableYears, {
+  format: d => String(d), 
+  value: allAvailableYears.at(-1)
+  });
+const trendBaseYear = Generators.input(baseYearTrendSelect);
 
-    if (!years.includes(2025)) {
-      trendYearCheckBox.value = [...years, 2025];
-      trendYearCheckBox.dispatchEvent(new Event("input"));
-    }
-  }
-});
 ```
 
 <div class="page">
@@ -543,13 +553,22 @@ trendTypeView.addEventListener("input", () => {
         <div class="control-label">Type</div>
         ${trendTypeView}
       </div>
+      ${trendType === "relatief"
+        ? html`
+          <div class="control-block">
+            <div class="control-label">Basis jaar</div>
+            ${baseYearTrendSelect}
+          </div>
+        `
+        : ""
+      }
     </div>
     ${resize((width) =>
       trendLijn(
-        selectGlobalData(trendMode, trendType)
+        selectGlobalData(trendMode, trendType, trendBaseYear)
           .filter(d => trendYears.map(Number).includes(Number(d.jaar))),
         trendMode,
-        trendType === "absoluut" ? "Gemiddelde aantal fietsers" : "Procentuele verandering t.o.v. 2025",
+        trendType === "absoluut" ? "Gemiddelde aantal fietsers" : `Procentuele verandering t.o.v. ${trendBaseYear}`,
         { width, height: 400, isPct: trendType === "relatief" }
       )
     )}

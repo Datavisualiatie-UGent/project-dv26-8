@@ -258,16 +258,13 @@ const poleTrendType = Generators.input(poleTrendTypeView);
 const poleTrendYearCheckBox = getYearsView(trendAllYears);
 const poleTrendYears = Generators.input(poleTrendYearCheckBox);
 
-poleTrendTypeView.addEventListener("input", () => {
-  if (poleTrendTypeView.value === "relatief") {
-    const years = poleTrendYearCheckBox.value.map(Number);
+console.log(trendAllYears);
 
-    if (!years.includes(2025)) {
-      poleTrendYearCheckBox.value = [...years, 2025];
-      poleTrendYearCheckBox.dispatchEvent(new Event("input"));
-    }
-  }
+const poleBaseYearTrendSelect = Inputs.select(trendAllYears, {
+  format: d => String(d), 
+  value: trendAllYears.at(-1)
 });
+const poleTrendBaseYear = Generators.input(poleBaseYearTrendSelect);
 
 ```
 
@@ -313,15 +310,26 @@ poleTrendTypeView.addEventListener("input", () => {
             <div class="control-label">Type</div>
             ${poleTrendTypeView}
           </div>
+          ${poleTrendType === "relatief"
+            ? html`
+              <div class="control-block">
+                <div class="control-label">Basis jaar</div>
+                ${poleBaseYearTrendSelect}
+              </div>
+            `
+            : ""
+          }
         </div>
         ${resize((width) => {
-          const data = getTrendDataForStation(trendDict, poleTrendMode, poleTrendType, station)
+          const data = getTrendDataForStation(trendDict, poleTrendMode, poleTrendType, station, poleTrendBaseYear)
             .filter(d => poleTrendYears.map(Number).includes(Number(d.jaar)));
           return data.length
             ? trendLijn(
                 data,
                 poleTrendMode,
-                poleTrendType === "absoluut" ? "Gemiddelde aantal fietsers" : "Procentuele verandering t.o.v. 2025",
+                poleTrendType === "absoluut" ? 
+                  "Gemiddelde aantal fietsers" : 
+                  `Procentuele verandering t.o.v. ${poleTrendBaseYear}`,
                 { width, height: 400, isPct: poleTrendType === "relatief" }
               )
             : html`<p class="empty-note">Geen trenddata gevonden voor deze telpaal.</p>`;

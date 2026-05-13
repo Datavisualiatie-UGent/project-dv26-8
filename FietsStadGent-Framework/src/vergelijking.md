@@ -114,7 +114,7 @@ selectLocationsTrend.addEventListener("input", () => {
 
 const selectedCodesTrend = Generators.input(selectLocationsTrend);
 
-const selectYearTrend = Inputs.select(allAvailableYears, {format: d => String(d), value: 2024 });
+const selectYearTrend = Inputs.select(allAvailableYears, {format: d => String(d), value: allAvailableYears[0]});
 const selectedYearTrend = Generators.input(selectYearTrend);
 
 const selectModeTrend = getModeView();
