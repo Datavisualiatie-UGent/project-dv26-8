@@ -10,7 +10,7 @@ export function drukte(data, yLabel, {width, height} = {}) {
       .map(d => {
         const value = d.avg - y0;
         const out = { ...d, month, value };
-        y0 = value;
+        y0 = d.avg;
         return out;
       });
   });
