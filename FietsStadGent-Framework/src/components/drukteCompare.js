@@ -2,7 +2,18 @@ import * as Plot from "npm:@observablehq/plot";
 import * as d3 from "d3";
 
 export function drukte(data, yLabel, {width, height} = {}) {
-  const sorted = [...data].sort((a, b) => (a.avg - b.avg))
+  const stacked = d3.groups(data, d => d.month).flatMap(([month, values]) => {
+    let y0 = 0;
+
+    return values
+      .sort((a, b) => a.avg - b.avg)
+      .map(d => {
+        const value = d.avg - y0;
+        const out = { ...d, month, value };
+        y0 = value;
+        return out;
+      });
+  });
   return Plot.plot({
     width,
     height,
@@ -26,23 +37,25 @@ export function drukte(data, yLabel, {width, height} = {}) {
       grid: true,
     },
     marks: [
-      Plot.barY(data, {
+      Plot.rectY(stacked, {
         x: "month",
-        y: "avg",
+        y: "value",
         fill: "location",
-        // opacity: 0.6,
         channels: {
             Locatie: "location",
+            "Aantal fietsers": "avg",
         },
         tip: {
           format: {
             Locatie: true,
-            y: true,
+            "Aantal fietsers": true,
             x: (d) => d.toLocaleDateString("nl-BE", { month: "long", year: "numeric" }),
             fill: false,
+            y: false,
           },
         }
-      })
+      }),
+      Plot.ruleY([0]),
     ]
   });
 }
