@@ -11,7 +11,7 @@ import {drukte} from "./components/drukteCompare.js";
 import * as d3 from "d3";
 import {getTrendDataForStation} from "./components/station_data.js";
 import {getModeView, getYearColor, getYearsView} from "./components/trendlijn_helper.js";
-import {trendLijnVergelijking, locationPatterns} from "./components/trendLijn.js";
+import {trendLijnVergelijking, locationPatterns} from "./components/trendlijn.js";
 ```
 
 ```js
