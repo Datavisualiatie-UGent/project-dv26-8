@@ -183,7 +183,7 @@ const stationContent = station
             ${poleInput}
           </div>
           <div class="pole-actions pole-actions--toolbar">
-            <a class="button primary" href="/fietspalen">Terug naar kaart</a>
+            <a class="button primary" href="./fietspalen">Terug naar kaart</a>
             ${osmHref
               ? html`<a class="button secondary" target="_blank" rel="noopener noreferrer" href="${osmHref}">Bekijk op OSM</a>`
               : null}
