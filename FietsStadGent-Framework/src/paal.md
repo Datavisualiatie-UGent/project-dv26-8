@@ -125,7 +125,7 @@ const poleInput = Inputs.select(
 poleInput.addEventListener("input", () => {
   const nextCode = poleInput.value;
   if (nextCode && nextCode !== code) {
-    location.href = `/paal?code=${encodeURIComponent(nextCode)}`;
+    location.href = `./paal?code=${encodeURIComponent(nextCode)}`;
   }
 });
 
