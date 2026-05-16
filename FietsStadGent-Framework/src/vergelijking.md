@@ -11,7 +11,7 @@ import {drukte} from "./components/drukteCompare.js";
 import * as d3 from "d3";
 import {getTrendDataForStation} from "./components/station_data.js";
 import {getModeView, getYearColor, getYearsView} from "./components/trendlijn_helper.js";
-import {trendLijnVergelijking, locationPatterns} from "./components/trendlijn.js";
+import {trendLijnVergelijking} from "./components/trendLijn.js";
 ```
 
 ```js
@@ -104,9 +104,7 @@ const selectLocationsTrend = Inputs.checkbox(
 
 selectLocationsTrend.addEventListener("input", () => {
   if (selectLocationsTrend.value.length > 5) {
-    // Zet de waarde terug naar de eerste 5 geselecteerde items
     selectLocationsTrend.value = selectLocationsTrend.value.slice(0, 5);
-    // Forceer een update voor de generator
     selectLocationsTrend.dispatchEvent(new Event("input"));
   }
 });
@@ -114,7 +112,7 @@ selectLocationsTrend.addEventListener("input", () => {
 
 const selectedCodesTrend = Generators.input(selectLocationsTrend);
 
-const selectYearTrend = Inputs.select(allAvailableYears, {format: d => String(d), value: 2024 });
+const selectYearTrend = Inputs.select(allAvailableYears, {format: d => String(d), value: allAvailableYears[0]});
 const selectedYearTrend = Generators.input(selectYearTrend);
 
 const selectModeTrend = getModeView();
@@ -123,17 +121,12 @@ const selectedModeTrend = Generators.input(selectModeTrend);
 ```
 
 ```js
-// BLOK 2: Reactieve Data Verwerking
-// Omdat dit een nieuw blok is, is 'selectedCodesTrend' nu een echte Array!
-
 const combinedTrendData = selectedCodesTrend.flatMap(code => {
     const station = locationByCode.get(code);
     if (!station) return [];
 
-    // Haal data op voor deze specifieke paal
     const stationData = getTrendDataForStation(trendDict, selectedModeTrend, "absoluut", station);
     
-    // Filter op het gekozen jaar en voeg de locatienaam toe
     return stationData
       .filter(d => Number(d.jaar) === Number(selectedYearTrend))
       .map(d => ({
@@ -143,46 +136,6 @@ const combinedTrendData = selectedCodesTrend.flatMap(code => {
 });
 
 const trendLocationOrder = selectedCodesTrend;
-
-// In het JS blok van vergelijking.md (Blok 2)
-
-const trendLegend = (codes) => {
-  // Haal de kleur op van het geselecteerde jaar voor de legende
-  const legendColor = combinedTrendData.length > 0 
-    ? getYearColor(combinedTrendData[0].jaar) 
-    : "black";
-
-  return html`
-    <div class="trend-legend" style="margin-bottom: 20px; padding: 15px; background: #f9f9f9; border-radius: 8px;">
-      <div class="legend-list" style="display: flex; flex-wrap: wrap; gap: 20px;">
-        ${codes.map((code, i) => {
-          const loc = locationByCode.get(code);
-          const pattern = locationPatterns[i % locationPatterns.length];
-
-          return html`
-            <div class="legend-item" style="display:flex; align-items:center; gap:10px;">
-              <svg width="50" height="10" style="overflow: visible;">
-                <line
-                  x1="0"
-                  x2="50"
-                  y1="5"
-                  y2="5"
-                  stroke="${legendColor}"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                  stroke-dasharray="${pattern.join(',')}"
-                />
-              </svg>
-              <span style="font-size: 0.9em; font-weight: 500;">
-                ${loc.name}
-              </span>
-            </div>
-          `;
-        })}
-      </div>
-    </div>
-  `;
-};
 
 ```
 
@@ -259,12 +212,11 @@ const trendLegend = (codes) => {
         ${selectYearTrend}
       </div>
       <div class="control-block">
-        <div class="control-label"><b>Weergave</b></div>
+        <div class="control-label"><b>Trend</b></div>
         ${selectModeTrend}
       </div>
     </div>
   </div>
-    ${trendLegend(selectedCodesTrend)}
     ${resize((width) => {
       return combinedTrendData.length > 0
         ? trendLijnVergelijking(

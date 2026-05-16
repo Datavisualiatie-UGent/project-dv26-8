@@ -119,9 +119,16 @@ export function getDailyDataForStation(records, station) {
   return mergeDailyRecords(matchedRecords);
 }
 
-export function getTrendDataForStation(trendDict, mode, type, station) {
+export function getTrendDataForStation(trendDict, mode, type, station, baseYear = undefined) {
   const dataset = trendDict[mode][type];
-  const records = collectStationRecords(dataset.perLocation, station, {locationKey: "locatie"});
+
+  let selectedDataset = dataset.perLocation;
+
+  if(type === "relatief" && baseYear !== undefined) {
+    selectedDataset = dataset.perLocation[baseYear];
+  }
+
+  const records = collectStationRecords(selectedDataset, station, {locationKey: "locatie"});
   return mergeTrendRecords(records, mode);
 }
 
