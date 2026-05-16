@@ -42,7 +42,9 @@ const normalizedMonthlyPerLocation = d3.merge(
 .sort((a, b) => a.month - b.month);
 
 const selectLocations = Inputs.checkbox(
-  locations.map((d) => d.code),
+  locations
+  .sort((a, b) => b.total - a.total)
+  .map((d) => d.code),
   {
     value: ["GRO", "COU"],
     format: (value) => {
@@ -175,8 +177,12 @@ const trendLocationOrder = selectedCodesTrend;
 
   <section class="card card--detail">
     <h3>Maandelijkse vergelijking</h3>
-    ${resize((width) => drukte(normalizedMonthlyPerLocation.filter(d => selectedLocations.includes(d.code)), "Aantal fietsers", {width, height: 400}))}
-    <p class="section-copy">Overlappende balken tonen de maandelijkse drukte voor elke geselecteerde telpaal. Zo zie je of het seizoenspatroon voor alle locaties gelijk loopt, of dat sommige palen pieken op andere momenten wat can wijzen op een ander gebruik (pendel, school, recreatie).</p>
+    ${resize((width) => {
+      return selectedLocations.length > 0 ?
+      drukte(normalizedMonthlyPerLocation.filter(d => selectedLocations.includes(d.code)), "Aantal fietsers", {width, height: 400})
+      : html`<div class="empty-note">Selecteer minstens één telpaal om de maandelijkse vergelijking te zien.</div>`
+    })}
+    <p class="section-copy">Overlappende balken tonen de maandelijkse drukte voor alle geselecteerde telpalen. Zo zie je of het seizoenspatroon voor alle locaties gelijk loopt, of dat sommige palen pieken op andere momenten wat kan wijzen op een ander gebruik (pendel, school, recreatie).</p>
   </section>
 
   <section class="card card--detail">
