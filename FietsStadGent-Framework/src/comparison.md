@@ -104,11 +104,18 @@ const selectLocationsTrend = Inputs.checkbox(
   }
 );
 
+let prevValueTrend = selectLocationsTrend.value.slice();
+
 selectLocationsTrend.addEventListener("input", () => {
   if (selectLocationsTrend.value.length > 5) {
-    selectLocationsTrend.value = selectLocationsTrend.value.slice(0, 5);
-    selectLocationsTrend.dispatchEvent(new Event("input"));
+    // Find which item was just added and remove it
+    const added = selectLocationsTrend.value.find(item => !prevValueTrend.includes(item));
+    if (added) {
+      selectLocationsTrend.value = selectLocationsTrend.value.filter(item => item !== added);
+    }
   }
+  prevValueTrend = selectLocationsTrend.value.slice();
+  selectLocationsTrend.dispatchEvent(new Event("input"));
 });
 
 
