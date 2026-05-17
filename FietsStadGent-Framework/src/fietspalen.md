@@ -110,13 +110,24 @@ const rankingSortInput = Inputs.radio(["total", "name", "buildYear"], {
     buildYear: "Bouwjaar"
   })[value]
 });
-const rankingSort = Generators.input(rankingSortInput);
 
 const rankingDirInput = Inputs.radio(["desc", "asc"], {
   value: "desc",
   format: (value) => value === "asc" ? "Oplopend" : "Aflopend"
 });
+
+const sortControls = html`<div class="ranking-controls">
+  <div class="sort-control">${rankingSortInput}</div>
+  <div class="sort-control">${rankingDirInput}</div>
+</div>`;
+```
+
+```js
+const rankingSort = Generators.input(rankingSortInput);
 const rankingDir = Generators.input(rankingDirInput);
+```
+
+```js
 
 function sortValue(location, key) {
   if (key === "name") return (location.name || "").toLowerCase();
@@ -149,11 +160,6 @@ const oldestStation = withBuildYear.length > 0
   : null;
 
 const nf = new Intl.NumberFormat("nl-BE");
-
-const sortControls = html`<div class="ranking-controls">
-  <div class="sort-control">${rankingSortInput}</div>
-  <div class="sort-control">${rankingDirInput}</div>
-</div>`;
 ```
 
 ```js
