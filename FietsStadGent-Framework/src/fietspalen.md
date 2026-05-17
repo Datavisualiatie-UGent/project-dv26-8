@@ -102,17 +102,21 @@ if (!globalThis.__fietsMapBridge) {
 }
 const mapBridge = globalThis.__fietsMapBridge;
 
-const pageParams = new URLSearchParams(location.search);
-const sortAliases = new Map([
-  ["naam", "name"],
-  ["bouwjaar", "buildYear"],
-  ["total", "total"],
-  ["code", "code"],
-  ["name", "name"],
-  ["buildYear", "buildYear"]
-]);
-const rankingSort = sortAliases.get(pageParams.get("sort")) || "total";
-const rankingDir = pageParams.get("dir") === "asc" ? "asc" : "desc";
+const rankingSortInput = Inputs.radio(["total", "name", "buildYear"], {
+  value: "total",
+  format: (value) => ({
+    total: "Fietsers",
+    name: "Naam",
+    buildYear: "Bouwjaar"
+  })[value]
+});
+const rankingSort = Generators.input(rankingSortInput);
+
+const rankingDirInput = Inputs.radio(["desc", "asc"], {
+  value: "desc",
+  format: (value) => value === "asc" ? "Oplopend" : "Aflopend"
+});
+const rankingDir = Generators.input(rankingDirInput);
 
 function sortValue(location, key) {
   if (key === "name") return (location.name || "").toLowerCase();
@@ -130,19 +134,13 @@ function compareLocations(a, b) {
   return rankingDir === "asc" ? av - bv : bv - av;
 }
 
-function createSortHref(sortKey, dir = rankingDir) {
-  const params = new URLSearchParams(location.search);
-  params.set("sort", sortKey);
-  params.set("dir", dir);
-  return `?${params.toString()}`;
-}
-
 const sortedLocations = [...locations].sort(compareLocations);
-const totalStations = sortedLocations.length;
-const totalCyclists = sortedLocations.reduce((sum, d) => sum + d.total, 0);
+const locationsByCyclists = [...locations].sort((a, b) => b.total - a.total);
+const totalStations = locations.length;
+const totalCyclists = locations.reduce((sum, d) => sum + d.total, 0);
 const avgCyclists = totalStations > 0 ? totalCyclists / totalStations : 0;
 
-const withBuildYear = sortedLocations.filter((d) => Number.isFinite(d.buildYear));
+const withBuildYear = locations.filter((d) => Number.isFinite(d.buildYear));
 const newestStation = withBuildYear.length > 0
   ? withBuildYear.reduce((best, d) => (d.buildYear > best.buildYear ? d : best))
   : null;
@@ -153,10 +151,8 @@ const oldestStation = withBuildYear.length > 0
 const nf = new Intl.NumberFormat("nl-BE");
 
 const sortControls = html`<div class="ranking-controls">
-  <a class="sort-chip ${rankingSort === "total" ? "active" : ""}" href=${createSortHref("total")}>Fietsers</a>
-  <a class="sort-chip ${rankingSort === "name" ? "active" : ""}" href=${createSortHref("name")}>Naam</a>
-  <a class="sort-chip ${rankingSort === "buildYear" ? "active" : ""}" href=${createSortHref("buildYear")}>Bouwjaar</a>
-  <a class="sort-chip" href=${createSortHref(rankingSort, rankingDir === "asc" ? "desc" : "asc")}>${rankingDir === "asc" ? "Oplopend" : "Aflopend"}</a>
+  <div class="sort-control">${rankingSortInput}</div>
+  <div class="sort-control">${rankingDirInput}</div>
 </div>`;
 ```
 
@@ -421,7 +417,7 @@ const trendBaseYear = Generators.input(baseYearTrendSelect);
     </article>
     <article class="card card--overview">
       <p class="metric-label">Top telpaal</p>
-      <p class="metric-value">${sortedLocations[0] ? sortedLocations[0].name : "Onbekend"}</p>
+      <p class="metric-value">${locationsByCyclists[0] ? locationsByCyclists[0].name : "Onbekend"}</p>
     </article>
   </section>
 
@@ -476,7 +472,7 @@ const trendBaseYear = Generators.input(baseYearTrendSelect);
     </article>
     <article class="card card--overview">
       <p class="metric-label">Top 3 samen</p>
-      <p class="metric-value">${nf.format(sortedLocations.slice(0, 3).reduce((sum, d) => sum + d.total, 0))}</p>
+      <p class="metric-value">${nf.format(locationsByCyclists.slice(0, 3).reduce((sum, d) => sum + d.total, 0))}</p>
     </article>
     <article class="card card--overview">
       <p class="metric-label">Mediaan (ruw)</p>
