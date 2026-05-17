@@ -403,11 +403,8 @@ const trendBaseYear = Generators.input(baseYearTrendSelect);
 <div class="page">
   <section class="page-hero">
     <h2>Fietstelpalen in Gent</h2>
-    <div class="page-hero-subtitle">Interactieve kaart en ranking op basis van totaal getelde fietsers per telpaal.</div>
+    <div class="page-hero-subtitle">Kerncijfers, interactieve kaart en globale patronen over de periode 2018–2026.</div>
   </section>
-
-  Deze pagina toont een globaal overzicht van alle fietstelpalen in Gent: hun locaties, telcijfers, en patronen over de periode 2018–2026. Onder vind je kerncijfers, een interactieve kaart, en drie visualisaties die respectievelijk maandelijkse, dagelijkse en jaar-op-jaar-trends illustreren.
-
   <section class="overview-grid">
     <article class="card card--overview">
       <p class="metric-label">Aantal telpalen</p>
@@ -602,10 +599,4 @@ const trendBaseYear = Generators.input(baseYearTrendSelect);
       </aside>
     </div>
   </section>
-  
-  <!-- <hr class="page-separator" />
-  
-  <div class="page-footer">
-    <p><strong>Opmerking:</strong> Deze data worden verzameld door vaste telpalen en geven dus een momentopname van het fietsverkeer op specifieke locaties. Ze weerspiegelen niet het volledige fietsgedrag in Gent — veel fietsers rijden op routes zonder telpalen. Daarnaast kunnen extreme weersomstandigheden, grote evenementen en seizoensgebonden factoren lokale uitschieters veroorzaken.</p>
-  </div> -->
 </div>
