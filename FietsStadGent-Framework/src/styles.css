@@ -313,7 +313,7 @@
 .ranking-controls {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
+    gap: 0.6rem;
     align-items: center;
 }
 
@@ -350,7 +350,13 @@
 }
 
 .sort-control form {
-    display: contents;
+    width: 100%;
+}
+
+.sort-control form > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
 }
 
 .sort-control label {
@@ -378,6 +384,11 @@
 .sort-control input {
     margin: 0;
     accent-color: var(--accent);
+    appearance: none;
+    -webkit-appearance: none;
+    width: 0;
+    height: 0;
+    display: none;
 }
 
 .collapsible-body {
