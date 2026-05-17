@@ -192,9 +192,13 @@ const trendLocationOrder = selectedCodesTrend;
     <div class="chart-layout">
       <div class="chart-main">
     ${resize((width) => {
-      return selectedLocations.length > 0 ?
-      drukte(normalizedMonthlyPerLocation.filter(d => selectedLocations.includes(d.code)), "Aantal fietsers", {width, height: 400})
-      : html`<div class="empty-note">Selecteer minstens één telpaal om de maandelijkse vergelijking te zien.</div>`
+      if (selectedLocations.length === 0) {
+        return html`<div class="empty-note">Selecteer minstens één telpaal om de maandelijkse vergelijking te zien.</div>`;
+      }
+      const filteredData = normalizedMonthlyPerLocation.filter(d => selectedLocations.includes(d.code));
+      return filteredData.length > 0
+        ? drukte(filteredData, "Aantal fietsers", {width, height: 400})
+        : html`<div class="empty-note">Geen data gevonden voor deze selectie.</div>`
     })}
       </div>
       <aside class="chart-insight">
@@ -248,11 +252,14 @@ const trendLocationOrder = selectedCodesTrend;
     <div class="chart-layout">
       <div class="chart-main">
     ${resize((width) => {
+      if (selectedCodesTrend.length === 0) {
+        return html`<div class="empty-note">Selecteer minstens één telpalen om de trendvergelijking te zien.</div>`;
+      }
       return combinedTrendData.length > 0
         ? trendLijnVergelijking(
-            combinedTrendData, 
-            selectedModeTrend, 
-            "Gemiddeld aantal fietsers", 
+            combinedTrendData,
+            selectedModeTrend,
+            "Gemiddeld aantal fietsers",
             { width, height: 450 }
           )
         : html`<div class="empty-note">Geen data gevonden voor deze selectie.</div>`
