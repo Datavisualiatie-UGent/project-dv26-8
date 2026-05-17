@@ -33,8 +33,9 @@ export function heatmap(rows, year, description, {width, height, colorDomain} = 
         },
         color: {
             label: description,
-            scheme: "greens",
-            domain: year !== undefined ? colorDomain : undefined
+            scheme: "viridis",
+            domain: year !== undefined ? colorDomain : undefined,
+            legend: true
             // domain: colorDomain
         },
         marks: [
