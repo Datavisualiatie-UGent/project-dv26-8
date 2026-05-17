@@ -170,10 +170,13 @@ const trendLocationOrder = selectedCodesTrend;
     </div>
   </section>
 
-  <section class="card card--detail">
-    <h3>Verkeersprofielen</h3>
+  <details class="card card--detail">
+    <summary class="ranking-header">
+      <h3>Verkeersprofielen</h3>
+      <span class="ranking-toggle">Open / sluit</span>
+    </summary>
     ${selectedLocations.map(location => verkeersprofielPlot(location))}
-  </section>
+  </details>
 
   <section class="card card--detail">
     <h3>Maandelijkse vergelijking</h3>
