@@ -83,6 +83,12 @@
     padding-top: 0.2rem;
 }
 
+.page p,
+.page-shell p,
+.card p {
+    max-width: none;
+}
+
 .page-hero {
     border-radius: 14px;
     padding: 1rem 1.1rem;
@@ -133,6 +139,43 @@
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+}
+
+.chart-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(18rem, 0.8fr);
+    gap: 0.85rem;
+    align-items: start;
+}
+
+.chart-main {
+    min-width: 0;
+}
+
+.chart-insight {
+    display: grid;
+    gap: 0.65rem;
+    align-content: start;
+    border-radius: 10px;
+    border: 1px solid var(--border-soft);
+    background: var(--surface-muted);
+    padding: 0.8rem 0.85rem;
+}
+
+.chart-insight-title {
+    margin: 0;
+    color: var(--text-label);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.chart-interpretation {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.55;
 }
 
 .chart-header {
@@ -202,6 +245,7 @@
 }
 
 .card--ranking,
+.card--collapsible,
 .card--map {
     overflow: hidden;
     padding: 0;
@@ -227,12 +271,14 @@
     font-weight: 700;
 }
 
-.card--ranking>summary {
+.card--ranking>summary,
+.card--collapsible>summary {
     list-style: none;
     cursor: pointer;
 }
 
-.card--ranking>summary::-webkit-details-marker {
+.card--ranking>summary::-webkit-details-marker,
+.card--collapsible>summary::-webkit-details-marker {
     display: none;
 }
 
@@ -271,6 +317,7 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
+    align-items: center;
 }
 
 .sort-chip,
@@ -290,6 +337,54 @@
     -webkit-text-fill-color: var(--text-main);
     font-size: 0.74rem;
     background: var(--surface);
+    cursor: pointer;
+}
+
+.sort-chip:hover {
+    border-color: var(--accent);
+    color: var(--accent) !important;
+    -webkit-text-fill-color: var(--accent);
+}
+
+.sort-control {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.sort-control form {
+    display: contents;
+}
+
+.sort-control label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin: 0;
+    padding: 0.32rem 0.58rem;
+    border-radius: 999px;
+    border: 1px solid #cbd5e1;
+    background: var(--surface);
+    color: var(--text-main);
+    font-size: 0.74rem;
+    font-weight: 700;
+    line-height: 1.2;
+    cursor: pointer;
+}
+
+.sort-control label:has(input:checked) {
+    color: #ffffff;
+    background: var(--accent);
+    border-color: var(--accent);
+}
+
+.sort-control input {
+    margin: 0;
+    accent-color: var(--accent);
+}
+
+.collapsible-body {
+    padding: 0.85rem;
 }
 
 .sort-chip.active {
@@ -998,6 +1093,10 @@
 @media (max-width: 1024px) {
     .overview-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .chart-layout {
+        grid-template-columns: 1fr;
     }
 }
 

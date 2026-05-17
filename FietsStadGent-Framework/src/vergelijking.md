@@ -182,12 +182,19 @@ const trendLocationOrder = selectedCodesTrend;
 
   <section class="card card--detail">
     <h3>Maandelijkse vergelijking</h3>
+    <div class="chart-layout">
+      <div class="chart-main">
     ${resize((width) => {
       return selectedLocations.length > 0 ?
       drukte(normalizedMonthlyPerLocation.filter(d => selectedLocations.includes(d.code)), "Aantal fietsers", {width, height: 400})
       : html`<div class="empty-note">Selecteer minstens één telpaal om de maandelijkse vergelijking te zien.</div>`
     })}
-    <p class="section-copy">Overlappende balken tonen de maandelijkse drukte voor alle geselecteerde telpalen. Zo zie je of het seizoenspatroon voor alle locaties gelijk loopt, of dat sommige palen pieken op andere momenten wat kan wijzen op een ander gebruik (pendel, school, recreatie).</p>
+      </div>
+      <aside class="chart-insight">
+        <p class="chart-insight-title">Interpretatie</p>
+        <p class="chart-interpretation">Overlappende balken tonen de maandelijkse drukte voor alle geselecteerde telpalen. Zo zie je of het seizoenspatroon voor alle locaties gelijk loopt, of dat sommige palen pieken op andere momenten wat kan wijzen op een ander gebruik (pendel, school, recreatie).</p>
+      </aside>
+    </div>
   </section>
 
   <section class="card card--detail">
@@ -228,6 +235,8 @@ const trendLocationOrder = selectedCodesTrend;
       </div>
     </div>
   </div>
+    <div class="chart-layout">
+      <div class="chart-main">
     ${resize((width) => {
       return combinedTrendData.length > 0
         ? trendLijnVergelijking(
@@ -238,5 +247,11 @@ const trendLocationOrder = selectedCodesTrend;
           )
         : html`<div class="empty-note">Geen data gevonden voor deze selectie.</div>`
     })}
+      </div>
+      <aside class="chart-insight">
+        <p class="chart-insight-title">Interpretatie</p>
+        <p class="chart-interpretation">Vergelijk de tijdslijnen van verschillende telpalen binnen een jaar. Zo wordt zichtbaar welke locaties hetzelfde ritme volgen en welke telpalen vooral op specifieke maanden, weekdagen of uren afwijken.</p>
+      </aside>
+    </div>
   </section>
 </div>
