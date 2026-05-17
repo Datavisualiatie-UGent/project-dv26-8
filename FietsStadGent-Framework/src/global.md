@@ -538,7 +538,9 @@ const trendBaseYear = Generators.input(baseYearTrendSelect);
     ${heatmapYearInput}
     <div class="chart-layout">
       <div class="chart-main">
-        ${selectedHeatmapYears.map((year) => heatmap(selectedHeatmapData(year), year !== "Alle jaren" ? year : undefined, "gemiddeld aantal fietsers", {width, height: 200, colorDomain: heatmapValueDomain}))}
+        ${selectedHeatmapYears.length
+          ? selectedHeatmapYears.map((year) => heatmap(selectedHeatmapData(year), year !== "Alle jaren" ? year : undefined, "gemiddeld aantal fietsers", {width, height: 200, colorDomain: heatmapValueDomain}))
+          : html`<p class="empty-note">Selecteer één of meer jaren om de heatmap te bekijken.</p>`}
       </div>
       <aside class="chart-insight">
         <p class="chart-insight-title">Interpretatie</p>
@@ -583,15 +585,18 @@ const trendBaseYear = Generators.input(baseYearTrendSelect);
     </div>
     <div class="chart-layout">
       <div class="chart-main">
-        ${resize((width) =>
-          trendLijn(
+        ${resize((width) => {
+          if (trendYears.length === 0) {
+            return html`<p class="empty-note">Selecteer één of meer jaren om de trendgrafiek te bekijken.</p>`;
+          }
+          return trendLijn(
             selectGlobalData(trendMode, trendType, trendBaseYear)
               .filter(d => trendYears.map(Number).includes(Number(d.jaar))),
             trendMode,
             trendType === "absoluut" ? "Gemiddelde aantal fietsers" : `Procentuele verandering t.o.v. ${trendBaseYear}`,
             { width, height: 400, isPct: trendType === "relatief" }
-          )
-        )}
+          );
+        })}
       </div>
       <aside class="chart-insight">
         <p class="chart-insight-title">Interpretatie</p>

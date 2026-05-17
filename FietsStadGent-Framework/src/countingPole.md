@@ -282,7 +282,9 @@ const poleTrendBaseYear = Generators.input(poleBaseYearTrendSelect);
         <div class="chart-layout">
           <div class="chart-main">
             ${stationDailyData.length
-              ? selectedStationHeatmapYears.map((year) => heatmap(selectedStationHeatmapData(year), year !== "Alle jaren" ? year : undefined, year !== "Alle jaren" ? "aantal fietsers" : "gemiddeld aantal fietsers", {width, height: 200, colorDomain: stationHeatmapValueDomain}))
+              ? selectedStationHeatmapYears.length
+                ? selectedStationHeatmapYears.map((year) => heatmap(selectedStationHeatmapData(year), year !== "Alle jaren" ? year : undefined, year !== "Alle jaren" ? "aantal fietsers" : "gemiddeld aantal fietsers", {width, height: 200, colorDomain: stationHeatmapValueDomain}))
+                : html`<p class="empty-note">Selecteer één of meer jaren om de heatmap te bekijken.</p>`
               : html`<p class="empty-note">Voor deze telpaal is geen dagdata gevonden.</p>`}
           </div>
           ${stationDailyData.length ? html`<aside class="chart-insight">
@@ -328,6 +330,9 @@ const poleTrendBaseYear = Generators.input(poleBaseYearTrendSelect);
         <div class="chart-layout">
           <div class="chart-main">
         ${resize((width) => {
+          if (poleTrendYears.length === 0) {
+            return html`<p class="empty-note">Selecteer één of meer jaren om de trendgrafiek te bekijken.</p>`;
+          }
           const data = getTrendDataForStation(trendDict, poleTrendMode, poleTrendType, station, poleTrendBaseYear)
             .filter(d => poleTrendYears.map(Number).includes(Number(d.jaar)));
           return data.length
