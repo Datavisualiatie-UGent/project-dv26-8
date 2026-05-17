@@ -214,6 +214,9 @@ const trendLocationOrder = selectedCodesTrend;
     <div class="control-block" style="min-width: 280px;">
       <h3 style="margin-top:0;">Selectie van telpalen</h3>
       <div class="pole-options">
+        <div style="margin-bottom: 0.75rem; font-size: 0.9rem; color: var(--text-muted);">
+          <strong>${selectedCodesTrend.length} / 5</strong> telpalen geselecteerd
+        </div>
         ${selectLocationsTrend}
       </div>
     </div>
