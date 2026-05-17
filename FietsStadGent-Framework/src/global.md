@@ -555,7 +555,7 @@ const trendBaseYear = Generators.input(baseYearTrendSelect);
     <div class="chart-header">
       <div>
         <h3>Trend — alle telpalen</h3>
-        <p>Trendlijnen per jaar: kies <em>absoluut</em> voor ruwe aantallen of <em>relatief</em> om jaren te vergelijken ten opzichte van 2025.</p>
+        <p>Trendlijnen per jaar: kies <em>absoluut</em> voor ruwe aantallen of <em>relatief</em> om jaren te vergelijken ten opzichte van een geselecteerde jaar.</p>
       </div>
     </div>
     <div class="controls-vertical">
@@ -596,7 +596,7 @@ const trendBaseYear = Generators.input(baseYearTrendSelect);
       <aside class="chart-insight">
         <p class="chart-insight-title">Interpretatie</p>
         <p class="chart-interpretation">
-          Deze grafiek laat zien hoe het fietsgebruik over jaren heen evolueert. In de <em>absoluut</em>-modus zie je werkelijke telcijfers per periode, wat direct aangeeft welk jaar het drukst of rustigst was. In de <em>relatief</em>-modus wordt elk jaar vergeleken met 2025, wat duidelijk maakt of eerdere jaren sterker of zwakker waren — hierdoor kan je duidelijk de trend zien. Door tussen maandelijks, weekdags en uurlijks aggregatie te schakelen, ontdek je fijner gestuurde patronen: bijvoorbeeld dat de ochtend- en avondspits steeds groter is geworden en ze omgedraaid zijn in drukte in 2022, het weekpatroon en de maandpatronen van verschillende jaren.
+          Deze grafiek laat zien hoe het fietsgebruik over jaren heen evolueert. In de <em>absoluut</em>-modus zie je werkelijke telcijfers per periode, wat direct aangeeft welk jaar het drukst of rustigst was. In de <em>relatief</em>-modus wordt elk jaar vergeleken met een specifiek geselecteerde jaar, wat duidelijk maakt of eerdere jaren sterker of zwakker waren — hierdoor kan je duidelijk de trend zien. Door tussen maandelijks, weekdags en uurlijks aggregatie te schakelen, ontdek je fijner gestuurde patronen: bijvoorbeeld dat de ochtend- en avondspits steeds groter is geworden en ze omgedraaid zijn in drukte in 2022, het weekpatroon en de maandpatronen van verschillende jaren.
         </p>
       </aside>
     </div>
