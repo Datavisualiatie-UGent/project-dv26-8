@@ -6,9 +6,9 @@ export default {
   // Organize navigation for the project team.
   pages: [
     {name: "Home", path: "/"},
-    {name: "Globaal", path: "/fietspalen"},
-    {name: "Telpaal", path: "/paal"},
-    {name: "Vergelijking", path: "/vergelijking"},
+    {name: "Globaal", path: "/global"},
+    {name: "Telpaal", path: "/countingPole"},
+    {name: "Vergelijking", path: "/comparison"},
   ],
 
   // Content to add to the head of the page, e.g. for a favicon:
