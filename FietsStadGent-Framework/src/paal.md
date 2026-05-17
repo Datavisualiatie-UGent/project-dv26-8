@@ -179,9 +179,6 @@ const stationContent = station
       </section>
 
       <section class="card card--detail">
-        <p style="margin:0 0 0.9rem; font-size:0.9rem; color:var(--text-muted); line-height:1.6;">
-          Deze pagina toont alle beschikbare data voor de telpaal <strong>${station.name}</strong>. Gebruik het dropdown-menu hieronder om naar een andere telpaal te navigeren. Via de knop "Terug naar kaart" ga je terug naar het globale overzicht met alle locaties.
-        </p>
         <div class="pole-toolbar">
           <div class="pole-toolbar-input">
             ${poleInput}
@@ -217,9 +214,6 @@ const stationContent = station
 
       <section class="card card--detail">
         <h3>Verkeersprofiel</h3>
-        <p style="margin:0 0 0.8rem; font-size:0.88rem; color:var(--text-muted); line-height:1.55;">
-          Het totaal aantal fietsers is de som van alle geregistreerde passages sinds de ingebruikname van de telpaal. De rang vergelijkt deze paal met alle andere Gentse telpalen. Het aandeel geeft aan welk percentage van het totale Gentse fietsverkeer langs deze locatie passeert.
-        </p>
         <div class="pole-metrics">
           <div class="metric">
             <p class="metric-label">Totaal fietsers</p>
