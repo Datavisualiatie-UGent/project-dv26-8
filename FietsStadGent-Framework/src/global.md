@@ -349,10 +349,12 @@ const mapCard = resize((width) => {
 
     // Keep top/bottom spacing visually balanced while accounting for pin height.
     const horizontalPadding = 10;
-    const verticalPadding = 10;
+    const verticalPadding = 20;
+    const topPadding = 30;
+    const bottomPadding = -20;
     map.fitBounds(bounds, {
-      paddingTopLeft: [horizontalPadding, verticalPadding],
-      paddingBottomRight: [horizontalPadding, verticalPadding],
+      paddingTopLeft: [horizontalPadding, topPadding],
+      paddingBottomRight: [horizontalPadding, bottomPadding],
       maxZoom: 15
     });
   }
