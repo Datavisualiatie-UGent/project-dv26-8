@@ -424,7 +424,7 @@ const trendBaseYear = Generators.input(baseYearTrendSelect);
     </article>
   </section>
 
-  <details class="card card--ranking" open>
+  <details class="card card--collapsible" open>
     <summary class="ranking-header">
       <h3>Ranking van telpalen</h3>
       <span class="ranking-toggle">Open / sluit</span>
