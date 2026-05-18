@@ -405,7 +405,7 @@ const trendBaseYear = Generators.input(baseYearTrendSelect);
 <div class="page">
   <section class="page-hero">
     <h2>Fietstelpalen in Gent</h2>
-    <div class="page-hero-subtitle">Kerncijfers, interactieve kaart en globale patronen over de periode 2018–2026.</div>
+    <div class="page-hero-subtitle">Kerncijfers, interactieve kaart en globale patronen over de periode 2018-2026.</div>
   </section>
   <section class="overview-grid">
     <article class="card card--overview">
@@ -495,11 +495,14 @@ const trendBaseYear = Generators.input(baseYearTrendSelect);
     <div class="card card--map">
       ${mapCard}
     </div>
-    <p class="map-caption map-note">Klik op een pin om de gegevens van die telpaal in het infopaneel te zien. Gebruik de ⊙-knop om de kaart te hercentreren.</p>
+    <p class="map-caption map-note">Klik op een pin om de gegevens van die fietstelpaal in het infopaneel te zien. Gebruik de ⊙-knop om de kaart te hercentreren.</p>
     <aside class="chart-insight">
       <p class="chart-insight-title">Interpretatie</p>
       <p class="chart-interpretation">
-      De kaart geeft een direct beeld van hoe de telpalen verspreid liggen over Gent. Je ziet dat detelpalen verspreid liggen in het centrum van gent en de binnenring ongeveer volgen in vorm. Deze kaart maakt duidelijk waarom Spoorwegbrug Drongen onderaan in de rang staat. Deze paal staat namelijk heel uitgezonderd en buiten het satd-centrum. Door op pinnen te klikken kun je per locatie dieper inzoomen.
+        De kaart toont dat de meeste fietstelpalen dicht bij het centrum en langs belangrijke fietswegen liggen. Veel locaties volgen de binnenring. Daardoor meten ze vooral stedelijk fietsverkeer: woon-werkverplaatsingen, schoolroutes en korte ritten binnen Gent.
+      </p>
+      <p class="chart-interpretation">
+        Buitenlocaties vallen daardoor extra op. Spoorwegbrug Drongen ligt duidelijk verder van het stadscentrum en registreert een kleiner totaalvolume dan centrale wegen zoals Groendreef of Coupure Links. De kaart helpt dus om de ranking juist te lezen: een lager aantal betekent niet noodzakelijk minder belang, maar vaak een andere ligging en functie binnen het fietsnetwerk.
       </p>
     </aside>
   </div>
@@ -508,7 +511,7 @@ const trendBaseYear = Generators.input(baseYearTrendSelect);
     <div class="chart-header">
       <div>
         <h3>Maandelijkse drukte</h3>
-        <p>Gemiddelde fietsers per maand (2018–2026). Seizoenen en jaarlijkse verschuivingen zichtbaar.</p>
+        <p>Gemiddelde fietsers per maand (2018-2026). Seizoenen en jaarlijkse verschuivingen worden zichtbaar.</p>
       </div>
     </div>
     ${useSeasonInput}
@@ -519,10 +522,10 @@ const trendBaseYear = Generators.input(baseYearTrendSelect);
       <aside class="chart-insight">
         <p class="chart-insight-title">Interpretatie</p>
         <p class="chart-interpretation">
-          Je kan duidelijk zien dat doorheen de jaren het aantal fietser stijgt. Dit kan je deels verwijten aan het feit dat er meer telpalen zijn bijgekomen. Maar zelfs dan kan je een stijgende trend zien doorheen de jaren. Je kan een duidelijke daling in het aantal fietsers zien in het jaar 2020 wat je kan linken aan de CORONA periode.
+          De maandgrafiek laat zien dat het fietsvolume doorheen de meetperiode stijgt. Die groei moet voorzichtig gelezen worden, omdat er in latere jaren extra fietstelpalen bijkomen. Toch blijft de algemene beweging duidelijk: Gent registreert na 2020 opnieuw hogere aantallen en bereikt in recente jaren de sterkste volumes.
         </p>
         <p class="chart-interpretation">
-          Als je de Seizoen kleuren aanzet kan de een duidelijk seizoenspatroon zien. De wintermaanden zijn het rustigst met een duidelijk lagere tellingen. Na de winter zie je een stijging in het aantal fietsers tot het piekt in de eerste helft van de herfst.
+          De terugval in 2020 past bij de coronaperiode, waarin verplaatsingsgedrag sterk veranderde. Met de seizoenskleuren ingeschakeld zie je daarnaast een vast ritme: wintermaanden zijn doorgaans rustiger, daarna neemt het fietsverkeer toe en de hoogste maandvolumes liggen vooral in de warmere maanden en de vroege herfst.
         </p>
       </aside>
     </div>
@@ -532,7 +535,7 @@ const trendBaseYear = Generators.input(baseYearTrendSelect);
     <div class="chart-header">
       <div>
         <h3>Dagelijkse fietsdrukte</h3>
-        <p>Heatmap van gemiddelde dagelijkse tellers.</p>
+        <p>Heatmap van gemiddelde dagelijkse tellingen.</p>
       </div>
     </div>
     ${heatmapYearInput}
@@ -545,9 +548,10 @@ const trendBaseYear = Generators.input(baseYearTrendSelect);
       <aside class="chart-insight">
         <p class="chart-insight-title">Interpretatie</p>
         <p class="chart-interpretation">
-          Deze heatmap toont op een oogopslag waar in het jaar het drukker of rustiger is. De lichtere vlakken in de winterperiode geven lager fietsverkeer aan, terwijl groenere vlakken (herfstmaanden) meer fietsverkeer aangeven. Je kan duidelijk zien dat er op de weekendagen veel minder pendelverkeer is. Dit kan je linken aan de werk en schooldagen. Ook kan je duidelijk de schoolvakanties zoals de paas- (apr), zomer- (jul-aug) en kerst-vakanties (dec-jan) zien.
-          Je ziet hier ook duidelijk dat de wintermaanden het minst populair zijn.
-          Door meerdere jaren te selecteren kun je patronen vergelijken in verschillende jaren.
+          De heatmap maakt het jaarritme concreet. Winterdagen kleuren lichter en wijzen op minder fietsverkeer, terwijl drukkere periodes in lente, zomer en herfst sterker opvallen. Ook het weekpatroon is zichtbaar: weekends zijn meestal rustiger dan werkdagen, wat wijst op een belangrijk aandeel pendelverkeer naar werk en school.
+        </p>
+        <p class="chart-interpretation">
+          Schoolvakanties, zoals de paasvakantie, zomervakantie en kerstvakantie, verschijnen vaak als rustiger blokken. Door meerdere jaren te selecteren kan je controleren of die patronen stabiel blijven of juist veranderen door uitzonderlijke omstandigheden, zoals de coronaperiode of wijzigingen in het aantal actieve fietstelpalen.
         </p>
       </aside>
     </div>
@@ -556,8 +560,8 @@ const trendBaseYear = Generators.input(baseYearTrendSelect);
   <section class="card card--chart card--with-controls">
     <div class="chart-header">
       <div>
-        <h3>Trend — alle telpalen</h3>
-        <p>Trendlijnen per jaar: kies <em>absoluut</em> voor ruwe aantallen of <em>relatief</em> om jaren te vergelijken ten opzichte van een geselecteerde jaar.</p>
+        <h3>Trend - alle telpalen</h3>
+        <p>Trendlijnen per jaar: kies <em>absoluut</em> voor ruwe aantallen of <em>relatief</em> om jaren te vergelijken met een gekozen basisjaar.</p>
       </div>
     </div>
     <div class="controls-vertical">
@@ -601,7 +605,10 @@ const trendBaseYear = Generators.input(baseYearTrendSelect);
       <aside class="chart-insight">
         <p class="chart-insight-title">Interpretatie</p>
         <p class="chart-interpretation">
-          Deze grafiek laat zien hoe het fietsgebruik over jaren heen evolueert. In de <em>absoluut</em>-modus zie je werkelijke telcijfers per periode, wat direct aangeeft welk jaar het drukst of rustigst was. In de <em>relatief</em>-modus wordt elk jaar vergeleken met een specifiek geselecteerde jaar, wat duidelijk maakt of eerdere jaren sterker of zwakker waren — hierdoor kan je duidelijk de trend zien. Door tussen maandelijks, weekdags en uurlijks aggregatie te schakelen, ontdek je fijner gestuurde patronen: bijvoorbeeld dat de ochtend- en avondspits steeds groter is geworden en ze omgedraaid zijn in drukte in 2022, het weekpatroon en de maandpatronen van verschillende jaren.
+          Deze trendgrafiek verbindt de losse patronen tot een langetermijnbeeld. In de <em>absoluut</em>-modus zie je welke jaren en periodes de meeste fietsers tellen. In de <em>relatief</em>-modus vergelijk je jaren met een gekozen basisjaar, waardoor groei, terugval en herstel sneller zichtbaar worden.
+        </p>
+        <p class="chart-interpretation">
+          De knoppen voor maand, weekdag en uur tonen telkens een ander aspect van fietsstad Gent. De maandweergave legt seizoenen bloot, de weekdagweergave toont het verschil tussen werkdagen en weekend, en de uurweergave maakt ochtend- en avondspits zichtbaar. Samen ondersteunen ze de conclusie dat Gent niet alleen veel fietsers telt, maar ook een herkenbaar stedelijk fietsritme heeft.
         </p>
       </aside>
     </div>
