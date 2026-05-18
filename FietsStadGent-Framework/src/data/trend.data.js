@@ -4,6 +4,13 @@ import { readFile } from "fs/promises";
 
 const filePath = new URL("./agg_hour.csv", import.meta.url);
 
+let dataPromise;
+
+function getProcessedData() {
+    dataPromise ??= processData();
+    return dataPromise;
+}
+
 async function processData() {
     const text = await readFile(filePath, "utf-8");
 
@@ -218,7 +225,7 @@ function calculatePctChange(rollup, key, baseYear) {
 
 async function buildComplete(key) {
 
-    const data = await processData();
+    const data = await getProcessedData();
 
     const years = [
         ...new Set(data.map(d => d.jaar))

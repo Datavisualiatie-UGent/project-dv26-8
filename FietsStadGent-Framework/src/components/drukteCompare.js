@@ -1,7 +1,7 @@
 import * as Plot from "npm:@observablehq/plot";
 import * as d3 from "d3";
 
-export function drukte(data, yLabel, {width, height} = {}) {
+export function drukteCompare(data, yLabel, {width, height} = {}) {
   const stacked = d3.groups(data, d => d.month).flatMap(([month, values]) => {
     let y0 = 0;
 
