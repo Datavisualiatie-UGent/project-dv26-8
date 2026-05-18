@@ -24,8 +24,8 @@ const busiestHourLabel = verdict.busiestHour != null ? `${verdict.busiestHour}u`
 
 <div class="home-hero">
   <p class="home-hero-eyebrow">Datavisualisatie · UGent 2025–2026</p>
-  <h1 class="home-hero-title">Is Gent écht een <em>fietsstad</em>?</h1>
-  <p class="home-hero-subtitle">Een interactief dashboard op basis van fietstelpaaldata van Stad Gent — inzicht in fietsstromen, trends en druktepatronen in de Gentse straten.</p>
+  <h1 class="home-hero-title">Is Gent echt een <em>fietsstad</em>?</h1>
+  <p class="home-hero-subtitle"> Met de fietstelpalen van Stad Gent brengen we groei, seizoenen, spitsuren en verschillen tussen locaties in kaart.</p>
   <div class="home-cta-group">
     <a class="home-cta-primary" href="./global">Bekijk alle telpalen →</a>
     <a class="home-cta-secondary" href="./countingPole">Detailpagina per paal</a>
@@ -51,7 +51,7 @@ const busiestHourLabel = verdict.busiestHour != null ? `${verdict.busiestHour}u`
   <p class="home-section-label">Over de data</p>
   <h2 class="home-section-heading">Stad Gent Open Data</h2>
   <p>
-    Gent heeft automatische fietstelpalen die elke 5 minuten het aantal passerende fietsers registreren — in beide richtingen. Deze open data is beschikbaar via het open dataplatform van Stad Gent en vormt de basis van alle visualisaties op deze site.
+    Gent heeft automatische fietstelpalen die om de vijf minuten het aantal passerende fietsers registreren, in beide richtingen. De open data van Stad Gent vormt de basis voor alle visualisaties op deze site. Daardoor kunnen we niet alleen tellen hoeveel er gefietst wordt, maar ook wanneer, waar en volgens welk patroon.
   </p>
   <a class="home-data-source-link" href="https://data.stad.gent/explore/?disjunctive.theme&sort=modified&q=fietstelpalen" target="_blank" rel="noopener noreferrer">
     🔗 Open data Stad Gent
@@ -68,14 +68,14 @@ const busiestHourLabel = verdict.busiestHour != null ? `${verdict.busiestHour}u`
   <div class="home-question-card"><p><span>🗓️</span>Hoe varieert het gebruik doorheen de seizoenen en de week?</p></div>
   <div class="home-question-card"><p><span>⏱️</span>Zijn er duidelijke spitsuren zichtbaar in de uurdata?</p></div>
   <!-- <div class="home-question-card"><p><span>🔁</span>Wat vertelt het verschil in rijrichting over pendel vs. recreatie?</p></div> -->
-  <div class="home-question-card"><p><span>🆚</span>Hoe verschillen telpalen onderling van profiel en volume?</p></div>
+  <div class="home-question-card"><p><span>🆚</span>Hoe verschillen fietstelpalen onderling van profiel en volume?</p></div>
 </div>
 
 <div class="home-verdict-block">
   <p class="home-section-label">Verdict</p>
   <h2 class="home-section-heading">Gent fietst duidelijk meer dan in 2019.</h2>
   <p class="home-section-body">
-    Op basis van de volledige jaren in de dataset kunnen we Gent overtuigend een fietsstad noemen. Sinds ${formatYear(verdict.baselineYear)} groeide het totale fietsvolume met ${formatPercent(verdict.growthSince2019)} en het huidige niveau ligt ${formatPercent(verdict.recoveryFromCovidDip)} boven de coronadip van 2020. Die trend vertaalt zich ook in het dagelijkse patroon: ${topLocationName} is de drukste telpaal, ${peakMonthLabel} is de maand met de hoogste volumes en rond ${busiestHourLabel} ligt de scherpste uurpiek.
+    Op basis van de volledige jaren in de dataset kunnen we Gent overtuigend een fietsstad noemen. Sinds ${formatYear(verdict.baselineYear)} groeide het totale fietsvolume met ${formatPercent(verdict.growthSince2019)} en het huidige niveau ligt ${formatPercent(verdict.recoveryFromCovidDip)} boven de coronadip van 2020. De data toont ook herkenbare ritmes: ${topLocationName} is de drukste telpaal, ${peakMonthLabel} is de maand met de hoogste volumes en rond ${busiestHourLabel} ligt de scherpste uurpiek.
   </p>
 
   <div class="home-verdict-cards">
@@ -109,25 +109,25 @@ const busiestHourLabel = verdict.busiestHour != null ? `${verdict.busiestHour}u`
 
 <p class="home-section-label">Pagina's</p>
 <h2 class="home-section-heading">Verken de data</h2>
-<p class="home-section-body">De site is opgebouwd uit drie hoofdpagina's, elk met een eigen focus en visualisatieset.</p>
+<p class="home-section-body">De site is opgebouwd uit drie hoofdpagina's. Samen tonen ze eerst het stadsbrede beeld, daarna het profiel van een gekozen locatie en tot slot de verschillen tussen fietstelpalen.</p>
 
 <div class="home-nav-cards">
   <a class="home-nav-card" href="./global">
-    <span class="home-nav-card-icon">🗺️</span>
+    <span class="home-nav-card-icon">Kaart</span>
     <p class="home-nav-card-title">Globaal overzicht</p>
-    <p class="home-nav-card-desc">Interactieve kaart van alle telpalen, ranking van de telpalen, maandelijkse drukte doorheen de jaren, dagelijkse heatmap en trendlijnen over alle jaren.</p>
+    <p class="home-nav-card-desc">Interactieve kaart van alle fietstelpalen, ranking van de drukste locaties, maandelijkse drukte, dagelijkse heatmap en trendlijnen over alle jaren.</p>
     <span class="home-nav-card-arrow">Bekijk pagina →</span>
   </a>
   <a class="home-nav-card" href="./countingPole">
-    <span class="home-nav-card-icon">📊</span>
+    <span class="home-nav-card-icon">Profiel</span>
     <p class="home-nav-card-title">Telpaal detail</p>
-    <p class="home-nav-card-desc">Zoom in op één specifieke telpaal: locatieinfo, verkeersprofiel, maandgrafiek, dagelijkse heatmap en vergelijking tussen jaren.</p>
+    <p class="home-nav-card-desc">Zoom in op een specifieke fietstelpaal: locatieinfo, verkeersprofiel, maandgrafiek, dagelijkse heatmap en vergelijking tussen jaren.</p>
     <span class="home-nav-card-arrow">Bekijk pagina →</span>
   </a>
   <a class="home-nav-card" href="./comparison">
-    <span class="home-nav-card-icon">⚖️</span>
+    <span class="home-nav-card-icon">Vergelijk</span>
     <p class="home-nav-card-title">Vergelijking</p>
-    <p class="home-nav-card-desc">Leg meerdere telpalen naast elkaar om verschillen in volume, spitspatronen en seizoensinvloed te ontdekken.</p>
+    <p class="home-nav-card-desc">Leg meerdere fietstelpalen naast elkaar om verschillen in volume, spitspatronen en seizoensinvloed te ontdekken.</p>
     <span class="home-nav-card-arrow">Bekijk pagina →</span>
   </a>
 </div>
