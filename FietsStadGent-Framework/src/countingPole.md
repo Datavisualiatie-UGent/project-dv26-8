@@ -162,7 +162,10 @@ function stationMonthlyChart(data, {width, height = 400} = {}) {
   const interpretation = html`<aside class="chart-insight">
     <p class="chart-insight-title">Interpretatie</p>
     <p class="chart-interpretation">
-    Dit maandoverzicht laat zien hoe het verbruik op deze specifieke paal verloopt doorheen de maanden en jaren. Je kunt direct zien of deze telpaal vooral seizoensgebonden is (sterk verschil zomer–winter = recreatief gebruik) of stabiel blijft (gelijkmatig pendelverkeer). Een hoge winter/zomer-verhouding suggereert structureel fietsverkeer naar werk of school. Controleer ook of groei jaar na jaar zichtbaar is — dit duidt erop dat deze route populairder wordt. Door "Seizoenen tonen" in te schakelen markeer je lente, zomer, herfst en winter visueel.
+      Dit maandoverzicht beschrijft het profiel van deze specifieke fietstelpaal. Sterke verschillen tussen zomer en winter wijzen vaak op recreatief of weersgevoelig fietsverkeer. Een gelijkmatiger patroon doorheen het jaar suggereert eerder structureel pendelverkeer naar werk, school of station.
+    </p>
+    <p class="chart-interpretation">
+      Kijk ook naar de evolutie tussen jaren. Een stijgende lijn betekent dat deze route belangrijker wordt binnen het Gentse fietsnetwerk, terwijl plotse dalingen kunnen samenhangen met de coronaperiode, wegenwerken, defecte tellingen of tijdelijke wijzigingen in verplaatsingsgedrag. Met "Seizoenen tonen" worden lente, zomer, herfst en winter visueel afgebakend.
     </p>
   </aside>`;
 
@@ -175,7 +178,7 @@ const stationContent = station
     <div class="page">
       <section class="page-hero page-hero--compact">
         <h2>${station.name || station.code}</h2>
-        <div class="page-hero-subtitle">Code ${station.code} - Fietstelpaal in Gent</div>
+        <div class="page-hero-subtitle">Profiel van fietstelpaal ${station.code}: locatie, aandeel in het totale fietsvolume en patronen doorheen de tijd.</div>
       </section>
 
       <section class="card card--detail">
@@ -194,7 +197,7 @@ const stationContent = station
 
       <section class="pole-grid">
         <article class="card card--detail">
-          <h3>Algemene info</h3>
+          <h3>Algemene informatie</h3>
           <dl class="pole-list">
             <dt>Code</dt><dd>${station.code}</dd>
             <dt>Eigenaar</dt><dd>${owner}</dd>
@@ -275,7 +278,7 @@ const poleTrendBaseYear = Generators.input(poleBaseYearTrendSelect);
         <div class="chart-header">
           <div>
             <h3>Dagelijkse fietsdrukte</h3>
-            <p>Heatmap per dag: weeknummer × weekdag. Vergelijk jaren voor stabiliteit en trends.</p>
+            <p>Heatmap per dag: weeknummer × weekdag. Vergelijk jaren om vaste en afwijkende patronen te herkennen.</p>
           </div>
         </div>
         ${stationDailyData.length ? stationHeatmapYearInput : null}
@@ -290,7 +293,10 @@ const poleTrendBaseYear = Generators.input(poleBaseYearTrendSelect);
           ${stationDailyData.length ? html`<aside class="chart-insight">
             <p class="chart-insight-title">Interpretatie</p>
             <p class="chart-interpretation">
-          Deze heatmap toont op een oogopslag waar in het jaar deze telpaal druk is en wanneer rustig. Donkere vlakken in de wintermaanden geven lagere tellingen aan, terwijl groenere tinten (vooral herfst) meer fietsverkeer aangeven. Je herkent meteen structurele patronen: weekendagen zijn doorgaans lichter (minder pendelverkeer), schoolvakanties (pasen, zomer, kerst) zijn duidelijk zichtbaar als lichtere vlakken, en feestdagen kunnen dalingen veroorzaken. Door meerdere jaren naast elkaar te vergelijken zie je of deze paal jaar na jaar dezelfde patronen volgt of groeit/daalt. Extreme uitschieters kunnen wijzen op paalfouten, stroomuitval, of bijzondere evenementen.
+              Deze heatmap toont wanneer deze locatie druk of rustig is. Lichtere winterdagen wijzen op minder fietsverkeer, terwijl sterkere kleuren in lente, zomer of herfst aangeven wanneer de route intensiever gebruikt wordt. Als werkdagen duidelijk drukker zijn dan weekends, wijst dat op pendelverkeer, wanneer weekenddagen relatief hoog blijven, kan dit op een eerder recreatief belangrijkere weg duiden.
+            </p>
+            <p class="chart-interpretation">
+              Vakantieperiodes en feestdagen verschijnen vaak als rustiger blokken. Door meerdere jaren naast elkaar te zetten zie je of het patroon stabiel is of verandert. Uitschieters kunnen wijzen op evenementen, werken, weersinvloed of technische problemen met de fietstelpaal.
             </p>
           </aside>` : null}
         </div>
@@ -300,8 +306,8 @@ const poleTrendBaseYear = Generators.input(poleBaseYearTrendSelect);
       <section class="card card--chart card--with-controls">
         <div class="chart-header">
           <div>
-            <h3>Trend — ${station.name}</h3>
-            <p>Trendlijnen per jaar: <em>absoluut</em> voor ruwe aantallen, <em>relatief</em> voor vergelijking met een geselecteerde jaar.</p>
+            <h3>Trend - ${station.name}</h3>
+            <p>Trendlijnen per jaar: <em>absoluut</em> voor ruwe aantallen, <em>relatief</em> voor vergelijking met een gekozen basisjaar.</p>
           </div>
         </div>
         <div class="controls-vertical">
@@ -350,7 +356,10 @@ const poleTrendBaseYear = Generators.input(poleBaseYearTrendSelect);
           <aside class="chart-insight">
             <p class="chart-insight-title">Interpretatie</p>
             <p class="chart-interpretation">
-          Deze trendgrafiek laat zien hoe het fietsgebruik op deze specifieke paal evolueert. In <em>absoluut</em>-modus zie je de werkelijke telcijfers per periode — dit toont seizoensschommelingen en langetermijngroei of teruggang. Controleer vooral of er duidelijke groei is (dat duidt op toenemend fietsgebruik op deze route). In <em>relatief</em>-modus worden alle jaren als percentage van een specifiek geselecteerd jaar weergegeven, wat het makkelijk maakt om jaar-op-jaar-variatie te zien. Door te schakelen tussen maandelijks, weekdags en uurlijks inzicht krijg je een veel scherper beeld van verkeertype: een duidelijke piek op werkdagen (ma–vr) suggereert sterk pendelverkeer, terwijl weekendtoppen op recreatie duiden. Grote dalingen in bepaalde jaren kunnen wijzen op externe factoren zoals lockdowns of weersextremen.
+              Deze trendgrafiek laat zien hoe het fietsgebruik op deze locatie evolueert. In <em>absoluut</em>-modus zie je de werkelijke tellingen per periode, waarmee seizoensschommelingen, groei of terugval zichtbaar worden. In <em>relatief</em>-modus worden jaren vergeleken met een gekozen basisjaar, zodat jaar-op-jaarverschillen duidelijker naar voren komen.
+            </p>
+            <p class="chart-interpretation">
+              De keuze tussen maand, weekdag en uur helpt het type route te bepalen: een duidelijke piek op werkdagen of rond 08:00 en 17:00 duidt op pendelverkeer; een gelijkmatiger weekpatroon of relatief hoge weekendwaarden wijst op recreatief gebruik.
             </p>
           </aside>
         </div>
