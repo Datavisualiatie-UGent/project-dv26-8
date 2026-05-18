@@ -125,7 +125,7 @@ const poleInput = Inputs.select(
 poleInput.addEventListener("input", () => {
   const nextCode = poleInput.value;
   if (nextCode && nextCode !== code) {
-    location.href = `./paal?code=${encodeURIComponent(nextCode)}`;
+    location.href = `./countingPole?code=${encodeURIComponent(nextCode)}`;
   }
 });
 
@@ -184,7 +184,7 @@ const stationContent = station
             ${poleInput}
           </div>
           <div class="pole-actions pole-actions--toolbar">
-            <a class="button primary" href="./fietspalen">Terug naar kaart</a>
+            <a class="button primary" href="./global">Terug naar kaart</a>
             ${osmHref
               ? html`<a class="button secondary" target="_blank" rel="noopener noreferrer" href="${osmHref}">Bekijk op OSM</a>`
               : null}
@@ -239,7 +239,7 @@ const stationContent = station
         <div class="page-hero-subtitle">Kies een telpaal via de kaart om detailinformatie te bekijken.</div>
       </section>
       <section class="pole-actions">
-        <a class="button primary" href="/fietspalen">Ga naar de kaart</a>
+        <a class="button primary" href="./global">Ga naar de kaart</a>
       </section>
     </div>
     `;

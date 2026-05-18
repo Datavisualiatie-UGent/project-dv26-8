@@ -352,8 +352,8 @@ import {html} from "npm:htl";
   <h1 class="hero-title">Is Gent écht een <em>fietsstad</em>?</h1>
   <p class="hero-subtitle">Een interactief dashboard op basis van fietstelpaaldata van Stad Gent — inzicht in fietsstromen, trends en druktepatronen in de Gentse straten.</p>
   <div class="hero-cta-group">
-    <a class="cta-primary" href="/fietspalen">Bekijk alle telpalen →</a>
-    <a class="cta-secondary" href="/paal">Detailpagina per paal</a>
+    <a class="cta-primary" href="./global">Bekijk alle telpalen →</a>
+    <a class="cta-secondary" href="./countingPole">Detailpagina per paal</a>
   </div>
 </div>
 
@@ -401,19 +401,19 @@ import {html} from "npm:htl";
 <p class="section-body">De site is opgebouwd uit drie hoofdpagina's, elk met een eigen focus en visualisatieset.</p>
 
 <div class="nav-cards">
-  <a class="nav-card-link" href="/fietspalen">
+  <a class="nav-card-link" href="./global">
     <span class="nav-card-icon">🗺️</span>
     <p class="nav-card-title">Globaal overzicht</p>
     <p class="nav-card-desc">Interactieve kaart van alle telpalen, ranking van de telpalen, maandelijkse drukte doorheen de jaren, dagelijkse heatmap en trendlijnen over alle jaren.</p>
     <span class="nav-card-arrow">Bekijk pagina →</span>
   </a>
-  <a class="nav-card-link" href="/paal">
+  <a class="nav-card-link" href="./countingPole">
     <span class="nav-card-icon">📊</span>
     <p class="nav-card-title">Telpaal detail</p>
     <p class="nav-card-desc">Zoom in op één specifieke telpaal: locatieinfo, verkeersprofiel, maandgrafiek, dagelijkse heatmap en vergelijking tussen jaren.</p>
     <span class="nav-card-arrow">Bekijk pagina →</span>
   </a>
-  <a class="nav-card-link" href="/vergelijking">
+  <a class="nav-card-link" href="./comparison">
     <span class="nav-card-icon">⚖️</span>
     <p class="nav-card-title">Vergelijking</p>
     <p class="nav-card-desc">Leg meerdere telpalen naast elkaar om verschillen in volume, spitspatronen en seizoensinvloed te ontdekken.</p>

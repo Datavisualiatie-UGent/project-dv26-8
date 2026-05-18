@@ -291,7 +291,7 @@ const mapCard = resize((width) => {
 
     const link = document.createElement("a");
     link.className = "pole-info-link";
-    link.href = `./paal?code=${encodeURIComponent(location.code)}`;
+    link.href = `./countingPole?code=${encodeURIComponent(location.code)}`;
     link.textContent = "Open infopagina";
 
     infoPanel.replaceChildren(header, list, link);
