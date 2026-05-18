@@ -186,6 +186,42 @@
     gap: 0.75rem;
 }
 
+/* Controls layout used by trend comparison and station trend controls */
+.controls-layout {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.controls-layout .control-block {
+    min-width: 280px;
+}
+
+.controls-layout .control-block h3 {
+    margin-top: 0;
+}
+
+.controls-layout .control-note {
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* Ensure lists using chart-interpretation follow the same spacing and color rules */
+.chart-interpretation {
+    margin: 0.4rem 0 0;
+    padding-left: 1.2rem;
+}
+
+.controls-inline {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
 .chart-header h3 {
     margin: 0;
     color: var(--text-main);

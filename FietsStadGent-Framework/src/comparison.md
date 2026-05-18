@@ -151,27 +151,27 @@ const trendLocationOrder = selectedCodesTrend;
 <div class="page">
   <section class="page-hero">
     <h2>Vergelijking van telpalen</h2>
-    <div class="page-hero-subtitle">Leg meerdere fietstelpalen naast elkaar en ontdek verschillen in volume, spitspatronen en seizoensinvloed.</div>
+    <div class="page-hero-subtitle">Leg meerdere fietstelpalen naast elkaar en ontdek verschillen in volume, spitspatronen, seizoensinvloed en routefunctie.</div>
   </section>
 
   <section class="card card--detail">
-    <p style="margin:0; font-size:0.9rem; color:var(--text-muted); line-height:1.6;">
-      Op deze pagina kan je <strong>twee of meer telpalen vergelijken</strong>. Dat is nuttig om te zien of bepaalde locaties structureel drukker zijn, of om te achterhalen welke palen een sterk pendelpatroon vertonen versus een meer recreatief profiel. Zo kan je bijvoorbeeld de Coupure Links een drukke invalsweg vergelijken met de Spoorwegbrug Drongen, een fietssnelweg verder van het centrum.
+    <p class="section-copy">
+      Op deze pagina kan je <strong>twee of meer fietstelpalen vergelijken</strong>. Dat is nuttig omdat een hoog totaalvolume niet alles zegt: sommige locaties zijn vooral druk tijdens de spits, andere volgen sterker het seizoen of liggen op een recreatieve verbinding. Door fietstelpalen naast elkaar te leggen zie je welke routes hetzelfde stedelijke ritme volgen en welke locaties een eigen profiel hebben.
     </p>
   </section>
 
   <section class="card card--detail">
       <h3>Interessante combinaties</h3>
-      <ul style="font-size:0.88rem; color:var(--text-muted); line-height:2; margin:0.4rem 0 0; padding-left:1.2rem;">
-        <li><strong>Groendreef vs. Coupure Links</strong> — twee drukke kanaalroutes</li>
-        <li><strong>Louisa d'Havébrug vs. Marie Sassepad</strong> — twee palen op de F400 fietssnelweg</li>
-        <li><strong>Spoorwegbrug Drongen vs. Dampoort-Noord</strong> — buitenste ring vs. binnenste ring</li>
+      <ul class="chart-interpretation">
+        <li><strong>Groendreef vs. Coupure Links</strong> - twee drukke kanaalroutes met hoge volumes</li>
+        <li><strong>Louisa d'Havébrug vs. Marie Sassepad</strong> - twee fietstelpalen op de F400-fietssnelweg</li>
+        <li><strong>Spoorwegbrug Drongen vs. Dampoort-Noord</strong> - buitenste ring vs. binnenste ring</li>
       </ul>
   </section>
 
   <section class="card card--detail">
     <h3>Selectie van telpalen</h3>
-    <p class="section-copy">Selecteer hier de telpalen die je wil vergelijken. De grafieken rechts en hieronder worden automatisch bijgewerkt op basis van je selectie.</p>
+    <p class="section-copy">Selecteer hier de fietstelpalen die je wil vergelijken. De grafieken worden automatisch bijgewerkt op basis van je selectie.</p>
     <div class="pole-options">
       ${selectLocations}
     </div>
@@ -193,7 +193,7 @@ const trendLocationOrder = selectedCodesTrend;
       <div class="chart-main">
     ${resize((width) => {
       if (selectedLocations.length === 0) {
-        return html`<div class="empty-note">Selecteer minstens één telpaal om de maandelijkse vergelijking te zien.</div>`;
+        return html`<div class="empty-note">Selecteer minstens één fietstelpaal om de maandelijkse vergelijking te zien.</div>`;
       }
       const filteredData = normalizedMonthlyPerLocation.filter(d => selectedLocations.includes(d.code));
       return filteredData.length > 0
@@ -203,30 +203,22 @@ const trendLocationOrder = selectedCodesTrend;
       </div>
       <aside class="chart-insight">
         <p class="chart-insight-title">Interpretatie</p>
-        <p class="chart-interpretation">Overlappende balken tonen de maandelijkse drukte voor alle geselecteerde telpalen. Zo zie je of het seizoenspatroon voor alle locaties gelijk loopt, of dat sommige palen pieken op andere momenten wat kan wijzen op een ander gebruik (pendel, school, recreatie).</p>
+        <p class="chart-interpretation">De maandelijkse vergelijking toont of geselecteerde fietstelpalen hetzelfde seizoenspatroon volgen. Als alle balben samen stijgen en dalen, wijst dat op een gedeeld stadsbreed ritme. Als een locatie op andere momenten piekt, kan dat wijzen op een andere functie: pendelverkeer, schoolroutes, recreatief fietsverkeer of een specifieke verbinding.</p>
+        <p class="chart-interpretation">Let ook op het schaalverschil. Een centrale route kan veel hogere aantallen halen, terwijl een kleinere fietstelpaal toch een duidelijk en stabiel patroon heeft. De vergelijking helpt dus om volume en gedrag apart te lezen.</p>
       </aside>
     </div>
   </section>
 
   <section class="card card--detail">
-    <h3>Trend Vergelijking</h3>
-    <p class="text-muted">Vergelijk de tijdslijnen van verschillende telpalen binnen één jaar.</p>
-    <div 
-      class="controls-layout" 
-      style="
-        display: flex;
-        gap: 2rem;
-        margin-bottom: 1.5rem;
-        align-items: flex-start;
-        flex-wrap: wrap;
-      "
-    >
+    <h3>Trendvergelijking</h3>
+    <p class="text-muted">Vergelijk de tijdslijnen van verschillende fietstelpalen binnen één jaar.</p>
+    <div class="controls-layout">
     <!-- LINKS -->
-    <div class="control-block" style="min-width: 280px;">
-      <h3 style="margin-top:0;">Selectie van telpalen</h3>
+    <div class="control-block">
+      <h3>Selectie van fietstelpalen</h3>
       <div class="pole-options">
-        <div style="margin-bottom: 0.75rem; font-size: 0.9rem; color: var(--text-muted);">
-          <strong>${selectedCodesTrend.length} / 5</strong> telpalen geselecteerd
+        <div class="control-note">
+          <strong>${selectedCodesTrend.length} / 5</strong> fietstelpalen geselecteerd
         </div>
         ${selectLocationsTrend}
       </div>
@@ -253,7 +245,7 @@ const trendLocationOrder = selectedCodesTrend;
       <div class="chart-main">
     ${resize((width) => {
       if (selectedCodesTrend.length === 0) {
-        return html`<div class="empty-note">Selecteer minstens één telpalen om de trendvergelijking te zien.</div>`;
+        return html`<div class="empty-note">Selecteer minstens één fietstelpaal om de trendvergelijking te zien.</div>`;
       }
       return combinedTrendData.length > 0
         ? trendLijnVergelijking(
@@ -267,7 +259,8 @@ const trendLocationOrder = selectedCodesTrend;
       </div>
       <aside class="chart-insight">
         <p class="chart-insight-title">Interpretatie</p>
-        <p class="chart-interpretation">Vergelijk de tijdslijnen van verschillende telpalen binnen een jaar. Zo wordt zichtbaar welke locaties hetzelfde ritme volgen en welke telpalen vooral op specifieke maanden, weekdagen of uren afwijken.</p>
+        <p class="chart-interpretation">De trendvergelijking laat zien welke fietstelpalen binnen hetzelfde jaar hetzelfde ritme volgen. In de maandweergave zie je seizoensinvloed, in de weekdagweergave het verschil tussen werkdagen en weekend, en in de uurweergave de ochtend- en avondspits.</p>
+        <p class="chart-interpretation">Wanneer twee locaties parallel bewegen, hebben ze waarschijnlijk een gelijkaardige functie in het fietsnetwerk. Wanneer een lijn duidelijk afwijkt, is dat net interessant: zo ontdek je routes die sterker pendelgericht, recreatief of locatiegebonden zijn.</p>
       </aside>
     </div>
   </section>
