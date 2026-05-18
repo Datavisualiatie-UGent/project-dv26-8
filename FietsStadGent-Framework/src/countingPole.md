@@ -301,7 +301,7 @@ const poleTrendBaseYear = Generators.input(poleBaseYearTrendSelect);
         <div class="chart-header">
           <div>
             <h3>Trend — ${station.name}</h3>
-            <p>Trendlijnen per jaar: <em>absoluut</em> voor ruwe aantallen, <em>relatief</em> voor vergelijking met 2025.</p>
+            <p>Trendlijnen per jaar: <em>absoluut</em> voor ruwe aantallen, <em>relatief</em> voor vergelijking met een geselecteerde jaar.</p>
           </div>
         </div>
         <div class="controls-vertical">
@@ -350,7 +350,7 @@ const poleTrendBaseYear = Generators.input(poleBaseYearTrendSelect);
           <aside class="chart-insight">
             <p class="chart-insight-title">Interpretatie</p>
             <p class="chart-interpretation">
-          Deze trendgrafiek laat zien hoe het fietsgebruik op deze specifieke paal evolueert. In <em>absoluut</em>-modus zie je de werkelijke telcijfers per periode — dit toont seizoensschommelingen en langetermijngroei of teruggang. Controleer vooral of er duidelijke groei is (dat duidt op toenemend fietsgebruik op deze route). In <em>relatief</em>-modus worden alle jaren als percentage van 2025 weergegeven, wat het makkelijk maakt om jaar-op-jaar-variatie te zien. Door te schakelen tussen maandelijks, weekdags en uurlijks inzicht krijg je een veel scherper beeld van verkeertype: een duidelijke piek op werkdagen (ma–vr) suggereert sterk pendelverkeer, terwijl weekendtoppen op recreatie duiden. Grote dalingen in bepaalde jaren kunnen wijzen op externe factoren zoals lockdowns of weersextremen.
+          Deze trendgrafiek laat zien hoe het fietsgebruik op deze specifieke paal evolueert. In <em>absoluut</em>-modus zie je de werkelijke telcijfers per periode — dit toont seizoensschommelingen en langetermijngroei of teruggang. Controleer vooral of er duidelijke groei is (dat duidt op toenemend fietsgebruik op deze route). In <em>relatief</em>-modus worden alle jaren als percentage van een specifiek geselecteerd jaar weergegeven, wat het makkelijk maakt om jaar-op-jaar-variatie te zien. Door te schakelen tussen maandelijks, weekdags en uurlijks inzicht krijg je een veel scherper beeld van verkeertype: een duidelijke piek op werkdagen (ma–vr) suggereert sterk pendelverkeer, terwijl weekendtoppen op recreatie duiden. Grote dalingen in bepaalde jaren kunnen wijzen op externe factoren zoals lockdowns of weersextremen.
             </p>
           </aside>
         </div>
