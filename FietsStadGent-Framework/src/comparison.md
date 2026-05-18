@@ -7,7 +7,7 @@ theme: dashboard
 ```js
 import * as Inputs from "@observablehq/inputs";
 import {Generators} from "@observablehq/stdlib";
-import {drukte} from "./components/drukteCompare.js";
+import {drukteCompare as drukte} from "./components/drukteCompare.js";
 import * as d3 from "d3";
 import {getTrendDataForStation} from "./components/station_data.js";
 import {getModeView, getYearColor, getYearsView} from "./components/trendlijn_helper.js";
