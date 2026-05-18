@@ -7,6 +7,21 @@ theme: dashboard
 import {html} from "npm:htl";
 ```
 
+```js
+const verdict = await FileAttachment("data/verdict.json").json();
+
+const formatPercent = (value) =>
+  value === null ? "n.v.t." : `${value >= 0 ? "+" : ""}${value.toFixed(1)}%`;
+
+const formatYear = (value) => value ?? "n.v.t.";
+const topLocationName = verdict.topLocationName ?? "Onbekend";
+const topLocationTotal = verdict.topLocationTotal
+  ? `${verdict.topLocationTotal.toLocaleString()} passages`
+  : "Aantal niet beschikbaar";
+const peakMonthLabel = verdict.peakMonth ?? "Niet bepaald";
+const busiestHourLabel = verdict.busiestHour != null ? `${verdict.busiestHour}u` : "Niet bepaald";
+```
+
 <div class="home-hero">
   <p class="home-hero-eyebrow">Datavisualisatie · UGent 2025–2026</p>
   <h1 class="home-hero-title">Is Gent écht een <em>fietsstad</em>?</h1>
@@ -54,6 +69,42 @@ import {html} from "npm:htl";
   <div class="home-question-card"><p><span>⏱️</span>Zijn er duidelijke spitsuren zichtbaar in de uurdata?</p></div>
   <!-- <div class="home-question-card"><p><span>🔁</span>Wat vertelt het verschil in rijrichting over pendel vs. recreatie?</p></div> -->
   <div class="home-question-card"><p><span>🆚</span>Hoe verschillen telpalen onderling van profiel en volume?</p></div>
+</div>
+
+<div class="home-verdict-block">
+  <p class="home-section-label">Verdict</p>
+  <h2 class="home-section-heading">Gent fietst duidelijk meer dan in 2019.</h2>
+  <p class="home-section-body">
+    Op basis van de volledige jaren in de dataset kunnen we Gent overtuigend een fietsstad noemen. Sinds ${formatYear(verdict.baselineYear)} groeide het totale fietsvolume met ${formatPercent(verdict.growthSince2019)} en het huidige niveau ligt ${formatPercent(verdict.recoveryFromCovidDip)} boven de coronadip van 2020. Die trend vertaalt zich ook in het dagelijkse patroon: ${topLocationName} is de drukste telpaal, ${peakMonthLabel} is de maand met de hoogste volumes en rond ${busiestHourLabel} ligt de scherpste uurpiek.
+  </p>
+
+  <div class="home-verdict-cards">
+    <div class="home-card">
+      <p class="home-card-label">Groei sinds ${formatYear(verdict.baselineYear)}</p>
+      <p class="home-card-value">${formatPercent(verdict.growthSince2019)}</p>
+    </div>
+    <div class="home-card">
+      <p class="home-card-label">Piekjaar</p>
+      <p class="home-card-value">${formatYear(verdict.peakYear)}</p>
+    </div>
+    <div class="home-card">
+      <p class="home-card-label">Herstel t.o.v. coronadip</p>
+      <p class="home-card-value">${formatPercent(verdict.recoveryFromCovidDip)}</p>
+    </div>
+    <div class="home-card">
+      <p class="home-card-label">Drukste locatie</p>
+      <p class="home-card-value">${topLocationName}</p>
+      <p class="home-card-sub">${topLocationTotal}</p>
+    </div>
+    <div class="home-card">
+      <p class="home-card-label">Seizoenspiek</p>
+      <p class="home-card-value">${peakMonthLabel}</p>
+    </div>
+    <div class="home-card">
+      <p class="home-card-label">Drukste uur (gem.)</p>
+      <p class="home-card-value">${busiestHourLabel}</p>
+    </div>
+  </div>
 </div>
 
 <p class="home-section-label">Pagina's</p>
